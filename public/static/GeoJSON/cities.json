@@ -1,0 +1,125 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "济南",
+        "description": "山东省省会",
+        "population": 7460000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.0264, 36.6512]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "青岛",
+        "description": "山东省经济中心",
+        "population": 10250000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.3826, 36.0671]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "烟台",
+        "description": "海滨城市",
+        "population": 7130000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.4415, 37.4648]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "潍坊",
+        "description": "风筝之都",
+        "population": 9350000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [119.1070, 36.7093]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "淄博",
+        "description": "工业城市",
+        "population": 4700000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [118.0579, 36.8013]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "泰安",
+        "description": "泰山所在地",
+        "population": 5600000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.1205, 36.2072]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "临沂",
+        "description": "物流之都",
+        "population": 11240000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [118.3472, 35.0577]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "济宁",
+        "description": "孔孟之乡",
+        "population": 8350000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [116.5873, 35.4137]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "东营",
+        "description": "石油之城",
+        "population": 2170000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [118.5457, 37.4519]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "威海",
+        "description": "海滨城市",
+        "population": 2830000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [122.1163, 37.5592]
+      }
+    }
+  ]
+}

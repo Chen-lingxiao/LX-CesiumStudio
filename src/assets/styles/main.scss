@@ -23,34 +23,107 @@
 
 /* ========== 全局主题变量（亮色模式） ========== */
 :root {
-  --bg-primary: #ffffff;          /* 主背景色 */
-  --bg-secondary: #f5f5f5;       /* 次背景色 */
-  --bg-hover: #e8e8e8;           /* 悬停背景色 */
-  --text-primary: #000000;       /* 主文字颜色 */
-  --text-secondary: #666666;     /* 次文字颜色 */
-  --border-color: #eeeeee;        /* 边框颜色 */
-  --header-bg: #ffffff;           /* 头部背景色 */
-  --sidebar-bg: #ffffff;          /* 侧边栏背景色 */
-  --resizer-bg: #dddddd;          /* 调整器背景色 */
-  --resizer-hover: #999999;       /* 调整器悬停颜色 */
-  --console-bg: #f0f0f0;         /* 控制台背景色 */
-  --console-text: #333333;        /* 控制台文字颜色 */
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  /* 阴影效果 */
+  /* ===== 文字颜色 ===== */
+  --color-text-primary: #000000;       /* 主文字颜色 */
+  --color-text-secondary: #666666;     /* 次文字颜色 */
+  --color-text-muted: #999999;         /* 弱化文字颜色 */
+  
+  /* ===== 背景颜色 ===== */
+  --color-bg-base: #ffffff;             /* 最底层背景（应用根背景） */
+  --color-bg-surface: #ffffff;          /* 表层背景（卡片、面板） */
+  --color-bg-elevated: #f5f5f5;        /* 提升层背景（编辑器区域） */
+  --color-bg-hover: #e8e8e8;           /* 悬停状态背景 */
+  
+  /* ===== 边框颜色 ===== */
+  --color-border: #eeeeee;             /* 边框颜色 */
+  --color-border-muted: #dddddd;       /* 弱化边框颜色 */
+  
+  /* ===== 特殊组件颜色 ===== */
+  --color-resizer: #dddddd;            /* 调整器背景色 */
+  --color-resizer-hover: #999999;      /* 调整器悬停颜色 */
+  --color-console-bg: #f0f0f0;         /* 控制台背景色 */
+  --color-console-text: #333333;       /* 控制台文字颜色 */
+  
+  /* ===== 阴影 ===== */
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  /* ===== 主题色预设变量 ===== */
+  /* 淡紫色系 */
+  --theme-light-purple-base: #ffd6ee;   /* 淡紫A：柔和淡紫背景 */
+  --theme-light-purple-surface: #f7b8e9; /* 淡紫B：稍深淡紫表层 */
+  --theme-light-purple-elevated: #ffe6f3;
+  --theme-light-purple-hover: #f0a8df;
+  --theme-light-purple-border: #f5c8e6;
+  
+  /* 淡绿色系 */
+  --theme-light-green-base: #e0ebd8;    /* 淡绿A：低饱和薄荷绿背景 */
+  --theme-light-green-surface: #d0ddc8; /* 淡绿B：护眼淡绿表层 */
+  --theme-light-green-elevated: #e8f0e1;
+  --theme-light-green-hover: #c0cfb8;
+  --theme-light-green-border: #d8e4ce;
+  
+  /* 淡粉色系 */
+  --theme-light-pink-base: #ffd6d6;     /* 淡粉A：柔和淡粉背景 */
+  --theme-light-pink-surface: #ffb8c2;  /* 淡粉B：稍高饱和淡粉 */
+  --theme-light-pink-elevated: #ffe6e6;
+  --theme-light-pink-hover: #ffa8b2;
+  --theme-light-pink-border: #ffcccc;
+  
+  /* 薄荷绿色系 */
+  --theme-mint-green-base: #e8f5f0;     /* 低饱和薄荷绿背景 */
+  --theme-mint-green-surface: #d4e8e0;  /* 稍深薄荷绿表层 */
+  --theme-mint-green-elevated: #f0faf7;
+  --theme-mint-green-hover: #c4d8d0;
+  --theme-mint-green-border: #d8ece4;
+  
+  /* 柔和蓝色系 */
+  --theme-soft-blue-base: #e8f0fe;      /* 柔和淡蓝背景 */
+  --theme-soft-blue-surface: #d4e4fc;   /* 稍深柔蓝表层 */
+  --theme-soft-blue-elevated: #f0f6ff;
+  --theme-soft-blue-hover: #c4d4ec;
+  --theme-soft-blue-border: #d8e4f8;
 }
 
 /* ========== 全局主题变量（暗色模式） ========== */
 :root.dark {
-  --bg-primary: #1e1e1e;          /* 主背景色 */
-  --bg-secondary: #252526;       /* 次背景色 */
-  --bg-hover: #2d2d30;           /* 悬停背景色 */
-  --text-primary: #ffffff;       /* 主文字颜色 */
-  --text-secondary: #cccccc;     /* 次文字颜色 */
-  --border-color: #333333;        /* 边框颜色 */
-  --header-bg: #252526;           /* 头部背景色 */
-  --sidebar-bg: #252526;          /* 侧边栏背景色 */
-  --resizer-bg: #3c3c3c;          /* 调整器背景色 */
-  --resizer-hover: #666666;       /* 调整器悬停颜色 */
-  --console-bg: #0d0d0d;         /* 控制台背景色 */
-  --console-text: #ffffff;        /* 控制台文字颜色 */
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);  /* 阴影效果 */
+  /* ===== 文字颜色 ===== */
+  --color-text-primary: #ffffff;       /* 主文字颜色 */
+  --color-text-secondary: #cccccc;     /* 次文字颜色 */
+  --color-text-muted: #999999;         /* 弱化文字颜色 */
+  
+  /* ===== 背景颜色 ===== */
+  --color-bg-base: #1e1e1e;             /* 最底层背景（应用根背景） */
+  --color-bg-surface: #252526;          /* 表层背景（卡片、面板） */
+  --color-bg-elevated: #2d2d30;         /* 提升层背景（编辑器区域） */
+  --color-bg-hover: #37373d;            /* 悬停状态背景 */
+  
+  /* ===== 边框颜色 ===== */
+  --color-border: #3c3c3c;             /* 边框颜色 */
+  --color-border-muted: #333333;       /* 弱化边框颜色 */
+  
+  /* ===== 特殊组件颜色 ===== */
+  --color-resizer: #3c3c3c;            /* 调整器背景色 */
+  --color-resizer-hover: #5c5c5c;      /* 调整器悬停颜色 */
+  --color-console-bg: #0d0d0d;         /* 控制台背景色 */
+  --color-console-text: #ffffff;       /* 控制台文字颜色 */
+  
+  /* ===== 阴影 ===== */
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+/* ========== 全局布局样式 ========== */
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s, color 0.3s;
 }
