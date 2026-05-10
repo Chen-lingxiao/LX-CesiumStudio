@@ -15,20 +15,20 @@
 
 import { extractCode } from './utils/codeExtractor'
 
-import BasicEntity from './Entity/BasicEntity.vue'
-import basicEntityCode from './Entity/BasicEntity.vue?raw'
-// import PointEntity from './Entity/PointEntity.vue'
-// import pointEntityCode from './Entity/PointEntity.vue?raw'
-// import PolylineEntity from './Entity/PolylineEntity.vue'
-// import polylineEntityCode from './Entity/PolylineEntity.vue?raw'
+
+import ViewerBasic from './Basic/ViewerBasic.vue'
+import viewerBasicCode from './Basic/ViewerBasic.vue?raw'
 import CameraBasic from './Basic/CameraBasic.vue'
 import cameraBasicCode from './Basic/CameraBasic.vue?raw'
+import SceneBasic from './Basic/SceneBasic.vue'
+import sceneBasicCode from './Basic/SceneBasic.vue?raw'
+import GlobeBasic from './Basic/GlobeBasic.vue'
+import globeBasicCode from './Basic/GlobeBasic.vue?raw'
 
 import OSMImagery from './Imagery/OSMImagery.vue'
 import osmImageryCode from './Imagery/OSMImagery.vue?raw'
-import BasicCesium from './Basic/BasicCesium.vue'
-import basicCesiumCode from './Basic/BasicCesium.vue?raw'
-
+import BasicEntity from './Entity/BasicEntity.vue'
+import basicEntityCode from './Entity/BasicEntity.vue?raw'
 
 /**
  * 示例列表
@@ -36,22 +36,40 @@ import basicCesiumCode from './Basic/BasicCesium.vue?raw'
  */
 export const examples = [
   {
-    id: 'basic-cesium',
-    name: 'Cesium 基础',
-    description: '创建基础的Cesium Viewer并添加实体对象',
-    tags: ['Basic', '基础'],
-    thumbnail: '/thumbnails/basic-cesium.png',
-    component: BasicCesium,
-    ...extractCode(basicCesiumCode)
+    id: 'viewer-basic',
+    name: 'Viewer 基础',
+    description: 'Cesium 应用的顶层容器类，封装 Scene、Camera、Globe、数据源及UI控件，提供声明式API简化三维应用开发',
+    tags: ['Viewer', '基础'],
+    thumbnail: '/thumbnails/viewer-basic.png',
+    component: ViewerBasic,
+    ...extractCode(viewerBasicCode)
   },
   {
     id: 'camera-basic',
-    name: '相机基础',
-    description: '创建基础的Cesium Viewer并添加相机对象',
+    name: 'Camera 基础',
+    description: '控制观察者视角的核心类，定义视锥体参数，实现场景导航、视角变换和飞行动画',
     tags: ['Camera', '基础'],
     thumbnail: '/thumbnails/camera-basic.png',
     component: CameraBasic,
     ...extractCode(cameraBasicCode)
+  },
+  {
+    id: 'scene-basic',
+    name: 'Scene 基础',
+    description: '渲染管线核心类，管理所有可渲染对象（图元、实体、3D瓦片），协调帧更新和底层渲染流程',
+    tags: ['Scene', '基础'],
+    thumbnail: '/thumbnails/scene-basic.png',
+    component: SceneBasic,
+    ...extractCode(sceneBasicCode)
+  },
+  {
+    id: 'globe-basic',
+    name: 'Globe 基础',
+    description: '地球模型核心类，定义地球的几何形状、材质、光照效果等',
+    tags: ['Globe', '基础'],
+    thumbnail: '/thumbnails/globe-basic.png',
+    component: GlobeBasic,
+    ...extractCode(globeBasicCode)
   },
   {
     id: 'basic-entity',

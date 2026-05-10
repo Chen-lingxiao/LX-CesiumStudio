@@ -1,11 +1,10 @@
 <script setup>
 /**
- * BasicCesium.vue - Cesium 基础示例组件
+ * ViewerBasic.vue - Cesium 基础示例组件
  *
  * 功能说明：
  * 1. 创建基础的 Cesium Viewer 实例
  * 2. 添加一个简单的实体对象（点标记+标签）到场景中
- * 3. 演示如何使用 Cesium Entities API 创建和显示地理实体
  */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
@@ -125,9 +124,9 @@ const initCesium = async () => {
       duration: 2
     })
     isReady.value = true // 初始化完成
-    console.log('Cesium 初始化完成')
+    console.log('ViewerBasic 初始化完成')
   } catch (error) {
-    console.error('Cesium 初始化失败：', error)
+    console.error('ViewerBasic 初始化失败：', error)
   }
 }
 // 销毁 Cesium 实例
@@ -137,7 +136,7 @@ const destroyCesium = () => {
     viewer = null
   }
   isReady.value = false
-  console.log('Cesium 销毁完成')
+  console.log('ViewerBasic 销毁完成')
 }
 onMounted(() => {
   initCesium()
@@ -154,5 +153,4 @@ onUnmounted(() => {
     <div v-if="!isReady" class="loading-overlay">加载中...</div>
   </div>
 </template>
-<style scoped>  </style>
-
+<style scoped></style>

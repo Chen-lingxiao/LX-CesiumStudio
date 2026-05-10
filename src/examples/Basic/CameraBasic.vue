@@ -31,9 +31,9 @@ const initCesium = async () => {
     addPoints()
     cameraEvents()
     isReady.value = true // 初始化完成
-    console.log('Cesium 初始化完成')
+    console.log('CameraBasic 初始化完成')
   } catch (error) {
-    console.error('Cesium 初始化失败：', error)
+    console.error('CameraBasic 初始化失败：', error)
   }
 }
 
@@ -110,11 +110,11 @@ const flyToGuangdong = () => {
 }
 
 const zoomIn = () => {
-  viewer.camera.zoomIn(500)
+  viewer.camera.zoomIn(1000)
 }
 
 const zoomOut = () => {
-  viewer.camera.zoomOut(500)
+  viewer.camera.zoomOut(1000)
 }
 
 const lookAtBeijing = () => {
@@ -172,7 +172,7 @@ const destroyCesium = () => {
     viewer = null
   }
   isReady.value = false
-  console.log('Cesium 销毁完成')
+  console.log('CameraBasic 销毁完成')
 }
 onMounted(() => {
   initCesium()
@@ -201,8 +201,8 @@ onUnmounted(() => {
 
         <div class="toolbar-section">
           <h4>缩放控制</h4>
-          <button @click="zoomIn">放大</button>
-          <button @click="zoomOut">缩小</button>
+          <button @click="zoomIn">放大1000米</button>
+          <button @click="zoomOut">缩小1000米</button>
         </div>
 
         <div class="toolbar-section">
@@ -218,58 +218,69 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-#cesium-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
 .toolbar {
   position: absolute;
   top: 10px;
   left: 10px;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 15px;
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  padding: 16px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
+  min-width: 200px;
 }
+
 .camera-status {
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border-muted);
   font-size: 14px;
   font-weight: bold;
-  color: #333;
+  color: var(--color-text-primary);
 }
+
 .toolbar-section {
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border-muted);
 }
+
 .toolbar-section:last-child {
   margin-bottom: 0;
   padding-bottom: 0;
   border-bottom: none;
 }
+
 .toolbar-section h4 {
-  margin: 0 0 8px 0;
-  font-size: 14px;
-  color: #333;
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
 }
+
 .toolbar-section button {
   display: block;
   width: 100%;
-  margin: 4px 0;
-  padding: 6px 12px;
+  margin: 5px 0;
+  padding: 8px 12px;
   font-size: 12px;
   cursor: pointer;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
-  background: #fff;
-  transition: all 0.2s;
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  transition: all 0.2s ease;
 }
+
 .toolbar-section button:hover {
-  background: #f0f0f0;
-  border-color: #ccc;
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-border-muted);
+}
+
+.toolbar-section button.active {
+  background-color: #4a90d9;
+  border-color: #4a90d9;
+  color: white;
 }
 </style>

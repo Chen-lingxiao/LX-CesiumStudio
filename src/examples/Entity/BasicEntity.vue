@@ -67,14 +67,11 @@ const initCesium = async () => {
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(116.390937, 39.91588, 1000),
       duration: 2,
-      easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT
     })
-
-    await new Promise(resolve => setTimeout(resolve, 2100))
     isReady.value = true
-    console.log('Cesium 初始化完成')
+    console.log('BasicEntity 初始化完成')
   } catch (error) {
-    console.error('Cesium 初始化失败：', error)
+    console.error('BasicEntity 初始化失败：', error)
   }
 }
 
@@ -103,4 +100,4 @@ onUnmounted(() => {
   </div>
 </template>
 
-<style scoped>  </style>
+<style scoped></style>
