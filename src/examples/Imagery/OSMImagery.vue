@@ -1,75 +1,97 @@
-<script setup>
+<script setup lang="ts">
 /**
- * BaseImagery.vue - 影像管理基础示例组件
+ * OSMImagery.vue - 影像图层切换示例组件
  *
  * 功能说明：
- * 1. 创建Cesium Viewer实例（禁用默认影像图层）
- * 2. 添加自定义影像源（OpenStreetMap）
- * 3. 演示如何管理和配置Cesium影像图层
+ * 1. 创建 Cesium Viewer 实例（禁用默认影像图层）
+ * 2. 添加多个自定义影像图层（OSM标准风格、黑色风格）
+ * 3. 演示如何切换显示不同的影像图层
  *
  * 技术要点：
- * - 使用imageryProvider: false禁用默认影像图层
- * - 创建UrlTemplateImageryProvider加载自定义瓦片服务
- * - 使用imageryLayers.addImageryProvider添加影像图层
+ * - imageryProvider: false 禁用默认影像
+ * - UrlTemplateImageryProvider 加载自定义瓦片服务
+ * - imageryLayers.addImageryProvider 添加影像图层
+ * - layer.show 控制图层显示/隐藏
+ * - layer.alpha 控制图层透明度
  */
-import { onMounted, onUnmounted } from "vue";
-import * as Cesium from "cesium";
+import { onMounted, onUnmounted, ref } from 'vue'
+import * as Cesium from 'cesium'
 
-let viewer = null;
-let osmLayer = null;
-let osmBlackLayer = null;
+let viewer = null as Cesium.Viewer | null // Cesium 实例
+const isReady = ref(false) // 初始化状态
+let osmLayer = null as Cesium.ImageryLayer | null
+let osmBlackLayer = null as Cesium.ImageryLayer | null
 
-const toggleLayer = (layerType) => {
-  if (layerType === "standard") {
-    osmLayer.show = true;
-    osmBlackLayer.show = false;
-  } else if (layerType === "dark") {
-    osmLayer.show = false;
-    osmBlackLayer.show = true;
+const initCesium = async () => {
+  try {
+    isReady.value = false
+    viewer = new Cesium.Viewer('cesium-container', {
+      terrainProvider: await Cesium.createWorldTerrainAsync(),
+    })
+
+    const osmProvider = new Cesium.UrlTemplateImageryProvider({
+      url: 'https://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+      subdomains: ['a', 'b', 'c', 'd'],
+    })
+
+    const osmBlackProvider = new Cesium.UrlTemplateImageryProvider({
+      url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+      subdomains: ['a', 'b', 'c', 'd'],
+    })
+
+    osmBlackLayer = viewer.imageryLayers.addImageryProvider(osmBlackProvider)
+    osmLayer = viewer.imageryLayers.addImageryProvider(osmProvider)
+
+    osmLayer.alpha = 0.5
+    osmLayer.show = false
+    osmBlackLayer.show = true
+
+    isReady.value = true
+    console.log('Cesium 初始化完成')
+  } catch (error) {
+    console.error('Cesium 初始化失败：', error)
   }
 }
-onMounted(() => {
-  // 创建Viewer实例，禁用默认影像图层
-  viewer = new Cesium.Viewer("cesium-container", {
-    imageryProvider: false, // 禁用默认影像提供器
-  });
 
-  // 将自定义影像图层添加到场景，并保存图层引用
-  const osmProvider = new Cesium.UrlTemplateImageryProvider({
-    url: "https://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png",
-    subdomains: ["a", "b", "c", "d"],
-  });
-  const osmBlackProvider = new Cesium.UrlTemplateImageryProvider({
-    url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-    subdomains: ["a", "b", "c", "d"],
-  });
-  
-  osmBlackLayer = viewer.imageryLayers.addImageryProvider(osmBlackProvider); // 黑色风格图层
-  osmLayer = viewer.imageryLayers.addImageryProvider(osmProvider); // 标准风格图层
-  
-  // 默认显示黑色风格
-  osmLayer.alpha = 0.5; // 标准风格图层透明度
-  osmLayer.show = false; // 标准风格图层是否显示
-  osmBlackLayer.show = true;
-});
-
-/**
- * 组件卸载时销毁Viewer，释放资源
- */
-onUnmounted(() => {
-  if (viewer) {
-    viewer.destroy();
-    viewer = null;
+const toggleLayer = (layerType: 'standard' | 'dark') => {
+  if (!viewer || !osmLayer || !osmBlackLayer) {
+    return
   }
-});
+  if (layerType === 'standard') {
+    osmLayer.show = true
+    osmBlackLayer.show = false
+  } else if (layerType === 'dark') {
+    osmLayer.show = false
+    osmBlackLayer.show = true
+  }
+}
+
+const destroyCesium = () => {
+  if (viewer && !viewer.isDestroyed()) {
+    viewer.destroy()
+    viewer = null
+  }
+  isReady.value = false
+  console.log('Cesium 销毁完成')
+}
+
+onMounted(() => {
+  initCesium()
+})
+
+onUnmounted(() => {
+  destroyCesium()
+})
 </script>
 
 <template>
-  <!-- Cesium容器 -->
-  <div id="cesium-container">
-    <div class="toolbar">
-      <button @click="toggleLayer('standard')">标准风格</button>
-      <button @click="toggleLayer('dark')">黑色风格</button>
+  <div class="cesium-wrapper">
+    <div id="cesium-container">
+      <div v-if="!isReady" class="loading-overlay">加载中...</div>
+      <div class="toolbar">
+        <button @click="toggleLayer('standard')">标准风格</button>
+        <button @click="toggleLayer('dark')">黑色风格</button>
+      </div>
     </div>
   </div>
 </template>

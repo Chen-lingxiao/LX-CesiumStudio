@@ -10,6 +10,7 @@
 - [环境要求](#环境要求)
 - [安装步骤](#安装步骤)
 - [使用指南](#使用指南)
+- [示例列表](#示例列表)
 - [项目结构](#项目结构)
 - [添加新示例](#添加新示例)
 - [配置说明](#配置说明)
@@ -163,6 +164,20 @@ pnpm preview
 
 ---
 
+## 示例列表
+
+项目提供以下 Cesium 示例，涵盖基础功能、相机控制、实体管理和影像图层等方面：
+
+| 示例名称 | 分类 | 描述 | 标签 |
+|---------|------|------|------|
+| Cesium 基础 | Basic | 创建基础的 Cesium Viewer 并添加实体对象（点标记+标签） | Basic、基础 |
+| 相机基础 | Basic | 演示 Cesium 相机的常用操作，包括 flyTo、setView、lookAt 等方法 | Camera、基础 |
+| 场景基础 | Basic | 展示场景模式、大气效果、雾效、光照等场景配置 | Scene、基础 |
+| Entities 基础 | Entity | 创建完整的实体对象，包含点标记、广告牌和文字标签 | Entities、基础 |
+| OpenStreetMap 影像 | Imagery | 添加 OpenStreetMap 影像图层，支持标准风格和黑色风格切换 | Imagery、影像、OpenStreetMap |
+
+---
+
 ## 项目结构
 
 ```
@@ -196,12 +211,16 @@ CesiumStudio-LX/
 │   │
 │   ├── examples/                     # Cesium 示例
 │   │   ├── index.js                  # 示例配置与数据管理
+│   │   ├── utils/                    # 工具函数
+│   │   │   └── codeExtractor.js      # 代码提取工具
 │   │   ├── Basic/                    # 基础示例目录
-│   │   │   └── BasicCesium.vue       # 基础Cesium示例
+│   │   │   ├── BasicCesium.vue       # 基础Cesium示例
+│   │   │   ├── CameraBasic.vue       # 相机控制示例
+│   │   │   └── SceneBasic.vue        # 场景配置示例
 │   │   ├── Entity/                   # 实体示例目录
-│   │   │   └── Basic.vue             # Entities基础示例
+│   │   │   └── BasicEntity.vue       # Entities基础示例
 │   │   └── Imagery/                  # 影像示例目录
-│   │       └── BaseImagery.vue       # 影像管理示例
+│   │       └── OSMImagery.vue        # OpenStreetMap影像示例
 │   │
 │   ├── App.vue                       # 根组件（布局管理）
 │   └── main.js                       # 应用入口文件
@@ -253,14 +272,33 @@ CesiumStudio-LX/
  * - {技术细节1}
  * - {技术细节2}
  */
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
 
-let viewer = null
+let viewer = null // Cesium 实例
+const isReady = ref(false) // 初始化状态
 
-const initCesium = () => {
-  viewer = new Cesium.Viewer('cesium-container', {})
-  // 添加功能代码...
+const initCesium = async () => {
+  try {
+    isReady.value = false
+    viewer = new Cesium.Viewer('cesium-container', {
+      terrainProvider: await Cesium.createWorldTerrainAsync(),
+    })
+    // 添加功能代码...
+    isReady.value = true // 初始化完成
+    console.log('Cesium 初始化完成')
+  } catch (error) {
+    console.error('Cesium 初始化失败：', error)
+  }
+}
+
+const destroyCesium = () => {
+  if (viewer && !viewer.isDestroyed()) {
+    viewer.destroy()
+    viewer = null
+  }
+  isReady.value = false
+  console.log('Cesium 销毁完成')
 }
 
 onMounted(() => {
@@ -268,21 +306,43 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (viewer) {
-    viewer.destroy()
-    viewer = null
-  }
+  destroyCesium()
 })
 </script>
 
 <template>
-  <div id="cesium-container"></div>
+  <div class="cesium-wrapper">
+    <div id="cesium-container"></div>
+    <div v-if="!isReady" class="loading-overlay">加载中...</div>
+  </div>
 </template>
 
 <style scoped>
+.cesium-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
 #cesium-container {
   width: 100%;
   height: 100%;
+}
+
+.loading-overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  z-index: 1000;
 }
 </style>
 ```

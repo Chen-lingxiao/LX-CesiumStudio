@@ -199,8 +199,13 @@ const destroyViewer = () => {
 const transformCode = (rawCode) => {
   let jsCode = rawCode
   
-  // 移除import语句（支持多行和无分号情况）
+  // 移除script标签（如果存在）
+  jsCode = jsCode.replace(/<script[^>]*>/g, '')
+  jsCode = jsCode.replace(/<\/script>/g, '')
+  
+  // 移除import语句（支持多种格式）
   jsCode = jsCode.replace(/import\s+[\s\S]*?from\s+['"][^'"]+['"]\s*[;\n]/g, '')
+  jsCode = jsCode.replace(/import\s+['"][^'"]+['"]\s*[;\n]/g, '')
   
   // 移除export语句
   jsCode = jsCode.replace(/export\s+default\s+[\s\S]*?(?=\n|$)/g, '')
@@ -210,18 +215,17 @@ const transformCode = (rawCode) => {
   jsCode = jsCode.replace(/defineProps\s*\([\s\S]*?\)\s*/g, '')
   jsCode = jsCode.replace(/defineEmits\s*\([\s\S]*?\)\s*/g, '')
   
-  // 提取onMounted之前的内容（函数定义、变量声明等）
+  // 处理onMounted：提取内部内容并立即执行
   const onMountedIndex = jsCode.indexOf('onMounted(() => {')
-  let beforeOnMounted = ''
-  let onMountedContent = ''
-  
   if (onMountedIndex !== -1) {
-    // 获取onMounted之前的内容
-    beforeOnMounted = jsCode.substring(0, onMountedIndex).trim()
+    // 获取onMounted之前的内容（函数定义、变量声明等）
+    const beforeOnMounted = jsCode.substring(0, onMountedIndex).trim()
     
     // 提取onMounted内部内容
     let contentStart = onMountedIndex + 'onMounted(() => {'.length
     let depth = 1
+    let onMountedContent = ''
+    
     for (let i = contentStart; i < jsCode.length && depth > 0; i++) {
       const char = jsCode[i]
       if (char === '{' && jsCode[i-1] !== '\\') depth++
@@ -231,21 +235,22 @@ const transformCode = (rawCode) => {
       }
     }
     
-    // 合并两部分内容
+    // 合并：保留函数定义 + onMounted内部调用
     jsCode = (beforeOnMounted + '\n\n' + onMountedContent).trim()
   }
   
-  // 移除viewer声明（保留函数内部的viewer使用）
-  jsCode = jsCode.replace(/let\s+viewer\s*=\s*null;/g, '')
-  
-  // 保持viewer赋值为全局变量，不改为const声明
-  // 这样可以让外部的viewer变量引用到新创建的实例
-  
-  // 移除onUnmounted
+  // 移除onUnmounted（销毁由容器统一处理）
   jsCode = jsCode.replace(/\s*onUnmounted\s*\([\s\S]*?\)\s*/g, '')
   
+  // 移除let viewer声明，改用全局viewer变量
+  jsCode = jsCode.replace(/let\s+viewer\s*=\s*null;/g, '')
+  
+  // 将const viewer声明转换为普通赋值，让全局viewer变量引用
+  jsCode = jsCode.replace(/const\s+viewer\s*=\s*new Cesium\.Viewer/g, 'viewer = new Cesium.Viewer')
+  jsCode = jsCode.replace(/let\s+viewer\s*=\s*new Cesium\.Viewer/g, 'viewer = new Cesium.Viewer')
+  
   // 将容器ID替换为container变量
-  jsCode = jsCode.replace(/'cesium-container'/g, 'container')
+  jsCode = jsCode.replace(/['"]cesium-container['"]/g, 'container')
   
   // 移除多余的空行和空白
   jsCode = jsCode.replace(/\n{3,}/g, '\n\n').trim()
@@ -275,14 +280,37 @@ const executeCode = (code) => {
       scriptCode = transformCode(code.js)
     }
     
-    // 创建函数并执行
-    const script = new Function(
-      'Cesium', 
-      'container', 
-      scriptCode
-    )
+    // 创建执行上下文对象
+    const context = {
+      Cesium,
+      container: cesiumContainerRef.value,
+      // Vue响应式API简化实现
+      ref: (initialValue) => ({ value: initialValue }),
+      reactive: (target) => target,
+      // 生命周期钩子简化实现
+      onMounted: (callback) => {
+        Promise.resolve().then(callback)
+      },
+      onUnmounted: () => {},
+      // 全局viewer变量
+      viewer: null
+    }
     
-    script(Cesium, cesiumContainerRef.value)
+    // 使用with语句创建执行环境
+    const wrappedCode = `
+      with(context) {
+        ${scriptCode}
+      }
+    `
+    
+    // 创建函数并执行
+    const script = new Function('context', wrappedCode)
+    script(context)
+    
+    // 保存viewer引用供销毁时使用
+    if (context.viewer) {
+      viewer = context.viewer
+    }
   } catch (error) {
     console.error('Failed to execute code:', error)
   }
@@ -293,13 +321,18 @@ const executeCode = (code) => {
  */
 watch(() => props.exampleComponent, (newComponent) => {
   if (newComponent) {
-    // 销毁旧Viewer，加载新组件
-    destroyViewer()
+    // 先设置新组件，让 Vue 完成 DOM 挂载
     currentExampleComponent.value = newComponent
+    // 等待 Vue 完成 DOM 更新后再销毁旧 Viewer
+    nextTick(() => {
+      destroyViewer()
+    })
   } else {
     // 清除组件，初始化默认Viewer
     currentExampleComponent.value = null
-    initDefaultViewer()
+    nextTick(() => {
+      initDefaultViewer()
+    })
   }
 })
 
