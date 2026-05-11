@@ -29,6 +29,31 @@ import OSMImagery from './Imagery/OSMImagery.vue'
 import osmImageryCode from './Imagery/OSMImagery.vue?raw'
 import BasicEntity from './Entity/BasicEntity.vue'
 import basicEntityCode from './Entity/BasicEntity.vue?raw'
+import PointEntity from './Entity/PointEntity.vue'
+import pointEntityCode from './Entity/PointEntity.vue?raw'
+import PolylineEntity from './Entity/PolylineEntity.vue'
+import polylineEntityCode from './Entity/PolylineEntity.vue?raw'
+
+import DrawTool from './Interaction/DrawTool.vue'
+import drawToolCode from './Interaction/DrawTool.vue?raw'
+import DrawPoint from './Interaction/DrawPoint.vue'
+import drawPointCode from './Interaction/DrawPoint.vue?raw'
+import DrawPolyline from './Interaction/DrawPolyline.vue'
+import drawPolylineCode from './Interaction/DrawPolyline.vue?raw'
+import DrawPolygon from './Interaction/DrawPolygon.vue'
+import drawPolygonCode from './Interaction/DrawPolygon.vue?raw'
+
+import MeasureTool from './Interaction/MeasureTool.vue'
+import measureToolCode from './Interaction/MeasureTool.vue?raw'
+import DistanceMeasure from './Interaction/DistanceMeasure.vue'
+import distanceMeasureCode from './Interaction/DistanceMeasure.vue?raw'
+import AreaMeasure from './Interaction/AreaMeasure.vue'
+import areaMeasureCode from './Interaction/AreaMeasure.vue?raw'
+import HeightMeasure from './Interaction/HeightMeasure.vue'
+import heightMeasureCode from './Interaction/HeightMeasure.vue?raw'
+import CoordinatePick from './Interaction/CoordinatePick.vue'
+import coordinatePickCode from './Interaction/CoordinatePick.vue?raw'
+
 
 /**
  * 示例列表
@@ -65,7 +90,7 @@ export const examples = [
   {
     id: 'globe-basic',
     name: 'Globe 基础',
-    description: '地球模型核心类，定义地球的几何形状、材质、光照效果等',
+    description: '地球模型核心类，定义地球的几何形状、椭球体参数、地表材质、地形渲染和光照效果',
     tags: ['Globe', '基础'],
     thumbnail: '/thumbnails/globe-basic.png',
     component: GlobeBasic,
@@ -74,30 +99,30 @@ export const examples = [
   {
     id: 'basic-entity',
     name: 'Entities 基础',
-    description: '创建基础的Cesium Viewer并添加实体对象',
+    description: '创建基础的Cesium Viewer实例，演示如何添加包含点标记、广告牌和文字标签的完整实体对象',
     tags: ['Entities', '基础'],
     thumbnail: '/thumbnails/basic-entity.png',
     component: BasicEntity,
     ...extractCode(basicEntityCode)
   },
-  // {
-  //   id: 'point-entity',
-  //   name: '点实体',
-  //   description: '创建基础的Cesium Viewer并添加点实体对象',
-  //   tags: ['Entities', 'Point'],
-  //   thumbnail: '/thumbnails/point-entity.png',
-  //   component: PointEntity,
-  //   ...extractCode(pointEntityCode)
-  // },
-  // {
-  //   id: 'polyline-entity',
-  //   name: '折线实体',
-  //   description: '创建基础的Cesium Viewer并添加折线实体对象',
-  //   tags: ['Entities', 'Polyline'],
-  //   thumbnail: '/thumbnails/polyline-entity.png',
-  //   component: PolylineEntity,
-  //   ...extractCode(polylineEntityCode)
-  // },
+  {
+    id: 'point-entity',
+    name: '点实体',
+    description: '创建点实体对象，设置点的颜色、大小、高度参考和深度测试等属性',
+    tags: ['Entities', 'Point'],
+    thumbnail: '/thumbnails/point-entity.png',
+    component: PointEntity,
+    ...extractCode(pointEntityCode)
+  },
+  {
+    id: 'polyline-entity',
+    name: '折线实体',
+    description: '创建折线实体对象，设置折线的宽度、颜色材质、是否贴地等属性',
+    tags: ['Entities', 'Polyline'],
+    thumbnail: '/thumbnails/polyline-entity.png',
+    component: PolylineEntity,
+    ...extractCode(polylineEntityCode)
+  },
   {
     id: 'base-imagery',
     name: 'OpenStreetMap 影像',
@@ -106,7 +131,89 @@ export const examples = [
     thumbnail: '/thumbnails/osm-imagery.png',
     component: OSMImagery,
     ...extractCode(osmImageryCode)
-  }
+  },
+  {
+    id: 'draw-tool',
+    name: '绘制工具',
+    description: '交互式绘制工具：支持点、线、多边形、矩形的绘制，左键添加顶点，右键完成绘制，支持清除所有绘制内容',
+    tags: ['Interaction', '绘制'],
+    thumbnail: '/thumbnails/draw-tool.png',
+    component: DrawTool,
+    ...extractCode(drawToolCode)
+  },
+  {
+    id: 'draw-point',
+    name: '绘制点',
+    description: '交互式点绘制工具，点击地图添加点位，支持清除绘制内容',
+    tags: ['Interaction', '绘制', 'Point'],
+    thumbnail: '/thumbnails/draw-point.png',
+    component: DrawPoint,
+    ...extractCode(drawPointCode)
+  },
+  {
+    id: 'draw-polyline',
+    name: '绘制折线',
+    description: '交互式折线绘制工具，点击添加顶点、右键完成绘制，支持清除',
+    tags: ['Interaction', '绘制', 'Polyline'],
+    thumbnail: '/thumbnails/draw-polyline.png',
+    component: DrawPolyline,
+    ...extractCode(drawPolylineCode)
+  },
+  {
+    id: 'draw-polygon',
+    name: '绘制多边形',
+    description: '交互式多边形绘制工具，点击添加顶点、右键闭合绘制，支持清除',
+    tags: ['Interaction', '绘制', 'Polygon'],
+    thumbnail: '/thumbnails/draw-polygon.png',
+    component: DrawPolygon,
+    ...extractCode(drawPolygonCode)
+  },
+  {
+    id: 'measure-tool',
+    name: '测量工具',
+    description: '交互式测量工具：使用 useMeasurement composable，支持距离测量、面积测量、高度测量和坐标拾取',
+    tags: ['Interaction', '测量', 'Composable'],
+    thumbnail: '/thumbnails/measure-tool.png',
+    component: MeasureTool,
+    ...extractCode(measureToolCode)
+  },
+  {
+    id: 'distance-measure',
+    name: '距离测量',
+    description: '独立实现的距离测量示例：点击添加两点，计算并显示两点间距离',
+    tags: ['Interaction', '测量', '距离'],
+    thumbnail: '/thumbnails/distance-measure.png',
+    component: DistanceMeasure,
+    ...extractCode(distanceMeasureCode)
+  },
+  {
+    id: 'area-measure',
+    name: '面积测量',
+    description: '独立实现的面积测量示例：点击添加顶点（至少3个），右键完成，使用 turf.js 计算面积',
+    tags: ['Interaction', '测量', '面积'],
+    thumbnail: '/thumbnails/area-measure.png',
+    component: AreaMeasure,
+    ...extractCode(areaMeasureCode)
+  },
+  {
+    id: 'height-measure',
+    name: '高度测量',
+    description: '独立实现的高度测量示例：点击选择两点，计算地形高度差',
+    tags: ['Interaction', '测量', '高度'],
+    thumbnail: '/thumbnails/height-measure.png',
+    component: HeightMeasure,
+    ...extractCode(heightMeasureCode)
+  },
+  {
+    id: 'coordinate-pick',
+    name: '坐标拾取',
+    description: '独立实现的坐标拾取示例：点击地图显示经纬度和高度信息',
+    tags: ['Interaction', '测量', '坐标'],
+    thumbnail: '/thumbnails/coordinate-pick.png',
+    component: CoordinatePick,
+    ...extractCode(coordinatePickCode)
+  },
+
 ]
 
 
