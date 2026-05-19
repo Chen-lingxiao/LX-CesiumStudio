@@ -1,0 +1,651 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 0,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17673920091943, 36.684446978098208]
+      },
+      "properties": {
+        "FID": 0,
+        "OBJECTID": 3,
+        "SHAPE_Leng": 0.0031759434779099999,
+        "SHAPE_Area": 2.1458316932599999e-7,
+        "Height": 20,
+        "Name": "竹园1号楼",
+        "ORIG_FID": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17644583650019, 36.684826740328845]
+      },
+      "properties": {
+        "FID": 1,
+        "OBJECTID": 4,
+        "SHAPE_Leng": 0.0017826825205400001,
+        "SHAPE_Area": 1.11178334353e-7,
+        "Height": 20,
+        "Name": "竹园3号楼",
+        "ORIG_FID": 1
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17549997050003, 36.68483151904087]
+      },
+      "properties": {
+        "FID": 2,
+        "OBJECTID": 6,
+        "SHAPE_Leng": 0.00171152486175,
+        "SHAPE_Area": 1.08271136989e-7,
+        "Height": 20,
+        "Name": "梅园4号楼",
+        "ORIG_FID": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17518148188253, 36.684532328673811]
+      },
+      "properties": {
+        "FID": 3,
+        "OBJECTID": 7,
+        "SHAPE_Leng": 0.0031347965767300002,
+        "SHAPE_Area": 2.16621270417e-7,
+        "Height": 20,
+        "Name": "梅园1号楼",
+        "ORIG_FID": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17518115096095, 36.683738911842624]
+      },
+      "properties": {
+        "FID": 4,
+        "OBJECTID": 8,
+        "SHAPE_Leng": 0.00310702113047,
+        "SHAPE_Area": 2.17373727945e-7,
+        "Height": 20,
+        "Name": "梅园2号楼",
+        "ORIG_FID": 4
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17518589711642, 36.683290231887838]
+      },
+      "properties": {
+        "FID": 5,
+        "OBJECTID": 9,
+        "SHAPE_Leng": 0.0030997015833500001,
+        "SHAPE_Area": 2.17168808588e-7,
+        "Height": 20,
+        "Name": "梅园3号楼",
+        "ORIG_FID": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 6,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17536733881445, 36.682170679779119]
+      },
+      "properties": {
+        "FID": 6,
+        "OBJECTID": 10,
+        "SHAPE_Leng": 0.0046382545555899999,
+        "SHAPE_Area": 8.4008825774499997e-7,
+        "Height": 16,
+        "Name": "雅苑餐厅",
+        "ORIG_FID": 6
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 7,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17674062564527, 36.683930846131545]
+      },
+      "properties": {
+        "FID": 7,
+        "OBJECTID": 11,
+        "SHAPE_Leng": 0.0031228328379799999,
+        "SHAPE_Area": 2.1638379821e-7,
+        "Height": 20,
+        "Name": "竹园3号楼",
+        "ORIG_FID": 7
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 8,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17676900200013, 36.683262690786705]
+      },
+      "properties": {
+        "FID": 8,
+        "OBJECTID": 12,
+        "SHAPE_Leng": 0.0038495182760499998,
+        "SHAPE_Area": 5.2075956131399999e-7,
+        "Height": 12,
+        "Name": "文苑餐厅",
+        "ORIG_FID": 8
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 9,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17848798276884, 36.68444611744934]
+      },
+      "properties": {
+        "FID": 9,
+        "OBJECTID": 13,
+        "SHAPE_Leng": 0.0031388483093199998,
+        "SHAPE_Area": 2.2182714350599999e-7,
+        "Height": 20,
+        "Name": "松园1号楼",
+        "ORIG_FID": 9
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 10,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17848633122992, 36.683928451733721]
+      },
+      "properties": {
+        "FID": 10,
+        "OBJECTID": 14,
+        "SHAPE_Leng": 0.0031115209301900001,
+        "SHAPE_Area": 2.1623977897600001e-7,
+        "Height": 20,
+        "Name": "松园2号楼",
+        "ORIG_FID": 10
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 11,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17848081617478, 36.683412985299753]
+      },
+      "properties": {
+        "FID": 11,
+        "OBJECTID": 15,
+        "SHAPE_Leng": 0.0031194680439500001,
+        "SHAPE_Area": 2.17327390874e-7,
+        "Height": 20,
+        "Name": "松园3号楼",
+        "ORIG_FID": 11
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 12,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18233428875021, 36.68122013620399]
+      },
+      "properties": {
+        "FID": 12,
+        "OBJECTID": 16,
+        "SHAPE_Leng": 0.0046552078103100003,
+        "SHAPE_Area": 3.6616797243899998e-7,
+        "Height": 25,
+        "Name": "逸夫楼",
+        "ORIG_FID": 12
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 13,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.1829372525001, 36.679943692394886]
+      },
+      "properties": {
+        "FID": 13,
+        "OBJECTID": 17,
+        "SHAPE_Leng": 0.0061679313817799997,
+        "SHAPE_Area": 4.6515206130999999e-7,
+        "Height": 25,
+        "Name": "博文馆",
+        "ORIG_FID": 13
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 14,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.1832500390002, 36.678726192265174]
+      },
+      "properties": {
+        "FID": 14,
+        "OBJECTID": 18,
+        "SHAPE_Leng": 0.0047235463705199996,
+        "SHAPE_Area": 4.1579601680099999e-7,
+        "Height": 24,
+        "Name": "外文楼",
+        "ORIG_FID": 14
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 15,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17999442032863, 36.682664317228387]
+      },
+      "properties": {
+        "FID": 15,
+        "OBJECTID": 19,
+        "SHAPE_Leng": 0.00214136178216,
+        "SHAPE_Area": 1.8397824841200001e-7,
+        "Height": 15,
+        "Name": "地宫实验室",
+        "ORIG_FID": 15
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 16,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18057115462034, 36.68145278485423]
+      },
+      "properties": {
+        "FID": 16,
+        "OBJECTID": 21,
+        "SHAPE_Leng": 0.0026261740601899999,
+        "SHAPE_Area": 1.6862926490399999e-7,
+        "Height": 23,
+        "Name": "科学馆东楼",
+        "ORIG_FID": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 17,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.1799212028053, 36.681457024138524]
+      },
+      "properties": {
+        "FID": 17,
+        "OBJECTID": 22,
+        "SHAPE_Leng": 0.0025171976666700001,
+        "SHAPE_Area": 1.5743936141700001e-7,
+        "Height": 23,
+        "Name": "科学馆西楼",
+        "ORIG_FID": 17
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 18,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17960328575941, 36.681951633756682]
+      },
+      "properties": {
+        "FID": 18,
+        "OBJECTID": 23,
+        "SHAPE_Leng": 0.0022585645516499998,
+        "SHAPE_Area": 2.4982015890999999e-7,
+        "Height": 25,
+        "Name": "土木楼",
+        "ORIG_FID": 18
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 19,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18164931272963, 36.678080336460255]
+      },
+      "properties": {
+        "FID": 19,
+        "OBJECTID": 24,
+        "SHAPE_Leng": 0.00400453322601,
+        "SHAPE_Area": 5.20153972797e-7,
+        "Height": 15,
+        "Name": "图书馆",
+        "ORIG_FID": 19
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 20,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18181388650021, 36.677026409428379]
+      },
+      "properties": {
+        "FID": 20,
+        "OBJECTID": 25,
+        "SHAPE_Leng": 0.0049098132756199998,
+        "SHAPE_Area": 4.1791412549799999e-7,
+        "Height": 15,
+        "Name": "信息楼",
+        "ORIG_FID": 20
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 21,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17851161400017, 36.685059355348187]
+      },
+      "properties": {
+        "FID": 21,
+        "OBJECTID": 26,
+        "SHAPE_Leng": 0.0034668771729400001,
+        "SHAPE_Area": 2.87852284251e-7,
+        "Height": 20,
+        "Name": "松园4号楼",
+        "ORIG_FID": 21
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 22,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.1798865615001, 36.684250515915096]
+      },
+      "properties": {
+        "FID": 22,
+        "OBJECTID": 27,
+        "SHAPE_Leng": 0.0031083818814199998,
+        "SHAPE_Area": 2.2245288046199999e-7,
+        "Height": 24,
+        "Name": "樱园1号楼",
+        "ORIG_FID": 22
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 23,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18396217800023, 36.676543719555752]
+      },
+      "properties": {
+        "FID": 23,
+        "OBJECTID": 31,
+        "SHAPE_Leng": 0.0049938206186100004,
+        "SHAPE_Area": 4.4521457961199998e-7,
+        "Height": 24,
+        "Name": "建艺馆",
+        "ORIG_FID": 23
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 24,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18485310075005, 36.675342438816358]
+      },
+      "properties": {
+        "FID": 24,
+        "OBJECTID": 32,
+        "SHAPE_Leng": 0.0040969316042200003,
+        "SHAPE_Area": 3.5553056467399999e-7,
+        "Height": 20,
+        "Name": "科技馆",
+        "ORIG_FID": 24
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 25,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18441685535333, 36.673943907770081]
+      },
+      "properties": {
+        "FID": 25,
+        "OBJECTID": 35,
+        "SHAPE_Leng": 0.0018978175132100001,
+        "SHAPE_Area": 1.83598760539e-7,
+        "Height": 20,
+        "Name": "产教融合中心",
+        "ORIG_FID": 25
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 26,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18304802370494, 36.67529313605155]
+      },
+      "properties": {
+        "FID": 26,
+        "OBJECTID": 37,
+        "SHAPE_Leng": 0.0035991028556299999,
+        "SHAPE_Area": 3.5413903878400001e-7,
+        "Height": 25,
+        "Name": "校史馆",
+        "ORIG_FID": 26
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 27,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18168162200004, 36.675504060066146]
+      },
+      "properties": {
+        "FID": 27,
+        "OBJECTID": 40,
+        "SHAPE_Leng": 0.00095491180434700005,
+        "SHAPE_Area": 7.2563238986400005e-8,
+        "Height": 20,
+        "Name": "博学会堂",
+        "ORIG_FID": 27
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 28,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18086453279375, 36.678448322329473]
+      },
+      "properties": {
+        "FID": 28,
+        "OBJECTID": 41,
+        "SHAPE_Leng": 0.00056797060137099998,
+        "SHAPE_Area": 1.9106824621100002e-8,
+        "Height": 5,
+        "Name": "地契展馆",
+        "ORIG_FID": 28
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 29,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18100840781392, 36.678802436406329]
+      },
+      "properties": {
+        "FID": 29,
+        "OBJECTID": 42,
+        "SHAPE_Leng": 0.00061702121661800005,
+        "SHAPE_Area": 1.89924123412e-8,
+        "Height": 4,
+        "Name": "雪山书苑",
+        "ORIG_FID": 29
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 30,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.1804102647219, 36.67890852276804]
+      },
+      "properties": {
+        "FID": 30,
+        "OBJECTID": 43,
+        "SHAPE_Leng": 0.00048940440889599999,
+        "SHAPE_Area": 9.6394480450000001e-9,
+        "Height": 5,
+        "Name": "民居展馆",
+        "ORIG_FID": 30
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 31,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17541685917888, 36.679533589914513]
+      },
+      "properties": {
+        "FID": 31,
+        "OBJECTID": 46,
+        "SHAPE_Leng": 0.0017289766563599999,
+        "SHAPE_Area": 1.5961602006299999e-7,
+        "Height": 25,
+        "Name": "综合楼",
+        "ORIG_FID": 31
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 32,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17493334924882, 36.681277464486584]
+      },
+      "properties": {
+        "FID": 32,
+        "OBJECTID": 49,
+        "SHAPE_Leng": 0.0018887772173699999,
+        "SHAPE_Area": 1.06909665844e-7,
+        "Height": 24,
+        "Name": "榴园1号楼",
+        "ORIG_FID": 32
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 33,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17493953100006, 36.680860021500166]
+      },
+      "properties": {
+        "FID": 33,
+        "OBJECTID": 50,
+        "SHAPE_Leng": 0.00188971800003,
+        "SHAPE_Area": 1.0566922229599999e-7,
+        "Height": 24,
+        "Name": "榴园2号楼",
+        "ORIG_FID": 33
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 34,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.17989181000007, 36.683625407705449]
+      },
+      "properties": {
+        "FID": 34,
+        "OBJECTID": 51,
+        "SHAPE_Leng": 0.0026497635070900001,
+        "SHAPE_Area": 1.6917412205200001e-7,
+        "Height": 24,
+        "Name": "樱园2号楼",
+        "ORIG_FID": 34
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 35,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18015465825124, 36.68314203850565]
+      },
+      "properties": {
+        "FID": 35,
+        "OBJECTID": 52,
+        "SHAPE_Leng": 0.0023548019548900001,
+        "SHAPE_Area": 8.1011056901799995e-8,
+        "Height": 2,
+        "Name": "火车餐厅",
+        "ORIG_FID": 35
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 36,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18085574350005, 36.684561118791464]
+      },
+      "properties": {
+        "FID": 36,
+        "OBJECTID": 53,
+        "SHAPE_Leng": 0.0035648043457100001,
+        "SHAPE_Area": 2.8233896383199999e-7,
+        "Height": 24,
+        "Name": "樱园3号楼",
+        "ORIG_FID": 36
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 37,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.18098156550013, 36.683644898104603]
+      },
+      "properties": {
+        "FID": 37,
+        "OBJECTID": 55,
+        "SHAPE_Leng": 0.0050552654581899996,
+        "SHAPE_Area": 3.5440160042100002e-7,
+        "Height": 24,
+        "Name": "樱园4号楼",
+        "ORIG_FID": 37
+      }
+    }
+  ]
+}

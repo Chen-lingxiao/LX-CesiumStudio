@@ -15,7 +15,17 @@ declare module 'vue' {
     AppMiddlePanel: typeof import('./src/components/AppMiddlePanel.vue')['default']
     AppRightPanel: typeof import('./src/components/AppRightPanel.vue')['default']
     AppSidebar: typeof import('./src/components/AppSidebar.vue')['default']
+    DandelionBackground: typeof import('./src/components/DandelionBackground.vue')['default']
+    ElAside: typeof import('element-plus/es')['ElAside']
+    ElButton: typeof import('element-plus/es')['ElButton']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElMenu: typeof import('element-plus/es')['ElMenu']
+    ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
+    ElTable: typeof import('element-plus/es')['ElTable']
+    ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     FPSMonitor: typeof import('./src/components/FPSMonitor.vue')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     SettingsPanel: typeof import('./src/components/SettingsPanel.vue')['default']
   }
 }

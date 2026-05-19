@@ -164,7 +164,7 @@ const adjustAtmosphere = (type, value) => {
       break;
   }
 };
-
+// 切换基础地图显示
 const toggleBaseMap = () => {
   const layers = viewer.imageryLayers;
   if (layers.length > 0) {
@@ -172,7 +172,7 @@ const toggleBaseMap = () => {
     baseMapHidden.value = !layers.get(0).show;
   }
 };
-
+// 设置地形质量
 const setTerrainQuality = (quality) => {
   const globe = viewer.scene.globe;
   // maximumScreenSpaceError 越小，地形越精细，但性能开销越大
@@ -184,12 +184,12 @@ const setTerrainQuality = (quality) => {
   };
   globe.maximumScreenSpaceError = qualities[quality] || 8;
 };
-
+// 设置瓦片缓存大小
 const setTileCacheSize = (size) => {
   const globe = viewer.scene.globe;
   globe.tileCacheSize = size;
 };
-
+// 显示地球信息
 const showGlobeInfo = () => {
   const globe = viewer.scene.globe;
   const info = `
@@ -234,10 +234,16 @@ onUnmounted(() => {
           <button @click="toggleLighting" :class="{ active: lightingEnabled }">
             {{ lightingEnabled ? "关闭" : "启用" }}光照
           </button>
-          <button @click="toggleDepthTest" :class="{ active: depthTestEnabled }">
+          <button
+            @click="toggleDepthTest"
+            :class="{ active: depthTestEnabled }"
+          >
             {{ depthTestEnabled ? "关闭" : "启用" }}深度测试
           </button>
-          <button @click="toggleAtmosphere" :class="{ active: atmosphereEnabled }">
+          <button
+            @click="toggleAtmosphere"
+            :class="{ active: atmosphereEnabled }"
+          >
             {{ atmosphereEnabled ? "关闭" : "启用" }}大气效果
           </button>
           <button @click="toggleWireframe" :class="{ active: wireframeMode }">
@@ -251,8 +257,14 @@ onUnmounted(() => {
         <div class="toolbar-section">
           <h4>基础颜色</h4>
           <div class="color-buttons">
-            <button @click="setBaseColor('blue')" class="color-btn blue"></button>
-            <button @click="setBaseColor('green')" class="color-btn green"></button>
+            <button
+              @click="setBaseColor('blue')"
+              class="color-btn blue"
+            ></button>
+            <button
+              @click="setBaseColor('green')"
+              class="color-btn green"
+            ></button>
             <button @click="setBaseColor('red')" class="color-btn red"></button>
           </div>
         </div>
@@ -260,32 +272,56 @@ onUnmounted(() => {
         <div class="toolbar-section">
           <h4>大气调整</h4>
           <div class="slider-item">
-            <label>色调:
+            <label
+              >色调:
               {{
                 (viewer?.scene.globe?.atmosphereHueShift || 0).toFixed(2)
-              }}</label>
-            <input type="range" min="-1" max="1" step="0.1" :value="viewer?.scene.globe?.atmosphereHueShift || 0"
-              @input="adjustAtmosphere('hue', parseFloat($event.target.value))" />
+              }}</label
+            >
+            <input
+              type="range"
+              min="-1"
+              max="1"
+              step="0.1"
+              :value="viewer?.scene.globe?.atmosphereHueShift || 0"
+              @input="adjustAtmosphere('hue', parseFloat($event.target.value))"
+            />
           </div>
           <div class="slider-item">
-            <label>饱和度:
+            <label
+              >饱和度:
               {{
                 (viewer?.scene.globe?.atmosphereSaturationShift || 0).toFixed(2)
-              }}</label>
-            <input type="range" min="-1" max="1" step="0.1" :value="viewer?.scene.globe?.atmosphereSaturationShift || 0"
+              }}</label
+            >
+            <input
+              type="range"
+              min="-1"
+              max="1"
+              step="0.1"
+              :value="viewer?.scene.globe?.atmosphereSaturationShift || 0"
               @input="
                 adjustAtmosphere('saturation', parseFloat($event.target.value))
-                " />
+              "
+            />
           </div>
           <div class="slider-item">
-            <label>亮度:
+            <label
+              >亮度:
               {{
                 (viewer?.scene.globe?.atmosphereBrightnessShift || 0).toFixed(2)
-              }}</label>
-            <input type="range" min="-1" max="1" step="0.1" :value="viewer?.scene.globe?.atmosphereBrightnessShift || 0"
+              }}</label
+            >
+            <input
+              type="range"
+              min="-1"
+              max="1"
+              step="0.1"
+              :value="viewer?.scene.globe?.atmosphereBrightnessShift || 0"
               @input="
                 adjustAtmosphere('brightness', parseFloat($event.target.value))
-                " />
+              "
+            />
           </div>
         </div>
 
@@ -303,8 +339,14 @@ onUnmounted(() => {
           <h4>瓦片缓存</h4>
           <div class="slider-item">
             <label>{{ viewer?.scene.globe?.tileCacheSize || 1000 }}</label>
-            <input type="range" min="500" max="5000" step="100" :value="viewer?.scene.globe?.tileCacheSize || 1000"
-              @input="setTileCacheSize(parseInt($event.target.value))" />
+            <input
+              type="range"
+              min="500"
+              max="5000"
+              step="100"
+              :value="viewer?.scene.globe?.tileCacheSize || 1000"
+              @input="setTileCacheSize(parseInt($event.target.value))"
+            />
           </div>
         </div>
 

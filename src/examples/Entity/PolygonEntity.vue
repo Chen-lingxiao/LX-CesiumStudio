@@ -23,7 +23,7 @@ const initCesium = async () => {
   try {
     isReady.value = false
     viewer = new Cesium.Viewer('cesium-container', {
-      // terrainProvider: await Cesium.createWorldTerrainAsync(),
+      terrainProvider: await Cesium.createWorldTerrainAsync(),
     })
 
     /**

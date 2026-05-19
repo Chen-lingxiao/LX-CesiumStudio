@@ -24,92 +24,92 @@
 /* ========== 全局主题变量（亮色模式） ========== */
 :root {
   /* ===== 文字颜色 ===== */
-  --color-text-primary: #000000;       /* 主文字颜色 */
-  --color-text-secondary: #666666;     /* 次文字颜色 */
-  --color-text-muted: #999999;         /* 弱化文字颜色 */
-  
+  --color-text-primary: #000000;
+  --color-text-secondary: #666666;
+  --color-text-muted: #999999;
+
   /* ===== 背景颜色 ===== */
-  --color-bg-base: #ffffff;             /* 最底层背景（应用根背景） */
-  --color-bg-surface: #ffffff;          /* 表层背景（卡片、面板） */
-  --color-bg-elevated: #f5f5f5;        /* 提升层背景（编辑器区域） */
-  --color-bg-hover: #e8e8e8;           /* 悬停状态背景 */
-  
+  --color-bg-base: #ffffff;
+  --color-bg-surface: #ffffff;
+  --color-bg-elevated: #f5f5f5;
+  --color-bg-hover: #e8e8e8;
+
   /* ===== 边框颜色 ===== */
-  --color-border: #eeeeee;             /* 边框颜色 */
-  --color-border-muted: #dddddd;       /* 弱化边框颜色 */
-  
+  --color-border: #eeeeee;
+  --color-border-muted: #dddddd;
+
   /* ===== 特殊组件颜色 ===== */
-  --color-resizer: #dddddd;            /* 调整器背景色 */
-  --color-resizer-hover: #999999;      /* 调整器悬停颜色 */
-  --color-console-bg: #f0f0f0;         /* 控制台背景色 */
-  --color-console-text: #333333;       /* 控制台文字颜色 */
-  
+  --color-resizer: #dddddd;
+  --color-resizer-hover: #999999;
+  --color-console-bg: #f0f0f0;
+  --color-console-text: #333333;
+
   /* ===== 阴影 ===== */
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
-  /* ===== 主题色预设变量 ===== */
-  /* 淡紫色系 */
-  --theme-light-purple-base: #ffd6ee;   /* 淡紫A：柔和淡紫背景 */
-  --theme-light-purple-surface: #f7b8e9; /* 淡紫B：稍深淡紫表层 */
-  --theme-light-purple-elevated: #ffe6f3;
-  --theme-light-purple-hover: #f0a8df;
-  --theme-light-purple-border: #f5c8e6;
-  
-  /* 淡绿色系 */
-  --theme-light-green-base: #e0ebd8;    /* 淡绿A：低饱和薄荷绿背景 */
-  --theme-light-green-surface: #d0ddc8; /* 淡绿B：护眼淡绿表层 */
-  --theme-light-green-elevated: #e8f0e1;
-  --theme-light-green-hover: #c0cfb8;
-  --theme-light-green-border: #d8e4ce;
-  
-  /* 淡粉色系 */
-  --theme-light-pink-base: #ffd6d6;     /* 淡粉A：柔和淡粉背景 */
-  --theme-light-pink-surface: #ffb8c2;  /* 淡粉B：稍高饱和淡粉 */
-  --theme-light-pink-elevated: #ffe6e6;
-  --theme-light-pink-hover: #ffa8b2;
-  --theme-light-pink-border: #ffcccc;
-  
-  /* 薄荷绿色系 */
-  --theme-mint-green-base: #e8f5f0;     /* 低饱和薄荷绿背景 */
-  --theme-mint-green-surface: #d4e8e0;  /* 稍深薄荷绿表层 */
-  --theme-mint-green-elevated: #f0faf7;
-  --theme-mint-green-hover: #c4d8d0;
-  --theme-mint-green-border: #d8ece4;
-  
-  /* 柔和蓝色系 */
-  --theme-soft-blue-base: #e8f0fe;      /* 柔和淡蓝背景 */
-  --theme-soft-blue-surface: #d4e4fc;   /* 稍深柔蓝表层 */
-  --theme-soft-blue-elevated: #f0f6ff;
-  --theme-soft-blue-hover: #c4d4ec;
-  --theme-soft-blue-border: #d8e4f8;
+
+  /* ===== 状态颜色变量 ===== */
+  --color-primary: #1e90ff;
+  --color-primary-hover: #1a7de0;
+  --color-primary-active: #1565c0;
+  --color-primary-bg-light: rgba(30, 144, 255, 0.08);
+  --color-primary-bg-hover: rgba(30, 144, 255, 0.12);
+  --color-primary-bg-active: rgba(30, 144, 255, 0.18);
+
+  /* ===== 过渡效果 ===== */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
 }
 
 /* ========== 全局主题变量（暗色模式） ========== */
 :root.dark {
   /* ===== 文字颜色 ===== */
-  --color-text-primary: #ffffff;       /* 主文字颜色 */
-  --color-text-secondary: #cccccc;     /* 次文字颜色 */
-  --color-text-muted: #999999;         /* 弱化文字颜色 */
-  
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #cccccc;
+  --color-text-muted: #999999;
+
   /* ===== 背景颜色 ===== */
-  --color-bg-base: #1e1e1e;             /* 最底层背景（应用根背景） */
-  --color-bg-surface: #252526;          /* 表层背景（卡片、面板） */
-  --color-bg-elevated: #2d2d30;         /* 提升层背景（编辑器区域） */
-  --color-bg-hover: #37373d;            /* 悬停状态背景 */
-  
+  --color-bg-base: #1e1e1e;
+  --color-bg-surface: #252526;
+  --color-bg-elevated: #2d2d30;
+  --color-bg-hover: #37373d;
+
   /* ===== 边框颜色 ===== */
-  --color-border: #3c3c3c;             /* 边框颜色 */
-  --color-border-muted: #333333;       /* 弱化边框颜色 */
-  
+  --color-border: #3c3c3c;
+  --color-border-muted: #333333;
+
   /* ===== 特殊组件颜色 ===== */
-  --color-resizer: #3c3c3c;            /* 调整器背景色 */
-  --color-resizer-hover: #5c5c5c;      /* 调整器悬停颜色 */
-  --color-console-bg: #0d0d0d;         /* 控制台背景色 */
-  --color-console-text: #ffffff;       /* 控制台文字颜色 */
-  
+  --color-resizer: #3c3c3c;
+  --color-resizer-hover: #5c5c5c;
+  --color-console-bg: #0d0d0d;
+  --color-console-text: #ffffff;
+
   /* ===== 阴影 ===== */
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  /* ===== 状态颜色变量（暗色模式） ===== */
+  --color-primary: #64b5f6;
+  --color-primary-hover: #90caf9;
+  --color-primary-active: #42a5f5;
+  --color-primary-bg-light: rgba(100, 181, 246, 0.15);
+  --color-primary-bg-hover: rgba(100, 181, 246, 0.2);
+  --color-primary-bg-active: rgba(100, 181, 246, 0.25);
 }
+
+/* ========== 全局暗色模式组件样式 ========== */
+:root.dark .nav-link:hover {
+  background-color: var(--color-primary-bg-light);
+}
+
+:root.dark .nav-link.active {
+  color: var(--color-primary);
+  background-color: var(--color-primary-bg-hover);
+}
+
+:root.dark .nav-link.active:hover {
+  background-color: var(--color-primary-bg-active);
+}
+
 /* ========== 全局布局样式 ========== */
 html, body {
   width: 100%;
@@ -125,7 +125,11 @@ html, body {
   flex-direction: column;
   background-color: var(--color-bg-base);
   color: var(--color-text-primary);
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color var(--transition-normal),
+    color var(--transition-normal),
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal);
 }
 
 /* ========== Cesium 示例组件通用样式 ========== */

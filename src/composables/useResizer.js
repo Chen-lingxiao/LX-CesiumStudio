@@ -18,7 +18,7 @@
  */
 import { ref, onUnmounted } from 'vue'
 
-export function useResizer(direction = 'horizontal', minSize = 10, maxSize = 90) {
+export function useResizer(direction = 'horizontal', minSize = 10, maxSize = 90, initialSize = 50) {
   /**
    * 是否正在拖拽
    */
@@ -27,7 +27,7 @@ export function useResizer(direction = 'horizontal', minSize = 10, maxSize = 90)
   /**
    * 当前尺寸百分比
    */
-  const sizePercent = ref(50)
+  const sizePercent = ref(initialSize)
 
   /**
    * 容器DOM引用

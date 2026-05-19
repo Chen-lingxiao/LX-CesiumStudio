@@ -139,8 +139,8 @@ const handleClose = () => {
 /* 设置容器 */
 .settings-container {
   position: fixed;
-  left: 50px;
-  bottom: 3px;
+  right: 10px;
+  top: 60px;
   z-index: 1000;
 }
 
@@ -192,7 +192,7 @@ const handleClose = () => {
   color: var(--color-text-secondary);
   cursor: pointer;
   border-radius: 4px;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
   font-size: 16px;
 }
 
@@ -236,7 +236,7 @@ const handleClose = () => {
   border-radius: 12px;
   cursor: pointer;
   position: relative;
-  transition: background-color 0.2s;
+  transition: background-color var(--transition-fast);
 }
 
 .toggle-switch.active {
@@ -287,7 +287,7 @@ const handleClose = () => {
   cursor: pointer;
   padding: 8px;
   border-radius: 6px;
-  transition: background-color 0.2s;
+  transition: background-color var(--transition-fast);
 }
 
 .color-preset-item:hover {
@@ -303,7 +303,7 @@ const handleClose = () => {
   height: 36px;
   border-radius: 50%;
   border: 2px solid;
-  transition: transform 0.2s;
+  transition: transform var(--transition-fast);
 }
 
 .color-preset-item.active .color-preview {
@@ -318,7 +318,7 @@ const handleClose = () => {
 /* 过渡动画 */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity var(--transition-fast);
 }
 
 .fade-enter-from,

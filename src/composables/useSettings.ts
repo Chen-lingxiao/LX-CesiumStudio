@@ -162,15 +162,20 @@ function updateThemeColors(preset: ThemeColorPreset) {
  */
 function updateDarkMode(isDarkMode: boolean) {
   const root = document.documentElement
+  const propertiesToRemove = [
+    '--color-bg-base',
+    '--color-bg-surface',
+    '--color-bg-elevated',
+    '--color-bg-hover',
+    '--color-border',
+    '--color-border-muted'
+  ]
 
   if (isDarkMode) {
     root.classList.add('dark')
-    root.style.removeProperty('--color-bg-base')
-    root.style.removeProperty('--color-bg-surface')
-    root.style.removeProperty('--color-bg-elevated')
-    root.style.removeProperty('--color-bg-hover')
-    root.style.removeProperty('--color-border')
-    root.style.removeProperty('--color-border-muted')
+    propertiesToRemove.forEach(p => {
+      root.style.removeProperty(p)
+    })
   } else {
     root.classList.remove('dark')
     updateThemeColors(settings.themeColorPreset)

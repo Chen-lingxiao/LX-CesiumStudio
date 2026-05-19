@@ -367,7 +367,7 @@ const handleThumbnailError = (e, example) => {
  * 加载新建示例（基础的Cesium模板）
  */
 const loadNewExample = () => {
-  const basicExample = examples.find((e) => e.id === "basic-cesium");
+  const basicExample = examples.find((e) => e.id === "viewer-basic");
   if (basicExample) {
     jsCode.value = basicExample.jsCode;
     htmlCssCode.value = basicExample.htmlCode + "\n\n" + basicExample.cssCode;

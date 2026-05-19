@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 /**
  * OSMImagery.vue - 影像图层切换示例组件
  *
@@ -17,10 +17,10 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
 
-let viewer = null as Cesium.Viewer | null // Cesium 实例
+let viewer = null // Cesium 实例
 const isReady = ref(false) // 初始化状态
-let osmLayer = null as Cesium.ImageryLayer | null
-let osmBlackLayer = null as Cesium.ImageryLayer | null
+let osmLayer = null
+let osmBlackLayer = null
 
 const initCesium = async () => {
   try {
@@ -53,7 +53,7 @@ const initCesium = async () => {
   }
 }
 
-const toggleLayer = (layerType: 'standard' | 'dark') => {
+const toggleLayer = (layerType) => {
   if (!viewer || !osmLayer || !osmBlackLayer) {
     return
   }

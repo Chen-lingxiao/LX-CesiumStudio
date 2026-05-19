@@ -24,16 +24,28 @@ import SceneBasic from './Basic/SceneBasic.vue'
 import sceneBasicCode from './Basic/SceneBasic.vue?raw'
 import GlobeBasic from './Basic/GlobeBasic.vue'
 import globeBasicCode from './Basic/GlobeBasic.vue?raw'
-
+// 影像
 import OSMImagery from './Imagery/OSMImagery.vue'
 import osmImageryCode from './Imagery/OSMImagery.vue?raw'
+import MapboxImagery from './Imagery/MapboxImagery.vue'
+import mapboxImageryCode from './Imagery/MapboxImagery.vue?raw'
+// 地形
+import TerrainBasic from './Terrain/TerrainBasic.vue'
+import terrainBasicCode from './Terrain/TerrainBasic.vue?raw'
+import TerrainElevationColor from './Terrain/TerrainElevationColor.vue'
+import terrainElevationColorCode from './Terrain/TerrainElevationColor.vue?raw'
+// 实体
 import BasicEntity from './Entity/BasicEntity.vue'
 import basicEntityCode from './Entity/BasicEntity.vue?raw'
 import PointEntity from './Entity/PointEntity.vue'
 import pointEntityCode from './Entity/PointEntity.vue?raw'
 import PolylineEntity from './Entity/PolylineEntity.vue'
 import polylineEntityCode from './Entity/PolylineEntity.vue?raw'
-
+import PolygonEntity from './Entity/PolygonEntity.vue'
+import polygonEntityCode from './Entity/PolygonEntity.vue?raw'
+import ModelEntity from './Entity/ModelEntity.vue'
+import modelEntityCode from './Entity/ModelEntity.vue?raw'
+// 交互
 import DrawTool from './Interaction/DrawTool.vue'
 import drawToolCode from './Interaction/DrawTool.vue?raw'
 import DrawPoint from './Interaction/DrawPoint.vue'
@@ -42,7 +54,7 @@ import DrawPolyline from './Interaction/DrawPolyline.vue'
 import drawPolylineCode from './Interaction/DrawPolyline.vue?raw'
 import DrawPolygon from './Interaction/DrawPolygon.vue'
 import drawPolygonCode from './Interaction/DrawPolygon.vue?raw'
-
+// 测量
 import MeasureTool from './Interaction/MeasureTool.vue'
 import measureToolCode from './Interaction/MeasureTool.vue?raw'
 import DistanceMeasure from './Interaction/DistanceMeasure.vue'
@@ -53,7 +65,17 @@ import HeightMeasure from './Interaction/HeightMeasure.vue'
 import heightMeasureCode from './Interaction/HeightMeasure.vue?raw'
 import CoordinatePick from './Interaction/CoordinatePick.vue'
 import coordinatePickCode from './Interaction/CoordinatePick.vue?raw'
-
+// 分析
+import SpatialAnaysis from './SpatialAnalysis/SpatialAnaysis.vue'
+import spatialAnaysisCode from './SpatialAnalysis/SpatialAnaysis.vue?raw'
+import SectionAnalysis from './SpatialAnalysis/SectionAnalysis.vue'
+import sectionAnalysisCode from './SpatialAnalysis/SectionAnalysis.vue?raw'
+import AspectAnalysis from './SpatialAnalysis/AspectAnalysis.vue'
+import aspectAnalysisCode from './SpatialAnalysis/AspectAnalysis.vue?raw'
+import VolumeAnalysis from './SpatialAnalysis/VolumeAnalysis.vue'
+import volumeAnalysisCode from './SpatialAnalysis/VolumeAnalysis.vue?raw'
+import VisibilityAnalysis from './SpatialAnalysis/VisibilityAnalysis.vue'
+import visibilityAnalysisCode from './SpatialAnalysis/VisibilityAnalysis.vue?raw'
 
 /**
  * 示例列表
@@ -124,6 +146,24 @@ export const examples = [
     ...extractCode(polylineEntityCode)
   },
   {
+    id: 'polygon-entity',
+    name: '多边形实体',
+    description: '创建多边形实体对象，设置多边形的颜色、大小、高度参考和深度测试等属性',
+    tags: ['Entities', 'Polygon'],
+    thumbnail: '/thumbnails/polygon-entity.png',
+    component: PolygonEntity,
+    ...extractCode(polygonEntityCode)
+  },
+  {
+    id: 'model-entity',
+    name: '模型实体',
+    description: '创建模型实体对象，加载3D模型文件，设置模型的位置、旋转、缩放等属性',
+    tags: ['Entities', 'Model'],
+    thumbnail: '/thumbnails/model-entity.png',
+    component: ModelEntity,
+    ...extractCode(modelEntityCode)
+  },
+  {
     id: 'base-imagery',
     name: 'OpenStreetMap 影像',
     description: '添加OpenStreetMap影像图层',
@@ -132,6 +172,36 @@ export const examples = [
     component: OSMImagery,
     ...extractCode(osmImageryCode)
   },
+  {
+    id: 'mapbox-imagery',
+    name: 'Mapbox 影像',
+    description: '添加Mapbox影像图层',
+    tags: ['Imagery', '影像', 'Mapbox'],
+    thumbnail: '/thumbnails/mapbox-imagery.png',
+    component: MapboxImagery,
+    ...extractCode(mapboxImageryCode)
+  },
+  // 地形
+  {
+    id: 'terrain-basic',
+    name: '地形基础',
+    description: '添加基础地形图层',
+    tags: ['Terrain', '基础'],
+    thumbnail: '/thumbnails/terrain-basic.png',
+    component: TerrainBasic,
+    ...extractCode(terrainBasicCode)
+  },
+  // 高程颜色
+  {
+    id: 'terrain-elevation-color',
+    name: '地形高程颜色',
+    description: '添加地形高程颜色图层',
+    tags: ['Terrain', '高程颜色'],
+    thumbnail: '/thumbnails/terrain-elevation-color.png',
+    component: TerrainElevationColor,
+    ...extractCode(terrainElevationColorCode)
+  },
+  
   {
     id: 'draw-tool',
     name: '绘制工具',
@@ -213,7 +283,51 @@ export const examples = [
     component: CoordinatePick,
     ...extractCode(coordinatePickCode)
   },
-
+  {
+    id: 'spatial-analysis',
+    name: '空间分析',
+    description: '独立实现的空间分析示例：点击地图显示空间分析结果',
+    tags: ['SpatialAnalysis', '空间分析', '空间分析'],
+    thumbnail: '/thumbnails/spatial-analysis.png',
+    component: SpatialAnaysis,
+    ...extractCode(spatialAnaysisCode)
+  },
+  {
+    id: 'section-analysis',
+    name: '剖面分析',
+    description: '独立实现的剖面分析示例：点击地图显示剖面分析结果',
+    tags: ['SpatialAnalysis', '空间分析', '剖面分析'],
+    thumbnail: '/thumbnails/section-analysis.png',
+    component: SectionAnalysis,
+    ...extractCode(sectionAnalysisCode)
+  },
+  {
+    id: 'aspect-analysis',
+    name: '坡向分析',
+    description: '独立实现的坡向分析示例：点击地图显示坡向分析结果',
+    tags: ['SpatialAnalysis', '空间分析', '坡向分析'],
+    thumbnail: '/thumbnails/aspect-analysis.png',
+    component: AspectAnalysis,
+    ...extractCode(aspectAnalysisCode)
+  },
+  {
+    id: 'volume-analysis',
+    name: '方量分析',
+    description: '独立实现的方量分析示例：点击地图显示方量分析结果',
+    tags: ['SpatialAnalysis', '空间分析', '方量分析'],
+    thumbnail: '/thumbnails/volume-analysis.png',
+    component: VolumeAnalysis,
+    ...extractCode(volumeAnalysisCode)
+  },
+  {
+    id: 'visibility-analysis',
+    name: '可见性分析',
+    description: '独立实现的可见性分析示例：点击地图显示可见性分析结果',
+    tags: ['SpatialAnalysis', '空间分析', '可见性分析'],
+    thumbnail: '/thumbnails/visibility-analysis.png',
+    component: VisibilityAnalysis,
+    ...extractCode(visibilityAnalysisCode)
+  }
 ]
 
 

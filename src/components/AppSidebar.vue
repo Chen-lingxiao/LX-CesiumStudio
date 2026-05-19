@@ -5,8 +5,7 @@
  * 功能说明：
  * 1. 提供应用的主要功能入口
  * 2. 支持视图切换（画廊/编辑器）
- * 3. 提供主题切换功能（亮色/暗色）
- * 4. 提供其他快捷操作入口（新建、文档、设置、邮箱、GitHub）
+ * 3. 提供其他快捷操作入口（新建、文档）
  * 
  * Props：
  * - currentView: 当前视图模式（'gallery' | 'editor'）
@@ -14,9 +13,7 @@
  * 事件：
  * - view-change: 视图切换事件，传递目标视图名称
  */
-import { ref } from 'vue'
 import { useSettings } from '../composables/useSettings'
-import SettingsPanel from './SettingsPanel.vue'
 
 const props = defineProps({
   currentView: {
@@ -27,12 +24,7 @@ const props = defineProps({
 
 const emit = defineEmits(['view-change', 'new-example'])
 
-const { settings, updateSetting } = useSettings()
-
-/**
- * 设置面板显示状态
- */
-const showSettingsPanel = ref(false)
+const { settings } = useSettings()
 
 /**
  * 处理图标点击
@@ -44,32 +36,9 @@ const handleIconClick = (iconName) => {
   } else if (iconName === 'new') {
     emit('view-change', 'editor')
     emit('new-example')
-  } else if (iconName === 'settings') {
-    showSettingsPanel.value = !showSettingsPanel.value
   } else if (iconName === 'docs') {
     window.open('https://cesium.com/learn/cesiumjs/ref-doc/', '_blank')
   }
-}
-
-/**
- * 处理主题切换
- */
-const handleThemeToggle = () => {
-  updateSetting('isDark', !settings.isDark)
-}
-
-/**
- * 处理GitHub点击
- */
-const handleGithubClick = () => {
-  window.open('https://github.com', '_blank')
-}
-
-/**
- * 关闭设置面板
- */
-const handleCloseSettings = () => {
-  showSettingsPanel.value = false
 }
 </script>
 
@@ -100,33 +69,7 @@ const handleCloseSettings = () => {
         <span class="iconfont icon-wendang"></span>
       </div>
     </div>
-    
-    <!-- 底部功能区 -->
-    <div class="sidebar-bottom">
-      <div class="icon-item" @click="handleIconClick('email')" title="邮箱">
-        <span class="iconfont icon-youxiang"></span>
-      </div>
-      <div class="icon-item" @click="handleGithubClick" title="GitHub">
-        <span class="iconfont icon-githublogo"></span>
-      </div>
-       <div 
-        class="icon-item" 
-        @click="handleThemeToggle" 
-        :title="settings.isDark ? '切换到亮色主题' : '切换到暗色主题'"
-      >
-        <span class="iconfont" :class="settings.isDark ? 'icon-taiyang' : 'icon-yueliang'"></span>
-      </div>
-      <div class="icon-item" @click="handleIconClick('settings')" title="设置">
-        <span class="iconfont icon-shezhi"></span>
-      </div>
-    </div>
   </aside>
-  
-  <!-- 设置面板 -->
-  <SettingsPanel 
-    :visible="showSettingsPanel" 
-    @close="handleCloseSettings" 
-  />
 </template>
 
 <style scoped>
@@ -141,17 +84,18 @@ const handleCloseSettings = () => {
   border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  transition: background-color 0.3s, border-color 0.3s;
+  align-items: center;
+  padding-top: 10px;
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal);
 }
 
-/* 顶部和底部功能区样式 */
-.sidebar-top,
-.sidebar-bottom {
+/* 顶部功能区样式 */
+.sidebar-top {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 0;
 }
 
 /* 图标项样式 */
@@ -162,7 +106,7 @@ const handleCloseSettings = () => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color var(--transition-fast);
   color: var(--color-text-primary);
 }
 

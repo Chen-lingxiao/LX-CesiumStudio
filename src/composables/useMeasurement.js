@@ -6,29 +6,92 @@
  * 通过闭包封装状态，对外暴露简洁的 API 接口。
  *
  * 模块结构：
- * 1. 公共工具函数（坐标拾取、格式化、实体创建）
- * 2. 交互状态清理
- * 3. 距离测量模块
- * 4. 面积测量模块（支持 Enter / 右键 / 双击 / Esc）
- * 5. 高度测量模块
- * 6. 坐标拾取模块
+ * 1. 内部状态定义
+ * 2. 公共工具函数（坐标拾取、格式化、实体创建）
+ * 3. 交互状态清理
+ * 4. 距离测量模块
+ * 5. 面积测量模块（支持 Enter / 右键 / 双击 / Esc）
+ * 6. 高度测量模块
+ * 7. 坐标拾取模块
  *
  * 修复历史：
  * - 修复浮动点覆盖已提交顶点的 Bug（mousePosition 独立于 activePoints）
  * - 修复高度测量结果实体被 resetState 误清理的问题
  * - 修复面积多边形动态预览时机构建异常
  *
- * @example
- * import { useMeasurement } from '@/composables/useMeasurement'
+ * 使用说明：
+ * 1. 首先需要初始化 Cesium Viewer 实例
+ * 2. 调用 useMeasurement(viewer, statusCallback) 获取测量方法
+ * 3. 调用对应的 startXxxMeasure() 开始测量
+ * 4. 测量完成后会自动在地图上绘制标记和标注
+ * 5. 可通过 stopCurrentMode() 取消当前测量，或 clearAll() 清除所有测量
  *
- * const {
- *   startDistanceMeasure,
- *   startAreaMeasure,
- *   startHeightMeasure,
- *   startCoordinatePick,
- *   stopCurrentMode,
- *   clearAll
- * } = useMeasurement(viewer, (msg) => { statusMessage.value = msg })
+ * 测量模式操作说明：
+ * - 距离测量：左键点击添加起点和终点，右键可取消
+ * - 面积测量：左键点击添加顶点（至少3个），Enter/右键/双击完成，Esc取消
+ * - 高度测量：左键点击添加起点和终点
+ * - 坐标拾取：左键点击地图任意位置获取坐标
+ *
+ * @example
+ * // 基础用法 - Vue 组件中
+ * import { useMeasurement } from '@/composables/useMeasurement'
+ * import { ref, onMounted } from 'vue'
+ * import * as Cesium from 'cesium'
+ *
+ * export default {
+ *   setup() {
+ *     const viewer = ref(null)
+ *     const statusMessage = ref('点击下方按钮开始测量')
+ *
+ *     // 初始化 Cesium Viewer
+ *     onMounted(() => {
+ *       viewer.value = new Cesium.Viewer('cesiumContainer')
+ *     })
+ *
+ *     // 初始化测量工具
+ *     const {
+ *       startDistanceMeasure,  // 启动距离测量
+ *       startAreaMeasure,     // 启动面积测量
+ *       startHeightMeasure,   // 启动高度测量
+ *       startCoordinatePick,  // 启动坐标拾取
+ *       stopCurrentMode,      // 停止当前测量
+ *       clearAll              // 清除所有测量
+ *     } = useMeasurement(
+ *       viewer.value,
+ *       (msg) => { statusMessage.value = msg }  // 状态回调，用于显示提示信息
+ *     )
+ *
+ *     // 按钮点击事件示例
+ *     const handleDistanceMeasure = () => {
+ *       startDistanceMeasure()
+ *     }
+ *
+ *     const handleClearAll = () => {
+ *       clearAll()
+ *       statusMessage.value = '已清除所有测量结果'
+ *     }
+ *
+ *     return {
+ *       statusMessage,
+ *       handleDistanceMeasure,
+ *       handleClearAll
+ *     }
+ *   }
+ * }
+ *
+ * @example
+ * // HTML 模板示例
+ * <template>
+ *   <div class="measurement-controls">
+ *     <div class="status-bar">{{ statusMessage }}</div>
+ *     <button @click="startDistanceMeasure">距离测量</button>
+ *     <button @click="startAreaMeasure">面积测量</button>
+ *     <button @click="startHeightMeasure">高度测量</button>
+ *     <button @click="startCoordinatePick">坐标拾取</button>
+ *     <button @click="stopCurrentMode">停止测量</button>
+ *     <button @click="clearAll">清除所有</button>
+ *   </div>
+ * </template>
  */
 import * as Cesium from 'cesium'
 
@@ -484,6 +547,53 @@ export function useMeasurement(viewer, statusCallback) {
   }
 
   /**
+   * 使用 Chamberlain-Duquette 球面公式计算环形区域面积
+   * 该算法考虑了地球曲率，在大范围多边形上比平面投影算法更精确
+   *
+   * @param {number[][]} coords - 经纬度坐标数组 [[lon, lat], ...]，首尾不需要闭合
+   * @returns {number} 面积（平方米）
+   */
+  const ringArea = (coords) => {
+    const len = coords.length
+    if (len <= 2) return 0
+
+    const R = 6378137 // WGS-84 地球长半轴（米）
+    let area = 0
+
+    for (let i = 0; i < len; i++) {
+      const p1 = coords[i]
+      const p2 = coords[(i + 1) % len]
+      const p3 = coords[(i + 2) % len]
+
+      area += (toRad(p3[0]) - toRad(p1[0])) * Math.sin(toRad(p2[1]))
+    }
+
+    return Math.abs(area * R * R / 2)
+  }
+
+  /**
+   * 计算多边形面积（平方米）
+   * 将笛卡尔坐标转为经纬度后，使用 Chamberlain-Duquette 球面公式计算
+   *
+   * @param {Cesium.Cartesian3[]} positions - 顶点坐标数组
+   * @returns {number} 面积（平方米）
+   */
+  const calculateArea = (positions) => {
+    if (positions.length < 3) return 0
+
+    const coordinates = positions.map((pos) => {
+      const cartographic = Cesium.Cartographic.fromCartesian(pos)
+      return [
+        Cesium.Math.toDegrees(cartographic.longitude),
+        Cesium.Math.toDegrees(cartographic.latitude)
+      ]
+    })
+    coordinates.push(coordinates[0]) // 闭合环
+
+    return ringArea(coordinates)
+  }
+
+  /**
    * 完成面积测量，生成最终多边形和面积标签
    *
    * 要求至少 3 个顶点才能构成有效多边形。
@@ -557,53 +667,6 @@ export function useMeasurement(viewer, statusCallback) {
       e.preventDefault()
       cancelAreaMeasure()
     }
-  }
-
-  /**
-   * 使用 Chamberlain-Duquette 球面公式计算环形区域面积
-   * 该算法考虑了地球曲率，在大范围多边形上比平面投影算法更精确
-   *
-   * @param {number[][]} coords - 经纬度坐标数组 [[lon, lat], ...]，首尾不需要闭合
-   * @returns {number} 面积（平方米）
-   */
-  const ringArea = (coords) => {
-    const len = coords.length
-    if (len <= 2) return 0
-
-    const R = 6378137 // WGS-84 地球长半轴（米）
-    let area = 0
-
-    for (let i = 0; i < len; i++) {
-      const p1 = coords[i]
-      const p2 = coords[(i + 1) % len]
-      const p3 = coords[(i + 2) % len]
-
-      area += (toRad(p3[0]) - toRad(p1[0])) * Math.sin(toRad(p2[1]))
-    }
-
-    return Math.abs(area * R * R / 2)
-  }
-
-  /**
-   * 计算多边形面积（平方米）
-   * 将笛卡尔坐标转为经纬度后，使用 Chamberlain-Duquette 球面公式计算
-   *
-   * @param {Cesium.Cartesian3[]} positions - 顶点坐标数组
-   * @returns {number} 面积（平方米）
-   */
-  const calculateArea = (positions) => {
-    if (positions.length < 3) return 0
-
-    const coordinates = positions.map((pos) => {
-      const cartographic = Cesium.Cartographic.fromCartesian(pos)
-      return [
-        Cesium.Math.toDegrees(cartographic.longitude),
-        Cesium.Math.toDegrees(cartographic.latitude)
-      ]
-    })
-    coordinates.push(coordinates[0]) // 闭合环
-
-    return ringArea(coordinates)
   }
 
   /**
