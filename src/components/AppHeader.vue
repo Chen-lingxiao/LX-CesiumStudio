@@ -21,7 +21,7 @@ const { isHeroSection } = useHomeSection()
 /**
  * 判断是否在首页
  */
-const isHome = computed(() => route.path === '/')
+const isHome = computed(() => route.path === '/home')
 
 /**
  * 是否应用白色文字样式（首页且处于hero区域）

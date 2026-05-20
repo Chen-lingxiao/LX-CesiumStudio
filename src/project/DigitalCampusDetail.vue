@@ -29,11 +29,11 @@ const project = {
 }
 
 const images = [
-  '/Preview/DigitalCampus/DigitalCampus1.png',
-  '/Preview/DigitalCampus/DigitalCampus2.png',
-  '/Preview/DigitalCampus/DigitalCampus3.png',
-  '/Preview/DigitalCampus/DigitalCampus4.png',
-  '/Preview/DigitalCampus/DigitalCampus5.png'
+  '../Preview/DigitalCampus/DigitalCampus1.png',
+  '../Preview/DigitalCampus/DigitalCampus2.png',
+  '../Preview/DigitalCampus/DigitalCampus3.png',
+  '../Preview/DigitalCampus/DigitalCampus4.png',
+  '../Preview/DigitalCampus/DigitalCampus5.png'
 ]
 
 const currentIndex = ref(0)
@@ -214,7 +214,7 @@ onUnmounted(() => {
 
 .project-card {
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   background: var(--color-bg-surface);
   border-radius: 12px;
   border: 1px solid var(--color-border);
@@ -235,7 +235,7 @@ onUnmounted(() => {
 .carousel-wrapper {
   position: relative;
   width: 100%;
-  height: 350px;
+  height: 450px;
   overflow: hidden;
   background: var(--color-bg-elevated);
 }

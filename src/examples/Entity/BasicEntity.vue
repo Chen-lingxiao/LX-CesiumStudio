@@ -42,7 +42,7 @@ const initCesium = async () => {
         disableDepthTestDistance: Number.POSITIVE_INFINITY
       },
       billboard: {
-        image: 'public/static/billbord/gufeng.png',
+        image: '/static/billbord/gufeng.png',
         scale: 1.0,
         horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
         verticalOrigin: Cesium.VerticalOrigin.CENTER,

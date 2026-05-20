@@ -124,7 +124,7 @@ onUnmounted(() => {
       <div class="about-content">
         <div class="about-intro scroll-animate fade-up">
           <h2>关于我</h2>
-          <p class="intro-text">热爱技术，专注于前端开发与WebGIS应用。喜欢探索新事物，追求代码的简洁与优雅。</p>
+          <p class="intro-text">专注于程序开发与WebGIS应用，喜欢探索新事物</p>
         </div>
         
         <div class="about-details">
@@ -142,7 +142,8 @@ onUnmounted(() => {
               <span class="tech-tag">OpenLayers</span>
               <span class="tech-tag">Mapbox</span>
               <span class="tech-tag">PostGIS</span>
-              <span class="tech-tag">Element Plus</span>
+              <span class="tech-tag">OGC</span>
+              <span class="tech-tag">HTML5/CSS3/JavaScript</span>
             </div>
           </div>
         </div>
@@ -160,7 +161,7 @@ onUnmounted(() => {
     <section class="projects-section" :style="{ height: sectionHeight + 'px' }">
       <div class="projects-content">
         <h2 class="scroll-animate fade-up">等待中</h2>
-        <p>点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点点</p>
+        <p>占位</p>
       </div>
     </section>
   </div>
@@ -186,6 +187,8 @@ onUnmounted(() => {
   width: 100%;
   overflow: hidden;
   background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f1628 100%);
+  margin-top: -50px;
+  padding-top: 50px;
 }
 
 .gradient-overlay {

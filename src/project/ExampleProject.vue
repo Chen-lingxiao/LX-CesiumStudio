@@ -77,7 +77,7 @@ const project = {
 
 .project-card {
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   background: var(--color-bg-surface);
   border-radius: 12px;
   border: 1px solid var(--color-border);

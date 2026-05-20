@@ -8,10 +8,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
+      redirect: '/home' // 重定向到首页
+    },
+    {
+      path: '/home',
       name: 'Home',
       component: () => import('../home/home.vue')
     },
@@ -36,16 +40,16 @@ const router = createRouter({
           component: () => import('../project/GraduationProject.vue')
         },
         {
+          path: 'cesium-sandbox',
+          name: 'CesiumSandboxDetail',
+          component: () => import('../project/CesiumSandboxDetail.vue')
+        },
+        {
           path: 'example',
           name: 'ExampleProject',
           component: () => import('../project/ExampleProject.vue')
         }
       ]
-    },
-    {
-      path: '/digital-campus',
-      name: 'DigitalCampus',
-      component: () => import('../project/DigitalCampus.vue')
     },
     {
       path: '/study',

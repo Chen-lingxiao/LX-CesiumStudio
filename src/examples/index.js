@@ -15,7 +15,6 @@
 
 import { extractCode } from './utils/codeExtractor'
 
-
 import ViewerBasic from './Basic/ViewerBasic.vue'
 import viewerBasicCode from './Basic/ViewerBasic.vue?raw'
 import CameraBasic from './Basic/CameraBasic.vue'
@@ -84,45 +83,45 @@ import visibilityAnalysisCode from './SpatialAnalysis/VisibilityAnalysis.vue?raw
 export const examples = [
   {
     id: 'viewer-basic',
-    name: 'Viewer 基础',
+    name: 'Viewer 基础类',
     description: 'Cesium 应用的顶层容器类，封装 Scene、Camera、Globe、数据源及UI控件，提供声明式API简化三维应用开发',
-    tags: ['Viewer', '基础'],
+    tags: ['Viewer', '基础类'],
     thumbnail: '/thumbnails/viewer-basic.png',
     component: ViewerBasic,
     ...extractCode(viewerBasicCode)
   },
   {
     id: 'camera-basic',
-    name: 'Camera 基础',
+    name: 'Camera 基础类',
     description: '控制观察者视角的核心类，定义视锥体参数，实现场景导航、视角变换和飞行动画',
-    tags: ['Camera', '基础'],
+    tags: ['Camera', '基础类'],
     thumbnail: '/thumbnails/camera-basic.png',
     component: CameraBasic,
     ...extractCode(cameraBasicCode)
   },
   {
     id: 'scene-basic',
-    name: 'Scene 基础',
+    name: 'Scene 基础类',
     description: '渲染管线核心类，管理所有可渲染对象（图元、实体、3D瓦片），协调帧更新和底层渲染流程',
-    tags: ['Scene', '基础'],
+    tags: ['Scene', '基础类'],
     thumbnail: '/thumbnails/scene-basic.png',
     component: SceneBasic,
     ...extractCode(sceneBasicCode)
   },
   {
     id: 'globe-basic',
-    name: 'Globe 基础',
+    name: 'Globe 基础类',
     description: '地球模型核心类，定义地球的几何形状、椭球体参数、地表材质、地形渲染和光照效果',
-    tags: ['Globe', '基础'],
+    tags: ['Globe', '基础类'],
     thumbnail: '/thumbnails/globe-basic.png',
     component: GlobeBasic,
     ...extractCode(globeBasicCode)
   },
   {
     id: 'basic-entity',
-    name: 'Entities 基础',
+    name: 'Entities 基础类',
     description: '创建基础的Cesium Viewer实例，演示如何添加包含点标记、广告牌和文字标签的完整实体对象',
-    tags: ['Entities', '基础'],
+    tags: ['Entities', '基础类'],
     thumbnail: '/thumbnails/basic-entity.png',
     component: BasicEntity,
     ...extractCode(basicEntityCode)
@@ -181,7 +180,6 @@ export const examples = [
     component: MapboxImagery,
     ...extractCode(mapboxImageryCode)
   },
-  // 地形
   {
     id: 'terrain-basic',
     name: '地形基础',
@@ -191,21 +189,19 @@ export const examples = [
     component: TerrainBasic,
     ...extractCode(terrainBasicCode)
   },
-  // 高程颜色
   {
     id: 'terrain-elevation-color',
-    name: '地形高程颜色',
-    description: '添加地形高程颜色图层',
-    tags: ['Terrain', '高程颜色'],
+    name: '地形高程分层设色',
+    description: '根据地形高程分层设置颜色',
+    tags: ['Terrain', '地形高程分层设色'],
     thumbnail: '/thumbnails/terrain-elevation-color.png',
     component: TerrainElevationColor,
     ...extractCode(terrainElevationColorCode)
   },
-  
   {
     id: 'draw-tool',
-    name: '绘制工具',
-    description: '交互式绘制工具：支持点、线、多边形、矩形的绘制，左键添加顶点，右键完成绘制，支持清除所有绘制内容',
+    name: '绘制工具合集',
+    description: '交互式绘制工具：使用 useCesiumDraw composable，支持点、线、多边形、矩形的绘制，左键添加顶点，右键完成绘制，支持清除所有绘制内容',
     tags: ['Interaction', '绘制'],
     thumbnail: '/thumbnails/draw-tool.png',
     component: DrawTool,
@@ -240,9 +236,9 @@ export const examples = [
   },
   {
     id: 'measure-tool',
-    name: '测量工具',
+    name: '测量工具合集',
     description: '交互式测量工具：使用 useMeasurement composable，支持距离测量、面积测量、高度测量和坐标拾取',
-    tags: ['Interaction', '测量', 'Composable'],
+    tags: ['Interaction', '测量'],
     thumbnail: '/thumbnails/measure-tool.png',
     component: MeasureTool,
     ...extractCode(measureToolCode)
@@ -259,7 +255,7 @@ export const examples = [
   {
     id: 'area-measure',
     name: '面积测量',
-    description: '独立实现的面积测量示例：点击添加顶点（至少3个），右键完成，使用 turf.js 计算面积',
+    description: '独立实现的面积测量示例：点击添加顶点（至少3个），右键完成，计算面积',
     tags: ['Interaction', '测量', '面积'],
     thumbnail: '/thumbnails/area-measure.png',
     component: AreaMeasure,
@@ -270,7 +266,7 @@ export const examples = [
     name: '高度测量',
     description: '独立实现的高度测量示例：点击选择两点，计算地形高度差',
     tags: ['Interaction', '测量', '高度'],
-    thumbnail: '/thumbnails/height-measure.png',
+    thumbnail: '/thumbnails/height-measure.png',  
     component: HeightMeasure,
     ...extractCode(heightMeasureCode)
   },
@@ -285,9 +281,9 @@ export const examples = [
   },
   {
     id: 'spatial-analysis',
-    name: '空间分析',
+    name: '空间分析合集',
     description: '独立实现的空间分析示例：点击地图显示空间分析结果',
-    tags: ['SpatialAnalysis', '空间分析', '空间分析'],
+    tags: ['SpatialAnalysis', '空间分析'],
     thumbnail: '/thumbnails/spatial-analysis.png',
     component: SpatialAnaysis,
     ...extractCode(spatialAnaysisCode)

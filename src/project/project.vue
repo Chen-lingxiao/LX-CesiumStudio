@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
@@ -8,11 +8,15 @@ const route = useRoute()
 const projectList = [
   {
     index: '/project/digital-campus',
-    title: '校园消防栓 GIS 可视化管理系统'
+    title: '校园消防栓可视化管理系统'
   },
   {
     index: '/project/graduation-project',
-    title: '微信小程序市政消防栓管理系统'
+    title: '微信小程序消防栓管理系统'
+  },
+  {
+    index: '/project/cesium-sandbox',
+    title: 'Cesium 在线沙盒编辑器'
   },
   {
     index: '/project/example',
@@ -26,10 +30,19 @@ const handleSelect = (index: string) => {
 
 const activeMenu = ref(route.path)
 
-onMounted(() => {
+const redirectToDefault = () => {
   if (route.path === '/project') {
     router.push('/project/digital-campus')
   }
+}
+
+onMounted(() => {
+  redirectToDefault()
+})
+
+watch(() => route.path, () => {
+  activeMenu.value = route.path
+  redirectToDefault()
 })
 </script>
 
@@ -76,7 +89,7 @@ onMounted(() => {
   height: 60px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding-left: 20px;
   border-bottom: 1px solid var(--color-border);
 }
 
