@@ -4,28 +4,28 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 const project = {
   name: 'Cesium 在线沙盒编辑器',
   url: '',
-  description: '一款面向 Cesium 开发者的在线示例沙盒平台，提供了丰富的三维 GIS 开发示例，支持按标签分类检索、代码实时预览与运行，帮助开发者快速学习 Cesium 核心 API 与三维可视化开发流程。',
-  techStack: ['Vue 3', 'TypeScript', 'Vite', 'CesiumJS', 'Monaco Editor', 'Tailwind CSS'],
+  description: '自主主导、AI协同开发的 Cesium 三维 GIS 在线示例沙盒，提供丰富可视化示例、标签检索、代码实时编辑与运行，高效辅助开发者学习 Cesium 核心 API 与三维开发流程。',
+  techStack: ['Vue 3', 'TypeScript', 'Vite', 'CesiumJS', 'Monaco Editor', 'Tailwind CSS', 'AI 辅助开发'],
   responsibilities: [
     {
-      title: '沙盒平台整体架构设计',
-      content: '设计并实现示例沙盒的核心架构，集成 Monaco Editor 代码编辑器与 Cesium 三维场景渲染容器；实现示例列表、标签分类筛选、代码预览与实时运行的联动逻辑，打造一体化开发学习环境'
+      title: '项目架构与页面布局设计',
+      content: '独立完成项目整体架构、页面布局与交互流程设计；主导 AI 完成路由配置、全局样式、工程化配置等重复性工作，大幅提升开发效率'
     },
     {
-      title: 'Cesium 示例库开发与封装',
-      content: '基于 CesiumJS 开发了多个单独示例，覆盖 Viewer/Scene/Camera/Entities/Imagery/Terrain/SpatialAnalysis 等核心模块；封装可复用的地图绘制、测量工具、空间分析组件，沉淀三维 GIS 开发通用方案'
+      title: 'Cesium 核心功能开发',
+      content: '自主实现 Cesium 场景、相机、图层、地形、空间分析等核心模块示例；将绘制工具、测量功能封装为可复用 composables，AI 辅助完成通用组件与功能封装'
     },
     {
-      title: '交互与用户体验优化',
-      content: '实现按标签、关键词的示例检索功能；优化代码编辑器与三维场景的交互体验，支持一键运行、控制台日志输出；针对 Cesium 相机控制、实体渲染、地形加载等场景做了性能与兼容性优化'
+      title: '交互体验与性能优化',
+      content: '独立开发示例检索、代码运行、三维联动等核心交互；AI 协助完成 FPS 监测组件、控制台日志等模块；自主完成三维渲染、相机控制、加载性能优化'
     },
     {
-      title: '组件化与工程化建设',
-      content: '使用 Vue 3 + TypeScript 构建组件化项目，实现示例卡片、标签下拉、代码运行面板等通用组件的复用；配置 ESLint、Prettier 规范代码风格，通过 Vite 构建优化打包体积与加载速度'
+      title: 'AI 协同开发与问题修复',
+      content: '全程使用 AI 进行代码生成、Bug 排查与问题修复；自主验证功能逻辑与三维效果，形成“核心自研+AI提效”的现代化开发模式'
     }
   ],
-  github: '',
-  gitee: ''
+  github: 'https://github.com/Chen-lingxiao/Studio-LX',
+  gitee: 'https://gitee.com/lxrelic/Studio-LX'
 }
 
 const images = [
@@ -131,9 +131,9 @@ onUnmounted(() => {
               >
                 <img :src="visibleImages.current" :alt="'预览图 ' + currentIndex" class="slide-image" />
                 <div class="slide-overlay">
-                  <a v-if="project.url" :href="project.url" target="_blank" rel="noopener noreferrer" class="visit-btn">
+                  <router-link to="/examples" class="visit-btn">
                     访问项目
-                  </a>
+                  </router-link>
                 </div>
               </div>
               <div 

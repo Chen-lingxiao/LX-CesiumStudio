@@ -45,11 +45,21 @@ const router = createRouter({
           component: () => import('../project/CesiumSandboxDetail.vue')
         },
         {
+          path: 'echarts-datav',
+          name: 'EchartsDatav',
+          component: () => import('../project/EchartsDatav.vue')
+        },
+        {
           path: 'example',
           name: 'ExampleProject',
           component: () => import('../project/ExampleProject.vue')
         }
       ]
+    },
+    {
+      path: '/project/echarts-datav/demo',
+      name: 'EchartsDemo',
+      component: () => import('../DataView/EchartsDemo.vue')
     },
     {
       path: '/study',

@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const project = {
-  name: '校园消防栓 GIS 可视化管理系统',
+  name: '校园消防栓可视化管理系统',
   url: 'http://115.29.230.69/login',
   description: '基于前后端分离架构，集三维可视化、实时数据监控与地理数据编辑于一体的校园设施管理平台，实现了消防设施的数字化管理与动态监控，支撑运维人员高效巡检与决策分析。',
   techStack: ['Vue 3', 'TypeScript', 'Vite', 'Cesium', 'Mapbox', 'Spring Boot', 'PostgreSQL', 'PostGIS', 'GeoServer'],

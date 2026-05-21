@@ -88,7 +88,7 @@ const handleCloseSettings = () => {
         <router-link to="/examples" class="nav-link" :class="{ active: $route.path === '/examples', 'white-link': useWhiteTextStyle }">
           <span>在线沙盒</span>
         </router-link>
-        <router-link to="/project" class="nav-link" :class="{ active: $route.path === '/project', 'white-link': useWhiteTextStyle }">
+        <router-link to="/project" class="nav-link" :class="{ active: $route.path.startsWith('/project'), 'white-link': useWhiteTextStyle }">
           <span>项目示例</span>
         </router-link>
         <router-link to="/study" class="nav-link" :class="{ active: $route.path === '/study', 'white-link': useWhiteTextStyle }">

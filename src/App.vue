@@ -21,18 +21,28 @@ initSettings()
  * 判断是否在首页
  */
 const isHome = computed(() => route.path === '/')
+
+/**
+ * 判断是否需要隐藏顶部导航栏（用于独立页面）
+ */
+const hideHeader = computed(() => {
+  const fullscreenPages = [
+    '/project/echarts-datav/demo'
+  ]
+  return fullscreenPages.includes(route.path)
+})
 </script>
 
 <template>
   <div id="app">
-    <!-- 顶部导航栏 -->
-    <AppHeader />
+    <!-- 顶部导航栏（独立页面隐藏） -->
+    <AppHeader v-if="!hideHeader" />
     
     <!-- FPS 监控 -->
-    <FPSMonitor v-if="settings.showFps" />
+    <FPSMonitor v-if="settings.showFps && !hideHeader" />
     
     <!-- 主内容区域 -->
-    <main class="main-content" :class="{ 'no-padding': isHome }">
+    <main class="main-content" :class="{ 'no-padding': isHome || hideHeader }">
       <router-view />
     </main>
   </div>

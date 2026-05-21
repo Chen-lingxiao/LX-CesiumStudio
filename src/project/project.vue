@@ -18,6 +18,10 @@ const projectList = [
     index: '/project/cesium-sandbox',
     title: 'Cesium 在线沙盒编辑器'
   },
+  // {
+  //   index: '/project/echarts-datav',
+  //   title: 'Echarts数据大屏'
+  // },
   {
     index: '/project/example',
     title: '示例项目'
