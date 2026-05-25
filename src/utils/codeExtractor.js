@@ -1,5 +1,5 @@
 /**
- * examples/utils/codeExtractor.js - Vue组件代码提取工具
+ * utils/codeExtractor.js - Vue组件代码提取工具
  *
  * 功能说明：
  * 提供从Vue单文件组件代码中提取可执行代码的工具函数

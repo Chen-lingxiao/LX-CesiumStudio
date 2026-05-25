@@ -20,7 +20,7 @@
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from "vue";
 import * as monaco from "monaco-editor";
 import { examples } from "../examples";
-import { useSettings } from "../composables/useSettings";
+import { useSettings, themeColorPresets } from "../composables/useSettings";
 
 /**
  * Monaco编辑器Worker配置
@@ -105,6 +105,45 @@ const emit = defineEmits(["update:modelValue", "run-code", "load-example"]);
  * 使用设置管理composable
  */
 const { settings } = useSettings();
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
+function registerPresetMonacoThemes() {
+  for (const [key, config] of Object.entries(themeColorPresets)) {
+    const c = config.colors
+    monaco.editor.defineTheme(`preset-${key}`, {
+      base: 'vs',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': c.editorBg,
+        'editorWidget.background': c.editorBg,
+        'editorWidget.border': c.border,
+        'input.background': c.bgElevated,
+        'input.border': c.border,
+        'dropdown.background': c.bgElevated,
+        'dropdown.border': c.border,
+        'list.hoverBackground': c.bgHover,
+        'focusBorder': c.borderMuted,
+        'scrollbar.shadow': hexToRgba(c.borderMuted, 0.3),
+        'scrollbarSlider.background': hexToRgba(c.borderMuted, 0.4),
+        'scrollbarSlider.hoverBackground': hexToRgba(c.borderMuted, 0.6),
+      }
+    })
+  }
+}
+registerPresetMonacoThemes()
+
+function getMonacoThemeName() {
+  if (settings.isDark) return 'vs-dark'
+  if (settings.themeColorPreset !== 'default') return `preset-${settings.themeColorPreset}`
+  return 'vs-light'
+}
 
 /**
  * 当前视图模式
@@ -207,11 +246,7 @@ watch(
  * 初始化Monaco编辑器
  */
 const initEditor = () => {
-  // 检查容器是否存在
   if (!editorContainer.value) return;
-
-  // 获取当前主题模式
-  const isDark = document.documentElement.classList.contains("dark");
 
   // 根据当前标签页获取初始代码
   const initialValue =
@@ -221,7 +256,7 @@ const initEditor = () => {
   editor = monaco.editor.create(editorContainer.value, {
     value: initialValue || "// 在此输入代码",
     language: currentTab.value === "javascript" ? "javascript" : "html",
-    theme: isDark ? "vs-dark" : "vs-light",
+    theme: getMonacoThemeName(),
     fontSize: 14,
     lineNumbers: "on",
     minimap: { enabled: false },
@@ -267,30 +302,24 @@ watch(currentTab, (newTab, oldTab) => {
   }
 });
 
-/**
- * 监听主题变化，同步编辑器主题
- */
+function applyEditorTheme() {
+  if (editor) {
+    monaco.editor.setTheme('vs-light')
+    setTimeout(() => {
+      monaco.editor.setTheme(getMonacoThemeName())
+    }, 50)
+  }
+}
+
 watch(
   () => settings.isDark,
-  (newIsDark) => {
-    if (editor) {
-      // 强制刷新编辑器主题，先切换到中间状态再切换到目标状态
-      monaco.editor.setTheme('vs-light');
-      setTimeout(() => {
-        monaco.editor.setTheme(newIsDark ? "vs-dark" : "vs-light");
-      }, 50);
-    }
-  },
-);
+  () => applyEditorTheme(),
+)
 
-/**
- * 切换视图模式
- * @param {string} view - 目标视图模式
- */
-const switchView = (view) => {
-  currentView.value = view;
-  emit("update:modelValue", view);
-};
+watch(
+  () => settings.themeColorPreset,
+  () => applyEditorTheme(),
+)
 
 /**
  * 处理运行代码按钮点击

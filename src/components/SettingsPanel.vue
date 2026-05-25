@@ -139,8 +139,8 @@ const handleClose = () => {
 /* 设置容器 */
 .settings-container {
   position: fixed;
-  right: 10px;
-  top: 60px;
+  left:60px;
+  bottom: 5px;
   z-index: 1000;
 }
 

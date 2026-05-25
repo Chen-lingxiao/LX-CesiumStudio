@@ -1,19 +1,15 @@
 /**
  * examples/index.js - 示例配置与管理模块
- * 
+ *
  * 功能说明：
- * 1. 定义示例分类
- * 2. 加载示例组件和代码
- * 3. 提供示例检索方法
- * 
+ * 1. 加载示例组件和代码
+ * 2. 提供示例列表
+ *
  * 导出内容：
- * - categories: 示例分类数组
  * - examples: 示例列表数组
- * - getExamplesByCategory: 按分类获取示例
- * - getExampleById: 按ID获取示例
  */
 
-import { extractCode } from './utils/codeExtractor'
+import { extractCode } from '../utils/codeExtractor'
 
 import ViewerBasic from './Basic/ViewerBasic.vue'
 import viewerBasicCode from './Basic/ViewerBasic.vue?raw'
@@ -31,6 +27,8 @@ import mapboxImageryCode from './Imagery/MapboxImagery.vue?raw'
 // 地形
 import TerrainBasic from './Terrain/TerrainBasic.vue'
 import terrainBasicCode from './Terrain/TerrainBasic.vue?raw'
+import TerrainCustom from './Terrain/TerrainCustom.vue'
+import terrainCustomCode from './Terrain/TerrainCustom.vue?raw'
 import TerrainElevationColor from './Terrain/TerrainElevationColor.vue'
 import terrainElevationColorCode from './Terrain/TerrainElevationColor.vue?raw'
 // 实体
@@ -44,6 +42,11 @@ import PolygonEntity from './Entity/PolygonEntity.vue'
 import polygonEntityCode from './Entity/PolygonEntity.vue?raw'
 import ModelEntity from './Entity/ModelEntity.vue'
 import modelEntityCode from './Entity/ModelEntity.vue?raw'
+// 数据源
+import GeoJsonDataSource from './DataSource/GeoJsonDataSource.vue'
+import geoJsonDataSourceCode from './DataSource/GeoJsonDataSource.vue?raw'
+import KmlDataSource from './DataSource/KmlDataSource.vue'
+import kmlDataSourceCode from './DataSource/KmlDataSource.vue?raw'
 // 交互
 import DrawTool from './Interaction/DrawTool.vue'
 import drawToolCode from './Interaction/DrawTool.vue?raw'
@@ -190,6 +193,15 @@ export const examples = [
     ...extractCode(terrainBasicCode)
   },
   {
+    id: 'terrain-custom',
+    name: '地形自定义',
+    description: '添加自定义地形图层',
+    tags: ['Terrain', '自定义'],
+    thumbnail: '/thumbnails/terrain-custom.png',
+    component: TerrainCustom,
+    ...extractCode(terrainCustomCode)
+  },
+  {
     id: 'terrain-elevation-color',
     name: '地形高程分层设色',
     description: '根据地形高程分层设置颜色',
@@ -197,6 +209,25 @@ export const examples = [
     thumbnail: '/thumbnails/terrain-elevation-color.png',
     component: TerrainElevationColor,
     ...extractCode(terrainElevationColorCode)
+  },
+  // 数据源
+  {
+    id: 'geojson-data-source',
+    name: 'GeoJSON 数据源',
+    description: '加载GeoJSON数据，显示在地图上',
+    tags: ['DataSource', 'GeoJSON'],
+    thumbnail: '/thumbnails/geojson-data-source.png',
+    component: GeoJsonDataSource,
+    ...extractCode(geoJsonDataSourceCode)
+  },
+  {
+    id: 'kml-data-source',
+    name: 'KML 数据源',
+    description: '加载KML数据，显示在地图上',
+    tags: ['DataSource', 'KML'],
+    thumbnail: '/thumbnails/kml-data-source.png',
+    component: KmlDataSource,
+    ...extractCode(kmlDataSourceCode)
   },
   {
     id: 'draw-tool',
@@ -327,11 +358,4 @@ export const examples = [
 ]
 
 
-/**
- * 按ID获取示例
- * @param {string} id - 示例ID
- * @returns {Object|undefined} 匹配的示例对象
- */
-export const getExampleById = (id) => {
-  return examples.find(e => e.id === id)
-}
+

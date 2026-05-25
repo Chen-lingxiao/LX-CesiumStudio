@@ -58,7 +58,10 @@ const themeColorPresets = {
       bgElevated: '#f5f5f5',
       bgHover: '#e8e8e8',
       border: '#eeeeee',
-      borderMuted: '#dddddd'
+      borderMuted: '#dddddd',
+      consoleBg: '#f0f0f0',
+      consoleText: '#333333',
+      editorBg: '#ffffff'
     }
   },
   'light-purple': {
@@ -69,7 +72,10 @@ const themeColorPresets = {
       bgElevated: '#fff5fb',
       bgHover: '#ffd6ed',
       border: '#f8e0f0',
-      borderMuted: '#f0d0e8'
+      borderMuted: '#f0d0e8',
+      consoleBg: '#f8f0f6',
+      consoleText: '#4a3046',
+      editorBg: '#fff8fc'
     }
   },
   'light-green': {
@@ -80,7 +86,10 @@ const themeColorPresets = {
       bgElevated: '#e8f0e1',
       bgHover: '#c0cfb8',
       border: '#d8e4ce',
-      borderMuted: '#c8d4bc'
+      borderMuted: '#c8d4bc',
+      consoleBg: '#eef2e8',
+      consoleText: '#3a4a34',
+      editorBg: '#f2f7ec'
     }
   },
   'light-pink': {
@@ -91,7 +100,10 @@ const themeColorPresets = {
       bgElevated: '#fffafa',
       bgHover: '#ffd6d6',
       border: '#ffebe9',
-      borderMuted: '#f0d8d8'
+      borderMuted: '#f0d8d8',
+      consoleBg: '#f8f0f0',
+      consoleText: '#4a3030',
+      editorBg: '#fff8f8'
     }
   },
   'mint-green': {
@@ -102,7 +114,10 @@ const themeColorPresets = {
       bgElevated: '#f0faf7',
       bgHover: '#c4d8d0',
       border: '#d8ece4',
-      borderMuted: '#c8dcc4'
+      borderMuted: '#c8dcc4',
+      consoleBg: '#eef5f1',
+      consoleText: '#2e4a40',
+      editorBg: '#f5faf8'
     }
   },
   'soft-blue': {
@@ -113,7 +128,10 @@ const themeColorPresets = {
       bgElevated: '#f0f6ff',
       bgHover: '#c4d4ec',
       border: '#d8e4f8',
-      borderMuted: '#c8d4e8'
+      borderMuted: '#c8d4e8',
+      consoleBg: '#ecf1f8',
+      consoleText: '#2e3a4a',
+      editorBg: '#f5f8ff'
     }
   }
 }
@@ -168,7 +186,10 @@ function updateDarkMode(isDarkMode: boolean) {
     '--color-bg-elevated',
     '--color-bg-hover',
     '--color-border',
-    '--color-border-muted'
+    '--color-border-muted',
+    '--color-console-bg',
+    '--color-console-text',
+    '--color-editor-bg'
   ]
 
   if (isDarkMode) {

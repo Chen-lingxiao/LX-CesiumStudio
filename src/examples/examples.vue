@@ -16,6 +16,8 @@ import { ref, nextTick, computed, shallowRef, markRaw } from 'vue'
 import AppSidebar from '../components/AppSidebar.vue'
 import AppMiddlePanel from '../components/AppMiddlePanel.vue'
 import AppRightPanel from '../components/AppRightPanel.vue'
+import FPSMonitor from '../components/FPSMonitor.vue'
+import SettingsPanel from '../components/SettingsPanel.vue'
 import { useResizer } from '../composables/useResizer'
 import { useSettings } from '../composables/useSettings'
 
@@ -27,6 +29,8 @@ const { isDragging, sizePercent: middleWidthPercent, startDrag, setContainerRef 
 // 获取设置状态并初始化
 const { settings, initSettings } = useSettings()
 initSettings()
+
+const showSettings = ref(false)
 
 /**
  * 中间面板组件引用
@@ -93,15 +97,19 @@ const handleLoadExample = (example) => {
  * @param {Object} code - 要执行的代码对象，包含js和htmlCss字段
  */
 const handleRunCode = (code) => {
-  // 使用扩展运算符创建新对象，确保每次都是新引用，触发watch检测
   currentCodeToRun.value = { ...code }
-  // 清除当前加载的示例组件
   currentExampleComponent.value = null
+}
+
+const toggleSettings = () => {
+  showSettings.value = !showSettings.value
 }
 </script>
 
 <template>
   <div class="examples-container">
+    <FPSMonitor />
+    <SettingsPanel :visible="showSettings" @close="showSettings = false" />
     <!-- 主内容区域 -->
     <div class="main-content">
       <!-- 左侧功能栏 -->
@@ -109,6 +117,7 @@ const handleRunCode = (code) => {
         :current-view="currentView" 
         @view-change="handleViewChange" 
         @new-example="handleNewExample"
+        @toggle-settings="toggleSettings"
       />
       
       <!-- 可拖拽调整的内容区域 -->

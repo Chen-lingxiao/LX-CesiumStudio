@@ -22,7 +22,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['view-change', 'new-example'])
+const emit = defineEmits(['view-change', 'new-example', 'toggle-settings'])
 
 const { settings } = useSettings()
 
@@ -38,7 +38,14 @@ const handleIconClick = (iconName) => {
     emit('new-example')
   } else if (iconName === 'docs') {
     window.open('https://cesium.com/learn/cesiumjs/ref-doc/', '_blank')
+  } else if (iconName === 'settings') {
+    emit('toggle-settings')
   }
+}
+
+const toggleDarkMode = () => {
+  const { updateSetting } = useSettings()
+  updateSetting('isDark', !settings.isDark)
 }
 </script>
 
@@ -69,6 +76,26 @@ const handleIconClick = (iconName) => {
         <span class="iconfont icon-wendang"></span>
       </div>
     </div>
+
+    <!-- 底部功能区 -->
+    <div class="sidebar-bottom">
+       <div class="icon-item" title="github">
+        <span class="iconfont icon-githublogo"></span>
+      </div>
+      <div class="icon-item" title="邮箱">
+        <span class="iconfont icon-youxiang"></span>
+      </div>
+      <div
+        class="icon-item"
+        :title="settings.isDark ? '切换到亮色模式' : '切换到暗色模式'"
+        @click="toggleDarkMode"
+      >
+        <span class="iconfont" :class="settings.isDark ? 'icon-taiyang' : 'icon-yueliang'"></span>
+      </div>
+      <div class="icon-item" @click="handleIconClick('settings')" title="设置">
+        <span class="iconfont icon-shezhi"></span>
+      </div>
+    </div>
   </aside>
 </template>
 
@@ -96,6 +123,14 @@ const handleIconClick = (iconName) => {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+/* 底部功能区样式 */
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: auto;
 }
 
 /* 图标项样式 */

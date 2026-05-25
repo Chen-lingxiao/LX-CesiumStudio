@@ -11,21 +11,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AppHeader: typeof import('./src/components/AppHeader.vue')['default']
     AppMiddlePanel: typeof import('./src/components/AppMiddlePanel.vue')['default']
     AppRightPanel: typeof import('./src/components/AppRightPanel.vue')['default']
     AppSidebar: typeof import('./src/components/AppSidebar.vue')['default']
-    DandelionBackground: typeof import('./src/components/DandelionBackground.vue')['default']
-    ElAside: typeof import('element-plus/es')['ElAside']
-    ElMenu: typeof import('element-plus/es')['ElMenu']
-    ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     FPSMonitor: typeof import('./src/components/FPSMonitor.vue')['default']
-    HorizonraBar: typeof import('./src/components/HorizonraBar.vue')['default']
-    MapChart: typeof import('./src/components/MapChart.vue')['default']
-    NightingaleChart: typeof import('./src/components/NightingaleChart.vue')['default']
-    RadarChart: typeof import('./src/components/RadarChart.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SettingsPanel: typeof import('./src/components/SettingsPanel.vue')['default']
+    SiderBar: typeof import('./src/components/SiderBar.vue')['default']
   }
 }

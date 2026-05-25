@@ -45,3 +45,5 @@ __screenshots__/
 # Cesium cache
 .cache
 cesium-ion-access-token
+# Static data folder - large and replaceable
+public/static/

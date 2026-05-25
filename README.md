@@ -16,7 +16,6 @@
 - [配置说明](#配置说明)
 - [贡献规范](#贡献规范)
 - [许可证](#许可证)
-- [致谢](#致谢)
 
 ---
 
@@ -30,19 +29,17 @@ CesiumStudio-LX 是一个面向开发者的 Cesium 学习与演示平台，旨�
 
 | 功能 | 描述 |
 |------|------|
-| **代码编辑** | 集成 Monaco Editor，支持 JavaScript/HTML/CSS 语法高亮 |
+| **代码编辑** | 集成 Monaco Editor，支持 JavaScript 语法高亮 |
 | **实时预览** | 左侧代码编辑，右侧 Cesium 场景即时渲染 |
-| **示例画廊** | 提供多种 Cesium 功能示例，支持搜索和标签筛选 |
+| **示例画廊** | 提供 28+ 种 Cesium 功能示例，支持搜索和标签筛选 |
 | **主题切换** | 支持亮色/暗色模式，适应不同开发环境 |
-| **多主题色** | 提供多种主题色预设，个性化界面风格 |
+| **多主题色** | 提供 6 种主题色预设（默认白、淡紫、淡绿、淡粉、薄荷绿、柔和蓝） |
 | **FPS监控** | 可选的帧率监控显示，便于性能调试 |
 | **Console面板** | 内置控制台日志输出，便于调试代码 |
 | **布局调整** | 支持面板宽度和控制台高度的拖拽调整 |
-| **绘制工具** | 交互式绘制点、线、多边形等几何图形 |
+| **绘制工具** | 交互式绘制点、线、多边形、矩形等几何图形 |
 | **测量工具** | 支持距离测量、面积测量、高度测量和坐标拾取 |
-| **空间分析** | 提供剖面分析、坡向分析、体积分析、通视分析等功能 |
-| **多页面路由** | 支持首页、学习、项目等多个页面模块 |
-| **项目展示** | 内置数字校园等项目案例展示 |
+| **空间分析** | 提供剖面分析、坡向分析、方量分析、可见性分析等功能 |
 
 ---
 
@@ -55,11 +52,10 @@ CesiumStudio-LX 是一个面向开发者的 Cesium 学习与演示平台，旨�
 | 地理可视化 | Cesium | 1.141.x |
 | 代码编辑器 | Monaco Editor | 0.55.x |
 | 样式预处理 | Sass | 1.99.x |
-| UI 组件库 | Element Plus | 2.13.x |
 | 路由管理 | Vue Router | 5.0.x |
 | 图表库 | ECharts | 6.0.x |
-| HTTP 客户端 | Axios | 1.16.x |
 | 地理计算 | Turf.js | 3.0.x |
+| 类型检查 | TypeScript | 6.0.x |
 | 包管理器 | pnpm | 推荐 |
 
 ---
@@ -133,14 +129,12 @@ pnpm preview
 ### 界面布局
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                      AppHeader                          │
-├────┬────────────────────────────────────┬───────────────┤
+┌────┬────────────────────────────────────┬───────────────┐
 │    │         AppMiddlePanel              │              │
-│    │      Monaco Editor                  │ AppRightPanel│
-│ App│          代码编辑区                   │  Cesium预览   │
-│Side│                                     │              │
-│ bar│                                     │──────────────┤
+│ App│      Monaco Editor                  │ AppRightPanel│
+│Side│          代码编辑区                   │  Cesium预览   │
+│ bar│                                     │              │
+│    │                                     │──────────────┤
 │    │                                     │              │
 │    │                                     │  Console     │
 │    │                                     │  (控制台)     │
@@ -149,16 +143,23 @@ pnpm preview
 
 ### 功能入口
 
+**顶部功能区**
+
 | 图标 | 功能 | 说明 |
 |------|------|------|
-| 画廊 | 画廊视图 | 浏览所有示例卡片 |
-| 代码编辑 | 编辑器视图 | 编写和运行代码 |
-| 新建 | 新建示例 | 创建新的代码文件 |
+| 图片 | 画廊视图 | 浏览所有示例卡片 |
+| 代码 | 编辑器视图 | 编写和运行代码 |
+| 添加 | 新建示例 | 创建新的代码文件 |
 | 文档 | 帮助文档 | 访问 Cesium 官方文档 |
-| 设置 | 应用设置 | 调整应用偏好 |
-| 主题 | 明暗模式 | 切换应用主题 |
-| 邮箱 | 联系作者 | 发送反馈邮件 |
+
+**底部功能区**
+
+| 图标 | 功能 | 说明 |
+|------|------|------|
 | GitHub | 项目仓库 | 访问源代码 |
+| 邮箱 | 联系作者 | 发送反馈邮件 |
+| 月亮/太阳 | 明暗模式 | 切换应用主题 |
+| 设置 | 应用设置 | 调整应用偏好（主题色预设、FPS监控等） |
 
 ### 运行代码
 
@@ -182,16 +183,16 @@ pnpm preview
 
 | 示例名称 | 描述 | 标签 |
 |---------|------|------|
-| Viewer 基础 | Cesium 应用的顶层容器类，封装 Scene、Camera、Globe、数据源及UI控件 | Viewer、基础 |
-| Camera 基础 | 控制观察者视角的核心类，实现场景导航、视角变换和飞行动画 | Camera、基础 |
-| Scene 基础 | 渲染管线核心类，管理所有可渲染对象，协调帧更新和底层渲染流程 | Scene、基础 |
-| Globe 基础 | 地球模型核心类，定义地球的几何形状、椭球体参数、地表材质 | Globe、基础 |
+| Viewer 基础 | Cesium 应用的顶层容器类，封装 Scene、Camera、Globe、数据源及UI控件 | Viewer、基础类 |
+| Camera 基础 | 控制观察者视角的核心类，实现场景导航、视角变换和飞行动画 | Camera、基础类 |
+| Scene 基础 | 渲染管线核心类，管理所有可渲染对象，协调帧更新和底层渲染流程 | Scene、基础类 |
+| Globe 基础 | 地球模型核心类，定义地球的几何形状、椭球体参数、地表材质 | Globe、基础类 |
 
 ### 实体管理（Entity）
 
 | 示例名称 | 描述 | 标签 |
 |---------|------|------|
-| Entities 基础 | 创建完整的实体对象，包含点标记、广告牌和文字标签 | Entities、基础 |
+| Entities 基础 | 创建完整的实体对象，包含点标记、广告牌和文字标签 | Entities、基础类 |
 | 点实体 | 创建点实体对象，设置点的颜色、大小、高度参考等属性 | Entities、Point |
 | 折线实体 | 创建折线实体对象，设置折线的宽度、颜色材质、是否贴地等属性 | Entities、Polyline |
 | 多边形实体 | 创建多边形实体对象，设置多边形的颜色、高度参考等属性 | Entities、Polygon |
@@ -209,13 +210,14 @@ pnpm preview
 | 示例名称 | 描述 | 标签 |
 |---------|------|------|
 | 地形基础 | 添加基础地形图层 | Terrain、基础 |
-| 地形高程颜色 | 添加地形高程颜色图层 | Terrain、高程颜色 |
+| 地形自定义 | 添加自定义地形图层 | Terrain、自定义 |
+| 地形高程分层设色 | 根据地形高程分层设置颜色 | Terrain、地形高程分层设色 |
 
 ### 交互绘制（Interaction）
 
 | 示例名称 | 描述 | 标签 |
 |---------|------|------|
-| 绘制工具 | 交互式绘制工具：支持点、线、多边形、矩形的绘制 | Interaction、绘制 |
+| 绘制工具合集 | 交互式绘制工具：支持点、线、多边形、矩形的绘制 | Interaction、绘制 |
 | 绘制点 | 交互式点绘制工具，点击地图添加点位 | Interaction、绘制、Point |
 | 绘制折线 | 交互式折线绘制工具，点击添加顶点、右键完成绘制 | Interaction、绘制、Polyline |
 | 绘制多边形 | 交互式多边形绘制工具，点击添加顶点、右键闭合绘制 | Interaction、绘制、Polygon |
@@ -224,7 +226,7 @@ pnpm preview
 
 | 示例名称 | 描述 | 标签 |
 |---------|------|------|
-| 测量工具 | 交互式测量工具：支持距离、面积、高度测量和坐标拾取 | Interaction、测量 |
+| 测量工具合集 | 交互式测量工具：支持距离、面积、高度测量和坐标拾取 | Interaction、测量 |
 | 距离测量 | 独立实现的距离测量示例：点击添加两点，计算并显示距离 | Interaction、测量、距离 |
 | 面积测量 | 独立实现的面积测量示例：使用 turf.js 计算面积 | Interaction、测量、面积 |
 | 高度测量 | 独立实现的高度测量示例：计算地形高度差 | Interaction、测量、高度 |
@@ -237,8 +239,8 @@ pnpm preview
 | 空间分析 | 综合空间分析示例 | SpatialAnalysis、空间分析 |
 | 剖面分析 | 地形剖面分析示例 | SpatialAnalysis、剖面分析 |
 | 坡向分析 | 地形坡向分析示例 | SpatialAnalysis、坡向分析 |
-| 体积分析 | 挖填方体积分析示例 | SpatialAnalysis、体积分析 |
-| 通视分析 | 视线通视分析示例 | SpatialAnalysis、通视分析 |
+| 方量分析 | 挖填方方量分析示例 | SpatialAnalysis、方量分析 |
+| 可见性分析 | 视线可见性分析示例 | SpatialAnalysis、可见性分析 |
 
 ---
 
@@ -252,9 +254,6 @@ CesiumStudio-LX/
 │       └── *.png                     # 示例缩略图文件
 │
 ├── src/                             # 源代码目录
-│   ├── api/                          # API 接口
-│   │   └── geoserver.ts              # GeoServer 接口
-│   │
 │   ├── assets/                       # 资源文件
 │   │   ├── fonts/                    # 字体文件
 │   │   │   ├── iconfont.css          # 图标字体样式
@@ -265,13 +264,11 @@ CesiumStudio-LX/
 │   │       └── main.scss             # 全局样式与主题变量
 │   │
 │   ├── components/                   # Vue 组件
-│   │   ├── AppHeader.vue             # 顶部导航栏
 │   │   ├── AppSidebar.vue            # 左侧功能栏
 │   │   ├── AppMiddlePanel.vue        # 中间面板（编辑器/画廊）
 │   │   ├── AppRightPanel.vue         # 右侧面板（Cesium预览）
 │   │   ├── SettingsPanel.vue         # 设置面板
-│   │   ├── FPSMonitor.vue            # FPS监控组件
-│   │   └── DandelionBackground.vue   # 蒲公英背景组件
+│   │   └── FPSMonitor.vue            # FPS监控组件
 │   │
 │   ├── composables/                  # 可组合函数
 │   │   ├── useSettings.ts            # 设置管理
@@ -279,14 +276,11 @@ CesiumStudio-LX/
 │   │   ├── useCesiumDraw.js          # Cesium 绘制工具
 │   │   ├── useMeasurement.js         # 测量工具
 │   │   ├── useAspectAnalysis.js      # 坡向分析
-│   │   ├── useHomeSection.js         # 首页剖面分析
-│   │   ├── useTerrainSectionAnalysis.js  # 地形剖面分析
-│   │   └── CircleWaveMaterial.ts     # 圆形波纹材质
+│   │   └── useTerrainSectionAnalysis.js  # 地形剖面分析
 │   │
 │   ├── examples/                     # Cesium 示例
 │   │   ├── index.js                  # 示例配置与数据管理
-│   │   ├── utils/                    # 工具函数
-│   │   │   └── codeExtractor.js      # 代码提取工具
+│   │   ├── examples.vue              # 示例页面主组件
 │   │   ├── Basic/                    # 基础示例目录
 │   │   │   ├── ViewerBasic.vue       # Viewer基础示例
 │   │   │   ├── CameraBasic.vue       # 相机控制示例
@@ -300,51 +294,42 @@ CesiumStudio-LX/
 │   │   │   └── ModelEntity.vue       # 模型实体示例
 │   │   ├── Imagery/                  # 影像示例目录
 │   │   │   ├── OSMImagery.vue        # OpenStreetMap影像示例
-│   │   │   ├── MapboxImagery.vue     # Mapbox影像示例
-│   │   │   └── WmsLayer.vue          # WMS图层示例
+│   │   │   └── MapboxImagery.vue     # Mapbox影像示例
 │   │   ├── Terrain/                  # 地形示例目录
 │   │   │   ├── TerrainBasic.vue      # 地形基础示例
-│   │   │   └── TerrainElevationColor.vue  # 地形高程颜色示例
+│   │   │   ├── TerrainCustom.vue     # 地形自定义示例
+│   │   │   └── TerrainElevationColor.vue  # 地形高程分层设色示例
 │   │   ├── Interaction/              # 交互示例目录
-│   │   │   ├── DrawTool.vue          # 绘制工具
+│   │   │   ├── DrawTool.vue          # 绘制工具合集
 │   │   │   ├── DrawPoint.vue         # 绘制点
 │   │   │   ├── DrawPolyline.vue      # 绘制折线
 │   │   │   ├── DrawPolygon.vue       # 绘制多边形
-│   │   │   ├── MeasureTool.vue       # 测量工具
+│   │   │   ├── MeasureTool.vue       # 测量工具合集
 │   │   │   ├── DistanceMeasure.vue   # 距离测量
 │   │   │   ├── AreaMeasure.vue       # 面积测量
 │   │   │   ├── HeightMeasure.vue     # 高度测量
 │   │   │   └── CoordinatePick.vue    # 坐标拾取
 │   │   └── SpatialAnalysis/          # 空间分析目录
-│   │       ├── SpatialAnaysis.vue    # 空间分析
+│   │       ├── SpatialAnaysis.vue    # 空间分析合集
 │   │       ├── SectionAnalysis.vue   # 剖面分析
 │   │       ├── AspectAnalysis.vue    # 坡向分析
-│   │       ├── VolumeAnalysis.vue    # 体积分析
-│   │       └── VisibilityAnalysis.vue  # 通视分析
+│   │       ├── VolumeAnalysis.vue    # 方量分析
+│   │       └── VisibilityAnalysis.vue  # 可见性分析
 │   │
 │   ├── router/                       # 路由配置
 │   │   └── index.js                  # 路由配置文件
 │   │
-│   ├── home/                         # 首页模块
-│   │   └── home.vue                  # 首页组件
+│   ├── utils/                        # 工具函数
+│   │   └── codeExtractor.js          # 代码提取工具
 │   │
-│   ├── study/                        # 学习模块
-│   │   └── study.vue                 # 学习组件
-│   │
-│   ├── project/                      # 项目模块
-│   │   ├── project.vue               # 项目列表
-│   │   ├── DigitalCampus.vue         # 数字校园项目
-│   │   ├── DigitalCampusDetail.vue   # 数字校园详情
-│   │   ├── ExampleProject.vue        # 示例项目
-│   │   └── GraduationProject.vue     # 毕业设计项目
-│   │
-│   ├── App.vue                       # 根组件（布局管理）
+│   ├── App.vue                       # 根组件
 │   ├── main.js                       # 应用入口文件
 │   └── env.d.ts                      # TypeScript 环境声明
 │
 ├── index.html                        # HTML 入口文件
 ├── vite.config.js                    # Vite 配置
 ├── package.json                      # 项目依赖配置
+├── tsconfig.json                     # TypeScript 配置
 ├── jsconfig.json                     # JavaScript 配置
 └── .gitignore                        # Git 忽略配置
 ```
@@ -358,7 +343,7 @@ CesiumStudio-LX/
 ```
 1. 创建 .vue 文件
 2. 在 src/examples/index.js 中注册示例
-3. 添加缩略图（可选）推荐 180 * 120 像素
+3. 添加缩略图（可选）推荐 180 × 120 像素
 4. 测试验证
 ```
 
@@ -371,10 +356,10 @@ CesiumStudio-LX/
 **分类目录**：
 - `Basic/` - 基础功能示例（Viewer、Camera、Scene、Globe）
 - `Entity/` - 实体相关示例（点、线、面、模型等）
-- `Imagery/` - 影像图层相关示例（OSM、Mapbox、WMS等）
+- `Imagery/` - 影像图层相关示例（OSM、Mapbox等）
 - `Terrain/` - 地形相关示例（地形加载、高程颜色等）
 - `Interaction/` - 交互相关示例（绘制、测量等）
-- `SpatialAnalysis/` - 空间分析示例（剖面、坡向、体积、通视等）
+- `SpatialAnalysis/` - 空间分析示例（剖面、坡向、方量、可见性等）
 - 其他分类可按需创建新目录
 
 **文件结构**：
@@ -395,17 +380,19 @@ CesiumStudio-LX/
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
 
-let viewer = null // Cesium 实例
-const isReady = ref(false) // 初始化状态
+let viewer = null
+const isReady = ref(false)
 
 const initCesium = async () => {
   try {
     isReady.value = false
     viewer = new Cesium.Viewer('cesium-container', {
-      terrainProvider: await Cesium.createWorldTerrainAsync(),
+      terrainProvider: await Cesium.CesiumTerrainProvider.fromUrl(
+        Cesium.IonResource.fromAssetId(1)
+      ),
     })
     // 添加功能代码...
-    isReady.value = true // 初始化完成
+    isReady.value = true
     console.log('Cesium 初始化完成')
   } catch (error) {
     console.error('Cesium 初始化失败：', error)
@@ -450,7 +437,7 @@ onUnmounted(() => {
   height: 100%;
 }
 
-.loading-overlay{
+.loading-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -506,7 +493,7 @@ import yourExampleCode from './YourCategory/YourExample.vue?raw'
 |--------|------|--------|
 | FPS监控 | 显示/隐藏帧率监控 | 开启 |
 | 明暗模式 | 切换亮色/暗色主题 | 亮色 |
-| 主题色预设 | 选择界面主题色 | 默认白 |
+| 主题色预设 | 选择界面主题色（默认白、淡紫、淡绿、淡粉、薄荷绿、柔和蓝） | 默认白 |
 
 ---
 
@@ -569,6 +556,5 @@ MIT License
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/) - 代码编辑器
 - [Vue.js](https://vuejs.org/) - 前端框架
 - [Vite](https://vitejs.dev/) - 构建工具
-- [Element Plus](https://element-plus.org/) - UI 组件库
 - [ECharts](https://echarts.apache.org/) - 图表库
 - [Turf.js](https://turfjs.org/) - 地理空间分析库
