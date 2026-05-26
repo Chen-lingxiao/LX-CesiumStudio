@@ -1,11 +1,73 @@
 <script setup>
 /**
- * PolylineEntity.vue - Cesium 折线实体示例组件
+ * PolylineEntity.vue - Cesium 折线实体多种模式示例组件
  *
- * 功能说明：
- * 1. 演示折线（Polyline）的三种模式：直线隧道效果、贴地弧线、不贴地弧线
- * 2. 展示 depthFailMaterial 属性实现隧道效果（被遮挡部分变色）
- * 3. 演示不同的 arcType 和 clampToGround 设置
+ * 【功能说明】
+ * 1. 演示折线（Polyline）的三种显示模式：直线隧道、贴地弧线、不贴地弧线
+ * 2. 展示 depthFailMaterial 属性实现隧道穿透效果（被地形遮挡部分变色）
+ * 3. 对比不同 arcType（弧线类型）和 clampToGround（贴地设置）的视觉效果
+ * 4. 介绍折线与地形交互的多种配置方式
+ *
+ * 【核心技术要点】
+ * - 地形深度检测：scene.globe.depthTestAgainstTerrain = true
+ *   开启后，折线被地形遮挡时会使用 depthFailMaterial 材质
+ *
+ * - 弧线类型（arcType）：
+ *   · ArcType.NONE：直线连接，不随球面弯曲（适合隧道、地下管线）
+ *   · ArcType.GEODESIC：大地线/测地线，球面最短路径（适合航线、道路）
+ *   · ArcType.RHUMB：恒向线/等角航线，保持固定方位角（适合航海导航）
+ *
+ * - 贴地模式（clampToGround）：
+ *   · true：线条沿地表起伏，贴合地形（适合道路、河流、边界线）
+ *   · false：保持指定高度，不随地形变化（适合航线、管道）
+ *
+ * - 分类类型（classificationType）：
+ *   · TERRAIN：仅贴合地形表面
+ *   · CESIUM_3D_TILE：仅贴合 3D 瓦片表面
+ *   · BOTH：同时贴合地形和 3D 瓦片
+ *
+ * - 高度参考（heightReference）：
+ *   · NONE：使用绝对高度
+ *   · CLAMP_TO_GROUND：固定到地面
+ *   · RELATIVE_TO_GROUND：相对于地面高度
+ *
+ * 【三种折线模式详解】
+ * 1. 直线隧道效果（蓝色线，红色遮挡部分）
+ *    - arcType: NONE（直线）
+ *    - clampToGround: false
+ *    - depthFailMaterial: 半透明红色（被地形遮挡时显示）
+ *    - 适用场景：隧道、地下管线、直线穿越效果
+ *
+ * 2. 贴地弧线（黄色线）
+ *    - arcType: GEODESIC（大地线）
+ *    - clampToGround: true
+ *    - classificationType: TERRAIN
+ *    - 适用场景：公路、铁路、河流、行政边界
+ *
+ * 3. 不贴地弧线（绿色线）
+ *    - arcType: GEODESIC（大地线）
+ *    - clampToGround: false
+ *    - 使用 fromDegreesArrayHeights 指定固定高度
+ *    - 适用场景：航线、输电线路、通信线路
+ *
+ * 【实现步骤】
+ * 1. 创建 Viewer 实例并加载地形数据
+ * 2. 开启地形深度检测（depthTestAgainstTerrain = true）
+ * 3. 分别创建三种模式的折线实体
+ * 4. 为每条线配置标签说明
+ * 5. 相机飞行到珠峰地区（地形起伏明显，效果更佳）
+ *
+ * 【注意事项】
+ * - depthFailMaterial 必须配合 depthTestAgainstTerrain = true 才能生效
+ * - clampToGround = true 时，positions 的高度值会被忽略
+ * - 大地线在短距离内近似直线，长距离才会显现曲率
+ * - 开启深度检测会增加性能开销，低配置设备可酌情关闭
+ *
+ * 【使用场景】
+ * - 交通规划：公路、铁路、航线可视化
+ * - 管线工程：输油管道、输电线路、通信光缆
+ * - 地理分析：行政边界、流域范围、等值线
+ * - 军事应用：飞行轨迹、导弹路径、雷达覆盖范围
  */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'

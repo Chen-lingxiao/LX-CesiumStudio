@@ -1,4 +1,44 @@
 <script setup>
+/**
+ * DrawPolyline.vue - Cesium 折线绘制示例组件
+ *
+ * 【功能说明】
+ * 1. 演示如何在 Cesium 地图上交互式绘制折线
+ * 2. 支持左键连续点击添加顶点，右键完成绘制
+ * 3. 实时预览折线（跟随鼠标变形）
+ * 4. 完成绘制后生成 WKT LINESTRING 格式坐标串和外包框
+ *
+ * 【核心技术要点】
+ *
+ * 1. 动态预览原理
+ *    - 使用 Cesium.CallbackProperty 动态获取折线顶点数组
+ *    - 鼠标移动时更新最后一个顶点位置，实现折线"拉伸"效果
+ *    - activeShapePoints 数组中最后一个点随鼠标移动
+ *
+ * 2. 顶点与临时实体管理
+ *    - drawnEntityIds：已完成折线的实体 ID
+ *    - drawnVertexIds：已完成折线的顶点标记 ID
+ *    - activeVertexIds：当前绘制中的顶点标记 ID（绘制完成后转入 drawnVertexIds）
+ *    - vertexCounter：顶点 ID 自增计数器
+ *
+ * 3. 坐标转换与 WKT 生成
+ *    - Cartesian3 → Cartographic（弧度经纬度）
+ *    - 弧度 → 角度：Cesium.Math.toDegrees，保留8位小数
+ *    - WKT LINESTRING 格式：LINESTRING (lon1 lat1, lon2 lat2, ...)
+ *
+ * 【交互流程】
+ * - 点击"绘制折线"按钮进入绘制模式
+ * - 左键点击添加顶点（第1个点创建浮动点和预览）
+ * - 鼠标移动时折线末端跟随变形
+ * - 右键点击完成绘制，生成最终实体和顶点标记
+ * - 顶点不足2个时自动取消绘制
+ *
+ * 【设计要点】
+ * - 预览样式：黄色折线，clampToGround 贴地
+ * - 顶点样式：白色圆点，pixelSize: 6
+ * - 状态栏显示已添加顶点数量
+ * - terminateShape 时将 activeVertexIds 合并到 drawnVertexIds
+ */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
 
@@ -27,7 +67,12 @@ let floatingPoint = null
 /** 屏幕空间事件处理器 */
 let handler = null
 
-/** 坐标拾取：优先地形表面，其次椭球体表面 */
+/**
+ * 获取屏幕坐标对应的地形表面笛卡尔坐标
+ *
+ * @param {Cesium.Cartesian2} position - 屏幕坐标 {x, y}
+ * @returns {Cesium.Cartesian3|null} 地形表面坐标，失败返回 null
+ */
 const getPickedPosition = (position) => {
   const ray = viewer.camera.getPickRay(position)
   if (!ray) return null
@@ -229,10 +274,11 @@ const initCesium = async () => {
       duration: 2
     })
     isReady.value = true
+    console.log('DrawPolyline初始化成功')
     statusMessage.value = '地图加载完成，请选择绘制模式'
   } catch (error) {
-    console.error('DrawPolyline 初始化失败：', error)
-    statusMessage.value = '地图初始化失败'
+    console.error('DrawPolyline初始化失败：', error)
+    statusMessage.value = 'DrawPolyline初始化失败'
   }
 }
 
@@ -244,6 +290,7 @@ const destroyCesium = () => {
     viewer = null
   }
   isReady.value = false
+  console.log('DrawPolyline已销毁')
 }
 
 onMounted(() => {
@@ -278,7 +325,6 @@ onUnmounted(() => {
     </div>
 
     <div class="status-bar">
-      <span class="status-icon">📏</span>
       <span class="status-text">{{ statusMessage }}</span>
     </div>
   </div>

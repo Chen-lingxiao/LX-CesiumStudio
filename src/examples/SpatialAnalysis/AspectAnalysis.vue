@@ -1,4 +1,71 @@
 <script setup>
+/**
+ * AspectAnalysis.vue - Cesium 地形坡向分析示例组件
+ *
+ * 【功能说明】
+ * 1. 演示如何对地形进行坡向分析（Aspect Analysis）
+ * 2. 用户可在地图上绘制多边形区域，系统对该区域进行坡向计算
+ * 3. 使用 Canvas 渲染坡向可视化结果，并叠加到地形上
+ * 4. 提供精度滑块控制分析精度
+ *
+ * 【核心技术要点】
+ *
+ * 1. 坡向定义
+ *    - 坡向：地形表面朝向的方位角（0°-360°）
+ *    - 0°/360°：北，90°：东，180°：南，270°：西
+ *    - 坡向反映地形倾斜方向，对气候、植被、建筑布局有重要影响
+ *
+ * 2. 坡向计算算法（基于 8 邻域梯度法）
+ *    - 对每个采样点，计算其 8 个邻域点（东、南、西、北 + 4 个对角方向）的高程差
+ *    - 找出高度差最大的方向，该方向即为坡向（水流流向）
+ *    - 归一化处理：对角方向距离更远（√2 倍），需要除以距离系数
+ *
+ * 3. 采样策略
+ *    - 网格采样：在分析区域内生成均匀网格
+ *    - 中心点 + 8 邻域：每个网格点采样 9 个位置（中心 + 8 个方向）
+ *    - 使用 Cesium.sampleTerrainMostDetailed 获取精确地形高度
+ *
+ * 4. 可视化渲染
+ *    - Canvas 像素级渲染：每个网格对应一个像素
+ *    - 8 方向配色：北(蓝)、东北(绿)、东(青)、东南(黄)、南(橙)、西南(红)、西(品红)、西北(紫)
+ *    - ImageMaterialProperty：将 Canvas 作为纹理叠加到多边形上
+ *
+ * 【实现步骤】
+ * 1. 创建 Viewer 实例并加载全球地形数据
+ * 2. 使用 useCesiumDraw 绘制多边形区域
+ * 3. 计算分析范围的网格尺寸（gridWidth × gridHeight）
+ * 4. 生成采样点坐标（中心点 + 8 邻域）
+ * 5. 使用 sampleTerrainMostDetailed 采样地形高度
+ * 6. 对每个网格点计算坡向（8 邻域梯度法）
+ * 7. 创建 Canvas 并根据坡向值绘制像素
+ * 8. 将 Canvas 作为材质应用到多边形
+ *
+ * 【坡向计算详解】
+ * 
+ * 假设中心点高度为 H_center，8 个邻域点高度为 H_i
+ * 
+ * 1. 计算高度差：ΔH_i = H_i - H_center
+ * 2. 归一化：ΔH'_i = ΔH_i / distance_i（正交方向 distance=1，对角方向 distance=√2）
+ * 3. 找出最大高度差方向：max(|ΔH'_i|)
+ * 4. 根据方向确定坡向：
+ *    - 若 ΔH_max > 0（邻域点更高），坡向指向该方向（水流流向）
+ *    - 若 ΔH_max < 0（邻域点更低），坡向指向相反方向
+ *
+ * 【注意事项】
+ * - 必须加载地形数据才能进行坡向分析
+ * - 分析精度越高（precision 越小），计算量越大，耗时越长
+ * - 精度建议：小区域（<1km²）用 0.0001（~11m），大区域用 0.0005（~55m）
+ * - 坡向分析结果叠加到地形上，需要开启 depthTestAgainstTerrain
+ * - Canvas 尺寸 = 网格尺寸，过大可能导致性能问题
+ *
+ * 【使用场景】
+ * - 地质勘探：分析断层走向、岩层倾斜方向
+ * - 水文分析：确定水流方向、汇水区域
+ * - 气象研究：分析日照时长、温度分布
+ * - 城市规划：建筑朝向选择、太阳能板布局
+ * - 农业规划：作物种植方向、灌溉系统设计
+ * - 生态研究：植被分布、动物栖息地分析
+ */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
 import { useCesiumDraw } from '@/composables/useCesiumDraw'
@@ -20,9 +87,9 @@ const initCesium = async () => {
       duration: 2,
     })
     isReady.value = true
-    console.log('BasicEntity 初始化完成')
+    console.log('坡向分析 初始化完成')
   } catch (error) {
-    console.error('BasicEntity 初始化失败：', error)
+    console.error('坡向分析 初始化失败：', error)
   }
 }
 
@@ -32,7 +99,7 @@ const destroyCesium = () => {
     viewer = null
   }
   isReady.value = false
-  console.log('Cesium 销毁完成')
+  console.log('坡向分析 销毁完成')
 }
 
 // ===================== 绘制功能集成 =====================

@@ -1,17 +1,29 @@
 <script setup>
 /**
- * BasicEntity.vue - Cesium Entity 基础示例组件
+ * BasicEntity.vue - Cesium Entity 综合标注示例组件
  *
- * 功能说明：
- * 1. 创建基础的 Cesium Viewer 实例
- * 2. 添加一个完整的实体对象（包含点标记、广告牌、文字标签）
- * 3. 演示如何使用 Cesium Entities API 创建和管理地理实体
+ * 【功能说明】
+ * 1. 演示如何在同一个 Entity 上组合多种可视化元素（点 + 广告牌 + 标签）
+ * 2. 展示 Entity 的完整配置结构，包括 ID、名称、描述信息和图形属性
+ * 3. 实现点击实体时显示 HTML 格式的详细信息框
+ * 4. 演示相机飞行到目标位置的动画效果
  *
- * 技术要点：
- * - Entity 支持多种可视化属性：point、billboard、label、polyline、polygon 等
- * - heightReference: 高度参考（NONE/RELATIVE_TO_GROUND/CLAMP_TO_GROUND）
- * - disableDepthTestDistance: 禁用深度测试，使标注始终显示在最前方
- * - distanceDisplayCondition: 根据距离控制显示范围
+ * 【核心技术要点】
+ * - Entity 复合结构：单个 Entity 可同时包含 point、billboard、label 等多种图形
+ * - 位置定位：使用 Cesium.Cartesian3.fromDegrees(经度，纬度，高度) 转换地理坐标
+ * - 深度测试：disableDepthTestDistance 确保标注不被地形遮挡
+ * - 距离控制：distanceDisplayCondition 根据相机距离自动显示/隐藏
+ * - 信息框：description 支持 HTML 字符串，点击实体时自动弹出
+ *
+ * 【关键参数说明】
+ * - id: 实体唯一标识符，用于后续查询和管理
+ * - name: 实体名称，显示在信息框标题
+ * - description: 实体描述，支持 HTML 格式，可包含图片、表格等
+ * - position: 实体锚点位置（笛卡尔坐标）
+ *
+ * 【使用场景】
+ * 适用于需要在地图上标注兴趣点（POI）并显示详细信息的场景，
+ * 如旅游景点、建筑物、地标等位置的可视化展示
  */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
@@ -81,7 +93,7 @@ const destroyCesium = () => {
     viewer = null
   }
   isReady.value = false
-  console.log('Cesium 销毁完成')
+  console.log('BasicEntity 销毁完成')
 }
 
 onMounted(() => {

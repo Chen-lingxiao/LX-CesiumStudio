@@ -361,6 +361,15 @@ const handleExampleClick = (example) => {
   }
 };
 
+const openEditorView = (example) => {
+  if (example) {
+    jsCode.value = example.jsCode;
+    htmlCssCode.value = example.htmlCode + "\n\n" + example.cssCode;
+    emit("load-example", example);
+  }
+  emit("update:modelValue", "editor");
+};
+
 /**
  * 组件挂载时初始化编辑器（如果当前是编辑器视图）
  */
@@ -472,7 +481,14 @@ defineExpose({
             </div>
           </div>
           <div class="card-content">
-            <h4 class="card-title">{{ example.name }}</h4>
+            <div class="card-title-row">
+              <h4 class="card-title">{{ example.name }}</h4>
+              <span 
+                class="iconfont icon-daima card-code-icon" 
+                title="代码编辑"
+                @click.stop="openEditorView(example)"
+              ></span>
+            </div>
             <p class="card-description">{{ example.description }}</p>
             <div class="card-footer">
               <div class="card-tags">
@@ -689,6 +705,39 @@ defineExpose({
   font-size: 14px;
   font-weight: 600;
   color: var(--color-text-primary);
+}
+
+/* 卡片标题行 */
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.card-title-row .card-title {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 卡片代码图标 */
+.card-code-icon {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  margin-left: 8px;
+  transition: color 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.card-code-icon:hover {
+  color: var(--color-primary);
+  transform: scale(1.1);
 }
 
 /* 卡片描述 */

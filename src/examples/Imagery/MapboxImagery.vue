@@ -67,9 +67,9 @@ const initCesium = async () => {
     currentLayer = createMapboxLayer(selectedStyle.value)
 
     isReady.value = true
-    console.log('Cesium 初始化完成')
+    console.log('MapboxImagery初始化成功')
   } catch (error) {
-    console.error('Cesium 初始化失败：', error)
+    console.error('MapboxImagery初始化失败：', error)
   }
 }
 
@@ -97,7 +97,7 @@ const destroyCesium = () => {
   }
   currentLayer = null
   isReady.value = false
-  console.log('Cesium 销毁完成')
+  console.log('MapboxImagery已销毁')
 }
 
 onMounted(() => {

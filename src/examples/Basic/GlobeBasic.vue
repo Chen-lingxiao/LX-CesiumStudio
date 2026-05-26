@@ -35,8 +35,8 @@ const initCesium = async () => {
     viewer = new Cesium.Viewer("cesium-container", {
       terrainProvider: await Cesium.createWorldTerrainAsync(),
     });
-
-    setupGlobe();
+    // 配置地球外观
+    setupGlobe(); 
     isReady.value = true;
     console.log("GlobeBasic 初始化完成");
   } catch (error) {

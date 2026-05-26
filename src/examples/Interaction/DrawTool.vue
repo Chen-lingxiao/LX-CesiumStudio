@@ -1,19 +1,46 @@
 <script setup>
 /**
- * DrawTool.vue - Cesium 点线面绘制工具组件
- * 
- * 功能说明：
- * 1. 创建 Cesium Viewer 实例
- * 2. 支持绘制点、线、多边形、矩形
- * 3. 左键点击添加顶点，右键完成绘制（点除外）
- * 4. 支持清除所有绘制内容
- * 
- * 使用方式：
- * - 点击按钮选择绘制模式
- * - 在地图上点击添加顶点
- * - 绘制线和面时右键完成绘制
- * - 绘制矩形只需要两个对角点
- * - 点击清除按钮删除所有绘制
+ * DrawTool.vue - Cesium 综合绘制工具组件
+ *
+ * 【功能说明】
+ * 1. 集成点、折线、多边形、矩形四种绘制模式
+ * 2. 基于 useCesiumDraw composable 实现绘制逻辑复用
+ * 3. 支持交互式绘制和绘制结果管理
+ *
+ * 【核心技术要点】
+ *
+ * 1. 组件架构
+ *    - 视图层（Vue Template）：UI 交互和状态展示
+ *    - 业务层（useCesiumDraw）：封装绘制逻辑
+ *    - 渲染层（Cesium Viewer）：地图渲染和实体管理
+ *
+ * 2. useCesiumDraw Composable
+ *    - drawLine()：异步绘制折线，返回 Promise<Result>
+ *    - drawPolygon()：异步绘制多边形，返回 Promise<Result>
+ *    - drawRectangle()：异步绘制矩形（两个对角点），返回 Promise<Result>
+ *    - clearDrawings()：清除所有绘制
+ *    - cancelCurrentDrawing()：取消当前绘制
+ *
+ * 3. 绘制结果格式
+ *    Result = {
+ *      type: 'polyline' | 'polygon' | 'rectangle',
+ *      lnglats: [[lon, lat], ...],
+ *      wkt: 'LINESTRING (...)' | 'POLYGON (...)',
+ *      boundingBox: { west, south, east, north }
+ *    }
+ *
+ * 【交互流程】
+ * - 点击按钮选择绘制模式（点/线/面/矩形）
+ * - 左键点击添加顶点，矩形只需两个对角点
+ * - 折线和多边形右键完成绘制
+ * - 绘制结果自动输出到控制台
+ * - 点击"清除所有"移除所有绘制
+ *
+ * 【设计要点】
+ * - currentMode 控制当前激活的绘制模式
+ * - 点绘制在组件内部直接管理（不在 useCesiumDraw 中）
+ * - 模式切换时先停止当前绘制，再开始新绘制
+ * - toggleDrawMode 再次点击同一按钮可取消当前绘制
  */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
@@ -193,10 +220,10 @@ const initCesium = async () => {
 
     isReady.value = true
     statusMessage.value = '地图加载完成，请选择绘制模式'
-    console.log('DrawTool 初始化完成')
+    console.log('DrawTool初始化成功')
   } catch (error) {
-    console.error('DrawTool 初始化失败：', error)
-    statusMessage.value = '地图初始化失败'
+    console.error('DrawTool初始化失败：', error)
+    statusMessage.value = 'DrawTool初始化失败'
   }
 }
 
@@ -212,7 +239,7 @@ const destroyCesium = () => {
   }
 
   isReady.value = false
-  console.log('Cesium 销毁完成')
+  console.log('DrawTool已销毁')
 }
 
 // 组件挂载时初始化

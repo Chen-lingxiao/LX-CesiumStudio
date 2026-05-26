@@ -1,17 +1,85 @@
 <script setup>
 /**
- * SectionAnalysis.vue - 剖面分析示例组件
+ * SectionAnalysis.vue - Cesium 地形剖面分析示例组件
  *
- * 功能说明：
- * 1. 在地形上绘制剖面线（起点→中间点→终点）
- * 2. 沿剖面线插值采样地形高度
- * 3. 使用 ECharts 绘制高程剖面图
+ * 【功能说明】
+ * 1. 演示如何在地形上绘制剖面线并进行高程采样
+ * 2. 沿剖面线插值采样地形高度，生成高程-距离数据
+ * 3. 使用 ECharts 绘制高程剖面图，直观展示地形起伏
+ * 4. 自动标注起点、终点，并在地图上显示剖面线
  *
- * 技术要点：
- * - Cesium.Math.lerp: 线性插值获取路径上的采样点
- * - viewer.scene.globe.getHeight: 获取地形高度
- * - Haversine 公式: 计算球面两点间的累计距离
- * - depthTestAgainstTerrain: 开启地形深度测试
+ * 【核心技术要点】
+ *
+ * 1. 剖面采样策略
+ *    - 控制点：用户定义的路径关键点（至少 2 个：起点和终点）
+ *    - 线性插值：在相邻控制点之间进行 100 等分采样
+ *    - 高程获取：使用 viewer.scene.globe.getHeight 获取每个采样点的地形高度
+ *    - 累计距离：使用 Haversine 公式计算从起点到当前点的球面距离
+ *
+ * 2. Haversine 公式（球面距离计算）
+ *    - 用于计算地球表面两点间的大圆距离
+ *    - 考虑地球曲率，比平面投影距离更精确
+ *    - 公式：d = R × 2 × atan2(√a, √(1-a))
+ *    - 其中：a = sin²(Δlat/2) + cos(lat1) × cos(lat2) × sin²(Δlon/2)
+ *    - R = 6371 km（地球平均半径）
+ *
+ * 3. 数据结构
+ *    - 输入：控制点数组 [[lon, lat], [lon, lat], ...]
+ *    - 中间数据：采样点坐标序列 [lon, lat]
+ *    - 输出：采样数据 [lon, lat, height, cumulativeDistance]
+ *
+ * 4. ECharts 图表配置
+ *    - xAxis：累计距离（公里），boundaryGap: false 使曲线连续
+ *    - yAxis：高程值（米）
+ *    - series：平滑面积图（smooth: true），面积填充 + 线条
+ *    - tooltip：悬停显示当前点距离和高程
+ *
+ * 【实现步骤】
+ * 1. 创建 Viewer 实例并加载全球地形数据
+ * 2. 开启地形深度测试（depthTestAgainstTerrain = true）
+ * 3. 飞行到目标区域，待地形加载完成后执行剖面分析
+ * 4. 定义默认剖面线控制点（可自定义）
+ * 5. 对每段控制点进行 100 等分线性插值
+ * 6. 使用 globe.getHeight 获取每个插值点的地形高度
+ * 7. 使用 Haversine 公式累计计算路径距离
+ * 8. 生成采样数据数组 [lon, lat, height, cumulativeDistance]
+ * 9. 使用 ECharts 渲染高程剖面图
+ * 10. 在地图上标注起点、终点，并绘制红色贴地剖面线
+ *
+ * 【剖面分析流程详解】
+ *
+ * 假设控制点为 A、B、C 三点
+ *
+ * 1. 第一段（A → B）：
+ *    - 在 A、B 之间进行 100 等分插值
+ *    - 生成 100 个采样点（不含终点 B，避免重复）
+ *    - 计算每个采样点的高程和累计距离
+ *
+ * 2. 第二段（B → C）：
+ *    - 在 B、C 之间进行 100 等分插值
+ *    - 生成 100 个采样点（含终点 C）
+ *    - 累计距离 = 上一段总距离 + 当前段距离
+ *
+ * 3. 最终数据：
+ *    - 总采样点数 = (控制点数 - 1) × 100
+ *    - 每个点包含：经度、纬度、高程、累计距离
+ *
+ * 【注意事项】
+ * - 必须加载地形数据才能获取高程信息
+ * - 地形加载需要时间，建议在 camera.flyTo 的 complete 回调中执行分析
+ * - 采样密度（step=100）可根据需要调整，值越大曲线越平滑
+ * - Haversine 公式计算的是球面距离，适合长距离路径
+ * - 短距离（<10km）可使用平面距离公式简化计算
+ * - globe.getHeight 返回的是相对于椭球体的高度（海拔）
+ *
+ * 【使用场景】
+ * - 道路规划：分析路线坡度、纵断面设计
+ * - 管线工程：设计管道、电缆的埋设深度
+ * - 铁路设计：计算坡度、确定隧道和桥梁位置
+ * - 地质勘探：分析地层剖面、矿藏分布
+ * - 水文分析：计算河流纵剖面、洪水淹没范围
+ * - 建筑设计：确定建筑地基高程、排水系统设计
+ * - 户外运动：规划登山路线、计算爬升高度
  */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
@@ -49,9 +117,9 @@ const initCesium = async () => {
     })
 
     isReady.value = true
-    console.log('SectionAnalysis 初始化完成')
+    console.log('剖面分析 初始化完成')
   } catch (error) {
-    console.error('SectionAnalysis 初始化失败：', error)
+    console.error('剖面分析 初始化失败：', error)
   }
 }
 
@@ -313,7 +381,7 @@ const destroyCesium = () => {
     viewer = null
   }
   isReady.value = false
-  console.log('Cesium 销毁完成')
+  console.log('剖面分析 销毁完成')
 }
 
 onMounted(() => {

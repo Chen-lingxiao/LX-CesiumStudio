@@ -274,9 +274,10 @@ const initCesium = async () => {
     })
 
     isReady.value = true
+    console.log('HeightMeasure初始化成功')
   } catch (error) {
-    console.error('初始化失败：', error)
-    statusMessage.value = '初始化失败'
+    console.error('HeightMeasure初始化失败：', error)
+    statusMessage.value = 'HeightMeasure初始化失败'
   }
 }
 
@@ -292,6 +293,7 @@ const destroyCesium = () => {
   }
 
   isReady.value = false
+  console.log('HeightMeasure已销毁')
 }
 
 onMounted(() => {
@@ -324,7 +326,6 @@ onUnmounted(() => {
     </div>
 
     <div class="status-bar">
-      <span class="status-icon">📈</span>
       <span class="status-text">{{ statusMessage }}</span>
     </div>
   </div>

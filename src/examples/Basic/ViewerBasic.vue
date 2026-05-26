@@ -1,10 +1,30 @@
 <script setup>
 /**
- * ViewerBasic.vue - Cesium 基础示例组件
+ * ViewerBasic.vue - Cesium Viewer 基础配置示例组件
  *
  * 功能说明：
  * 1. 创建基础的 Cesium Viewer 实例
- * 2. 添加一个简单的实体对象（点标记+标签）到场景中
+ * 2. 配置 Viewer 的各种可选控件（地形、按钮、面板等）
+ * 3. 添加一个简单的实体对象（点标记 + 标签）到场景中
+ * 4. 演示相机飞行到指定位置
+ *
+ * 技术要点：
+ * - terrainProvider: 地形提供器（createWorldTerrainAsync 全球地形）
+ * - baseLayerPicker: 底图选择器（右上角影像图层切换）
+ * - geocoder: 地理编码搜索（地点搜索定位）
+ * - homeButton: 首页按钮（返回默认全球视图）
+ * - sceneModePicker: 场景模式选择器（3D/2D/2.5D 切换）
+ * - navigationHelpButton: 导航帮助（操作提示）
+ * - animation: 动画控制器（时间轴播放控件）
+ * - timeline: 时间轴（时间序列数据控制）
+ * - fullscreenButton: 全屏按钮
+ * - vrButton: VR 虚拟现实模式
+ * - infoBox: 实体信息框（点击显示详情）
+ * - selectionIndicator: 选中指示器（高亮标记）
+ * - skyBox: 天空盒（背景星空纹理）
+ * - skyAtmosphere: 大气效果（地球周围蓝色光晕）
+ * - shadows: 阴影渲染（性能开销大）
+ * - shouldAnimate: 自动动画播放
  */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'

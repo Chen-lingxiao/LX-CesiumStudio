@@ -1,4 +1,43 @@
 <script setup>
+/**
+ * DrawPoint.vue - Cesium 单点绘制示例组件
+ *
+ * 【功能说明】
+ * 1. 演示如何在 Cesium 地图上交互式绘制单个点标记
+ * 2. 支持连续点击放置多个点标记，所有点保留显示
+ * 3. 支持撤销最后一个点和清除所有点
+ * 4. 实时显示已放置点的经纬度坐标
+ *
+ * 【核心技术要点】
+ *
+ * 1. 坐标拾取策略
+ *    - 使用 Camera.getPickRay 获取屏幕射线
+ *    - 使用 Globe.pick 拾取地形表面坐标（支持地形起伏）
+ *    - 回退到 camera.pickEllipsoid 拾取椭球体表面
+ *    - HeightReference.CLAMP_TO_GROUND 确保点贴地显示
+ *
+ * 2. 实体管理
+ *    - pointEntityIds 数组存储所有已放置点的实体 ID
+ *    - 支持按 ID 精确删除单个实体
+ *    - 撤销功能通过 pop() 移除最后一个 ID
+ *
+ * 3. 事件处理
+ *    - LEFT_CLICK：放置点标记
+ *    - RIGHT_CLICK：结束绘制模式
+ *    - 使用 ScreenSpaceEventHandler 管理鼠标事件
+ *
+ * 【交互流程】
+ * - 点击"开始绘制"按钮进入绘制模式
+ * - 左键点击地图放置点标记（可连续放置多个）
+ * - 右键点击结束绘制模式
+ * - 点击"撤销上一个点"删除最后放置的点
+ * - 点击"清除所有"删除所有点
+ *
+ * 【设计要点】
+ * - 点的样式：红色实心点，白色边框，贴地显示
+ * - 状态栏实时显示已放置点数量和坐标
+ * - 绘制模式和状态分离，通过 isDrawing 控制
+ */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
 
@@ -15,7 +54,17 @@ const pointEntityIds = []
 /** 屏幕空间事件处理器 */
 let handler = null
 
-/** 坐标拾取：优先地形表面，其次椭球体表面 */
+/**
+ * 获取屏幕坐标对应的地形表面笛卡尔坐标
+ *
+ * 【拾取策略】
+ * 1. 通过 getPickRay 获取相机射线
+ * 2. 使用 globe.pick 拾取地形表面（含高程）
+ * 3. 若地形不可用，回退到椭球体表面拾取
+ *
+ * @param {Cesium.Cartesian2} position - 屏幕坐标 {x, y}
+ * @returns {Cesium.Cartesian3|null} 地形表面坐标，失败返回 null
+ */
 const getPickedPosition = (position) => {
   const ray = viewer.camera.getPickRay(position)
   if (!ray) return null
@@ -119,10 +168,11 @@ const initCesium = async () => {
       duration: 2
     })
     isReady.value = true
+    console.log('DrawPoint初始化成功')
     statusMessage.value = '地图加载完成，请选择绘制模式'
   } catch (error) {
-    console.error('DrawPoint 初始化失败：', error)
-    statusMessage.value = '地图初始化失败'
+    console.error('DrawPoint初始化失败：', error)
+    statusMessage.value = 'DrawPoint初始化失败'
   }
 }
 
@@ -134,6 +184,7 @@ const destroyCesium = () => {
     viewer = null
   }
   isReady.value = false
+  console.log('DrawPoint已销毁')
 }
 
 onMounted(() => {
@@ -171,7 +222,6 @@ onUnmounted(() => {
     </div>
 
     <div class="status-bar">
-      <span class="status-icon">📍</span>
       <span class="status-text">{{ statusMessage }}</span>
     </div>
   </div>

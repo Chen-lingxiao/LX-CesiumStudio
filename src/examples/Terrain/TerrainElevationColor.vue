@@ -1,21 +1,62 @@
 <script setup>
 /**
- * SceneBasic.vue - Cesium 场景基础示例组件
+ * TerrainElevationColor.vue - Cesium 地形高程分层设色示例组件
  *
- * 功能说明：
- * 1. 演示 Cesium Scene 类的各种配置选项
- * 2. 展示场景模式、大气效果、雾效、光照等效果
- * 3. 介绍地形夸张、天空盒、背景颜色等配置
- * 4. 提供交互式控制面板实时调整场景参数
+ * 【功能说明】
+ * 1. 演示如何使用 Cesium.createElevationBandMaterial() 创建高程分层设色效果
+ * 2. 根据不同海拔高度为地形着色，形成类似地形图的视觉效果
+ * 3. 提供地形垂直夸张控制，增强地形起伏的视觉表现
+ * 4. 演示高程带材质的完整配置流程
  *
- * 技术要点：
- * - SceneMode: 场景模式（2D/3D/ColumbusView）
- * - SkyAtmosphere: 大气效果（色调、饱和度、亮度调整）
- * - Fog: 雾效（距离衰减效果）
- * - ClassificationType: 分类类型（TERRAIN/3D_TILES/BOTH）
- * - ArcType: 弧线类型（NONE/GEODESIC/RHUMB）
- * - verticalExaggeration: 地形垂直夸张
- * - requestRenderMode: 渲染模式（持续/按需）
+ * 【核心技术要点】
+ *
+ * 1. 高程带材质创建（Cesium.createElevationBandMaterial）
+ *    - 核心方法：Cesium.createElevationBandMaterial({ scene, layers })
+ *    - scene: 当前场景对象（必需）
+ *    - layers: 高程带配置数组（定义各高度范围的颜色）
+ *
+ * 2. 高程带配置结构（layers 数组）
+ *    - 每个 layer 包含：
+ *      · entries: 高度区间配置数组
+ *        - height: 高度值（米）
+ *        - color: 该高度范围的颜色（支持透明度）
+ *      · extendUpwards: 是否向上延伸（最后一层通常设为 true）
+ *
+ * 3. 高程分层方案（本示例采用标准地形图配色）
+ *    - 0-200米: 深绿色（平原/低地）
+ *    - 200-500米: 浅绿色（丘陵）
+ *    - 500-1000米: 黄绿色（低山）
+ *    - 1000-2000米: 橙黄色（中山）
+ *    - 2000-3000米: 橙棕色（高山）
+ *    - 3000-5000米: 棕褐色（极高山）
+ *    - 5000-8848米: 紫灰色（雪线以上）
+ *
+ * 4. 地形增强效果
+ *    - verticalExaggeration: 地形垂直夸张系数（1=真实比例，>1=夸张显示）
+ *    - enableLighting: 启用光照（增强地形立体感）
+ *
+ * 【实现步骤】
+ * 1. 创建 Viewer 实例并加载全球地形数据
+ * 2. 定义高程带配置数组（layers），每个元素包含高度范围和对应颜色
+ * 3. 使用 Cesium.createElevationBandMaterial() 创建材质对象
+ * 4. 将材质应用到 globe.material
+ * 5. 配置地形夸张和光照效果
+ * 6. 提供交互式滑块控制地形夸张系数
+ *
+ * 【注意事项】
+ * - 必须加载地形数据才能看到高程设色效果
+ * - layers 数组中的高度值必须按升序排列
+ * - 最后一个 layer 建议设置 extendUpwards: true，覆盖最高海拔以上区域
+ * - 颜色的 alpha 值影响透明度，建议 0.6-0.8 之间以保持地形可见性
+ * - 地形夸张系数不宜过大（建议 1-5 倍），否则会失真
+ * - 启用光照（enableLighting）会增强立体感，但会增加性能开销
+ *
+ * 【使用场景】
+ * - 地理教学：直观展示地形起伏和海拔分布
+ * - 气象分析：配合高程数据进行气候分区
+ * - 规划设计：评估地形对项目的影响
+ * - 旅游导航：展示山地、平原等地形特征
+ * - 地质研究：分析地形地貌分布规律
  */
 import { onMounted, onUnmounted, ref } from "vue";
 import * as Cesium from "cesium";
@@ -142,9 +183,9 @@ const initCesium = async () => {
     
     console.log('高程分层设色效果已成功应用！');
     isReady.value = true;
-    console.log("SceneBasic 初始化完成");
+    console.log("TerrainElevationColor初始化成功");
   } catch (error) {
-    console.error("SceneBasic 初始化失败：", error);
+    console.error("TerrainElevationColor初始化失败：", error);
   }
 };
 
@@ -160,7 +201,7 @@ const destroyCesium = () => {
     viewer = null;
   }
   isReady.value = false;
-  console.log("SceneBasic 销毁完成");
+  console.log("TerrainElevationColor已销毁");
 };
 
 onMounted(() => {

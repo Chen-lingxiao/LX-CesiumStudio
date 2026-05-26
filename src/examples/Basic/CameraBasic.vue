@@ -195,7 +195,8 @@ const setViewRectangle = () => {
  * 弹出对话框显示相机的位置、朝向等信息
  */
 const getCameraInfo = () => {
-  const position = viewer.camera.position
+  const position = viewer.camera.position 
+  // 转换为经纬度坐标
   const cartographic = Cesium.Cartographic.fromCartesian(position)
   
   // 将弧度转换为度并保留小数

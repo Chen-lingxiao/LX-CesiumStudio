@@ -47,9 +47,9 @@ const initCesium = async () => {
     osmBlackLayer.show = true
 
     isReady.value = true
-    console.log('Cesium 初始化完成')
+    console.log('OSMImagery初始化成功')
   } catch (error) {
-    console.error('Cesium 初始化失败：', error)
+    console.error('OSMImagery初始化失败：', error)
   }
 }
 
@@ -72,7 +72,7 @@ const destroyCesium = () => {
     viewer = null
   }
   isReady.value = false
-  console.log('Cesium 销毁完成')
+  console.log('OSMImagery已销毁')
 }
 
 onMounted(() => {

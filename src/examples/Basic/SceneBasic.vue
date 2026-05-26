@@ -1,6 +1,6 @@
 <script setup>
 /**
- * SceneBasic.vue - Cesium 场景基础示例组件
+ * SceneBasic.vue - Cesium Scene 场景配置示例组件
  *
  * 功能说明：
  * 1. 演示 Cesium Scene 类的各种配置选项
@@ -9,13 +9,18 @@
  * 4. 提供交互式控制面板实时调整场景参数
  *
  * 技术要点：
- * - SceneMode: 场景模式（2D/3D/ColumbusView）
- * - SkyAtmosphere: 大气效果（色调、饱和度、亮度调整）
- * - Fog: 雾效（距离衰减效果）
+ * - SkyAtmosphere: 大气效果（色调/饱和度/亮度调整）
+ * - Fog: 雾效（距离衰减效果，density 控制浓度）
+ * - Sun/Moon: 太阳和月亮天体显示
+ * - Lighting: 地表光照（地形阴影效果）
+ * - verticalExaggeration: 地形垂直夸张（1.0 真实，5.0+ 夸张）
+ * - requestRenderMode: 渲染模式（false 持续渲染/true 按需渲染）
+ * - FXAA: 快速近似抗锯齿
+ * - shadows: 动态阴影（性能开销大）
  * - ClassificationType: 分类类型（TERRAIN/3D_TILES/BOTH）
- * - ArcType: 弧线类型（NONE/GEODESIC/RHUMB）
- * - verticalExaggeration: 地形垂直夸张
- * - requestRenderMode: 渲染模式（持续/按需）
+ * - ArcType: 弧线类型（NONE/GEODESIC 大地线/RHUMB 恒向线）
+ * - backgroundColor: 背景颜色设置
+ * - skyBox: 天空盒（自定义星空纹理）
  */
 import { onMounted, onUnmounted, ref } from "vue";
 import * as Cesium from "cesium";
@@ -24,13 +29,14 @@ let viewer = null; // Cesium 实例
 const isReady = ref(false); // 初始化状态
 
 // 控制面板状态
-const atmosphereEnabled = ref(true);
-const fogEnabled = ref(true);
-const sunEnabled = ref(true);
-const moonEnabled = ref(true);
-const shadowsEnabled = ref(false);
-const fxaaEnabled = ref(false);
-const exaggeration = ref(1.0);
+const atmosphereEnabled = ref(true); // 是否显示大气效果
+const fogEnabled = ref(true); // 是否显示雾效
+const sunEnabled = ref(true); // 是否显示太阳
+const moonEnabled = ref(true); // 是否显示月亮
+const shadowsEnabled = ref(false); // 是否显示阴影
+const fxaaEnabled = ref(false); // 是否启用 FXAA 抗锯齿
+const exaggeration = ref(1.0); // 地形垂直夸张
+
 
 const initCesium = async () => {
   try {
@@ -38,7 +44,7 @@ const initCesium = async () => {
     viewer = new Cesium.Viewer("cesium-container", {
       terrainProvider: await Cesium.createWorldTerrainAsync(),
     });
-
+    // 初始化场景
     setupScene();
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(86.85, 28.05, 100000),

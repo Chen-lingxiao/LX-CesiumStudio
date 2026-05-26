@@ -1,76 +1,124 @@
 <script setup>
 /**
- * SpatialAnalysis.vue - 地形分析交互示例
- *
+ * SpatialAnaysis.vue - Cesium 综合空间分析示例组件
+ * 
  * 【功能说明】
- * 支持两种地形分析模式：
- * 1. 剖面分析：用户在地图上交互式绘制一条折线，系统自动沿该折线进行地形高程采样，
- *    并渲染 ECharts 高程剖面图
- * 2. 坡向分析：用户在地图上交互式绘制一个多边形区域，系统对该区域进行坡向分析，
- *    并在地图上渲染坡向可视化结果
- *
- * 【剖面分析交互流程】
- * 1. 点击"绘制剖面线"按钮，进入绘制模式
- * 2. 在地图上依次点击添加顶点（至少 2 个点）
- * 3. 右键结束绘制，自动触发剖面分析
- * 4. 图表显示高程剖面，支持悬停查看具体数值
- * 5. 可点击"清除"按钮重新开始
- *
- * 【坡向分析交互流程】
- * 1. 点击"绘制分析区域"按钮，进入多边形绘制模式
- * 2. 在地图上依次点击添加顶点，右键结束绘制
- * 3. 点击"开始坡向分析"按钮，系统进行坡向分析并渲染结果
- * 4. 可通过精度滑块调整分析精度
- * 5. 可点击"清除"按钮重新开始
- *
- * 【使用的 Composable】
- * - useCesiumDraw: 负责折线和多边形绘制交互
- * - useTerrainSectionAnalysis: 负责地形剖面采样 + ECharts 图表渲染
- * - useAspectAnalysis: 负责坡向分析
+ * 集成四种地形分析功能，展示如何调用封装好的 composables：
+ * 1. 剖面分析：沿折线采样地形高程，渲染剖面图
+ * 2. 坡向分析：分析多边形区域内的坡向分布
+ * 3. 坡度分析：分析多边形区域内的坡度分布
+ * 4. 方量分析：计算填挖方量
+ * 
+ * 【调用方式】
+ * 直接在页面中引入该组件即可使用：
+ * <SpatialAnaysis />
+ * 
+ * 【模块依赖说明】
+ * - useCesiumDraw: 提供绘制折线和多边形的交互能力
+ * - useSectionAnalysis: 剖面分析，返回分析器实例
+ * - useAspectAnalysis: 坡向分析，返回分析器实例
+ * - useSlopeAnalysis: 坡度分析，返回分析器实例
+ * - MeasureVolume: 方量分析，需实例化使用
  */
-import { onMounted, onUnmounted, ref } from 'vue'
+
+// ------------------------------
+// 依赖导入
+// ------------------------------
+import { onMounted, onUnmounted, ref, reactive, watch } from 'vue'
 import * as Cesium from 'cesium'
 import { useCesiumDraw } from '@/composables/useCesiumDraw'
-import { useTerrainSectionAnalysis } from '@/composables/useTerrainSectionAnalysis'
+import { useSectionAnalysis } from '@/composables/useSectionAnalysis'
 import { useAspectAnalysis } from '@/composables/useAspectAnalysis'
+import { useSlopeAnalysis } from '@/composables/useSlopeAnalysis'
+import { useMeasureVolume } from '@/composables/useMeasureVolume'
 
-let viewer = null
-const isReady = ref(false)
-const isDrawing = ref(false)
-const statusMessage = ref('点击"绘制剖面线"开始分析')
+// ------------------------------
+// 全局实例变量
+// ------------------------------
+let viewer = null                // Cesium 视图实例
+let getViewer = null           // 获取 viewer 的函数（供 composables 使用）
+let drawManager = null           // 绘制管理器实例
+let sectionAnalyzer = null       // 剖面分析器实例
+let aspectAnalyzer = null        // 坡向分析器实例
+let slopeAnalyzer = null         // 坡度分析器实例
+let volumeAnalyzer = null        // 方量分析器实例
 
-let getViewerFn = null
-let drawManager = null
-let sectionAnalyzer = null
-let aspectAnalyzer = null
+// ------------------------------
+// 响应式状态（通用）
+// ------------------------------
+const isReady = ref(false)               // Cesium 是否初始化完成
+const isDrawing = ref(false)             // 是否正在绘制
+const statusMessage = ref('点击"绘制剖面线"开始分析')  // 状态提示信息
+const currentMode = ref('section')       // 当前分析模式: section | aspect | slope | volume
 
-const currentAnalysisMode = ref('section')
-const currentExtent = ref([116.138, 40.001, 116.162, 40.019])
-const currentPolygonPositions = ref(null)
-const precisionLevel = ref(5)
-const precisionMeters = ref(55)
-const currentPrecision = ref(0.0005)
-const currentMode = ref('section')
-const showAspectResult = ref(false)
+// ------------------------------
+// 响应式状态（坡向/坡度分析共用）
+// ------------------------------
+const currentExtent = ref([116.138, 40.001, 116.162, 40.019])  // 分析区域范围
+const currentPolygonPositions = ref(null)                        // 当前多边形顶点位置
+const precisionLevel = ref(5)            // 精度等级 (1-10)
+const precisionMeters = ref(55)          // 精度对应的米数
+const currentPrecision = ref(0.0005)     // 精度（经纬度单位）
+const showAspectResult = ref(false)      // 是否显示坡向图例
+const showSlopeResult = ref(false)       // 是否显示坡度图例
 
+// ------------------------------
+// 响应式状态（方量分析专用）
+// ------------------------------
+const volumeResult = ref(null)           // 方量计算结果
+const volumePolygonData = ref(null)      // 保存原始多边形数据（用于重新分析）
+
+/**
+ * 方量分析参数配置
+ * - planeHeight: 基准面高度（米）
+ * - wallMinHeight: 墙体最小高度（米）
+ * - wallMaxHeight: 墙体最大高度（米）
+ */
+const volumeParams = reactive({
+  planeHeight: 100,
+  wallMinHeight: 0,
+  wallMaxHeight: 200
+})
+
+// ------------------------------
+// 方量分析参数监听（自动重新分析）
+// ------------------------------
+watch(volumeParams, () => {
+  if (volumeResult.value) {
+    handleReAnalyzeVolume()
+  }
+}, { deep: true })
+
+// ------------------------------
+// 初始化函数
+// ------------------------------
+/**
+ * 初始化 Cesium 视图和所有分析器
+ * 【调用时机】组件挂载时自动调用
+ */
 const initCesium = async () => {
   try {
     isReady.value = false
+    
+    // 1. 创建 Cesium Viewer
     viewer = new Cesium.Viewer('cesium-container', {
       terrainProvider: await Cesium.createWorldTerrainAsync(),
     })
-
     viewer.scene.globe.depthTestAgainstTerrain = true
 
+    // 2. 定位到默认区域（北京附近）
     viewer.camera.flyTo({
-      destination: Cesium.Rectangle.fromDegrees(90, 30, 92, 32),
-      duration: 3,
+      destination: Cesium.Cartesian3.fromDegrees(116.15, 40.01, 1500),
+      duration: 2,
     })
 
-    getViewerFn = () => viewer
-    drawManager = useCesiumDraw(getViewerFn)
-    sectionAnalyzer = useTerrainSectionAnalysis(getViewerFn, 'section-chart')
-    aspectAnalyzer = useAspectAnalysis(getViewerFn)
+    // 3. 初始化各分析模块
+    getViewer = () => viewer
+    drawManager = useCesiumDraw(getViewer)
+    sectionAnalyzer = useSectionAnalysis(getViewer, 'section-chart')
+    aspectAnalyzer = useAspectAnalysis(getViewer)
+    slopeAnalyzer = useSlopeAnalysis(getViewer)
+    volumeAnalyzer = useMeasureVolume(getViewer, { terrainLevel: 13 })
 
     isReady.value = true
     console.log('SpatialAnalysis 初始化完成')
@@ -79,34 +127,69 @@ const initCesium = async () => {
   }
 }
 
+// ------------------------------
+// 精度设置函数
+// ------------------------------
+/**
+ * 更新分析精度
+ * @description 根据精度等级计算实际精度值（米和经纬度单位）
+ */
 const updateDelta = () => {
   const level = precisionLevel.value
   currentPrecision.value = level * 0.0001
   precisionMeters.value = Math.round(currentPrecision.value * 111320)
 }
 
+// ------------------------------
+// 模式切换函数
+// ------------------------------
+/**
+ * 切换分析模式
+ * @param {string} mode - 目标模式: 'section' | 'aspect' | 'slope' | 'volume'
+ * @description 切换模式时自动清除之前的分析结果
+ */
 const switchMode = (mode) => {
   currentMode.value = mode
-  if (mode === 'section') {
-    statusMessage.value = '点击"绘制剖面线"开始剖面分析'
-  } else {
-    statusMessage.value = '点击"绘制分析区域"开始坡向分析'
+  handleClear()
+  
+  // 设置对应模式的初始提示
+  switch (mode) {
+    case 'section':
+      statusMessage.value = '点击"绘制剖面线"开始剖面分析'
+      break
+    case 'aspect':
+      statusMessage.value = '点击"绘制分析区域"开始坡向分析'
+      break
+    case 'slope':
+      statusMessage.value = '点击"绘制分析区域"开始坡度分析'
+      break
+    case 'volume':
+      statusMessage.value = '点击"绘制区域"开始方量分析'
+      volumeResult.value = null
+      break
   }
 }
 
+// ------------------------------
+// 绘制交互函数
+// ------------------------------
+
+/**
+ * 绘制剖面线
+ * @description 调用 drawManager.drawLine() 绘制折线，完成后自动执行剖面分析
+ */
 const handleDrawSection = async () => {
   if (!drawManager || !sectionAnalyzer) return
-
   if (isDrawing.value) return
 
   isDrawing.value = true
   statusMessage.value = '绘制中：左键点击添加顶点，右键结束绘制'
 
   const result = await drawManager.drawLine()
-
   isDrawing.value = false
 
   if (result && result.lnglats && result.lnglats.length >= 2) {
+    // 调用剖面分析器的分析方法
     sectionAnalyzer.analyzeSection(result.lnglats)
     statusMessage.value = '剖面分析完成，悬停图表查看高程详情'
   } else {
@@ -114,16 +197,18 @@ const handleDrawSection = async () => {
   }
 }
 
+/**
+ * 绘制分析区域（坡向/坡度共用）
+ * @description 调用 drawManager.drawPolygon() 绘制多边形，保存区域范围和顶点
+ */
 const handleDrawPolygon = async () => {
   if (!drawManager) return
-
   if (isDrawing.value) return
 
   isDrawing.value = true
   statusMessage.value = '绘制中：左键点击添加顶点，右键结束绘制'
 
   const result = await drawManager.drawPolygon()
-
   isDrawing.value = false
 
   if (result && result.positions && result.positions.length >= 3) {
@@ -134,15 +219,53 @@ const handleDrawPolygon = async () => {
       result.boundingBox.east,
       result.boundingBox.north
     ]
-    statusMessage.value = '区域绘制完成，点击"开始坡向分析"进行分析'
+    
+    // 根据当前模式设置提示信息
+    if (currentMode.value === 'aspect') {
+      statusMessage.value = '区域绘制完成，点击"开始坡向分析"进行分析'
+    } else if (currentMode.value === 'slope') {
+      statusMessage.value = '区域绘制完成，点击"开始坡度分析"进行分析'
+    }
   } else {
     statusMessage.value = '绘制取消，请重新绘制'
   }
 }
 
+/**
+ * 绘制方量分析区域
+ * @description 调用 drawManager.drawPolygon() 绘制多边形，保存多边形数据供分析使用
+ */
+const handleDrawVolumePolygon = async () => {
+  if (!drawManager) return
+  if (isDrawing.value) return
+
+  isDrawing.value = true
+  statusMessage.value = '绘制中：左键点击添加顶点，右键结束绘制'
+
+  const result = await drawManager.drawPolygon()
+  isDrawing.value = false
+
+  if (result && result.positions && result.positions.length >= 3) {
+    volumePolygonData.value = result.lnglats // 保存原始多边形经纬度数据
+    statusMessage.value = '区域绘制完成，点击"计算方量"进行分析'
+  } else {
+    statusMessage.value = '绘制取消，请重新绘制'
+  }
+}
+
+// ------------------------------
+// 分析执行函数
+// ------------------------------
+
+/**
+ * 执行坡向分析
+ * @description 调用 aspectAnalyzer.analyzeAspect() 进行坡向分析
+ * @param {Array} extent - 分析区域范围 [west, south, east, north]
+ * @param {number} precision - 分析精度（经纬度单位）
+ * @param {Array} polygonPositions - 多边形顶点位置（用于裁剪分析结果）
+ */
 const handleStartAspectAnalysis = async () => {
   if (!aspectAnalyzer) return
-
   if (!currentExtent.value || currentExtent.value.length !== 4) {
     statusMessage.value = '请先绘制分析区域'
     return
@@ -150,12 +273,21 @@ const handleStartAspectAnalysis = async () => {
 
   try {
     statusMessage.value = '分析中，请稍候...'
-    await aspectAnalyzer.analyzeAspect(currentExtent.value, currentPrecision.value, currentPolygonPositions.value)
+    
+    // 调用坡向分析器的分析方法
+    await aspectAnalyzer.analyzeAspect(
+      currentExtent.value, 
+      currentPrecision.value, 
+      currentPolygonPositions.value
+    )
+    
+    // 清除绘制的多边形
     if (drawManager) {
       drawManager.clearDrawings()
     }
     currentPolygonPositions.value = null
     showAspectResult.value = true
+    showSlopeResult.value = false
     statusMessage.value = '坡向分析完成'
   } catch (error) {
     console.error('坡向分析失败:', error)
@@ -163,171 +295,332 @@ const handleStartAspectAnalysis = async () => {
   }
 }
 
+/**
+ * 执行坡度分析
+ * @description 调用 slopeAnalyzer.analyzeSlope() 进行坡度分析
+ * @param {Array} extent - 分析区域范围 [west, south, east, north]
+ * @param {number} precision - 分析精度（经纬度单位）
+ * @param {Array} polygonPositions - 多边形顶点位置（用于裁剪分析结果）
+ */
+const handleStartSlopeAnalysis = async () => {
+  if (!slopeAnalyzer) return
+  if (!currentExtent.value || currentExtent.value.length !== 4) {
+    statusMessage.value = '请先绘制分析区域'
+    return
+  }
+
+  try {
+    statusMessage.value = '分析中，请稍候...'
+    
+    // 调用坡度分析器的分析方法
+    await slopeAnalyzer.analyzeSlope(
+      currentExtent.value, 
+      currentPrecision.value, 
+      currentPolygonPositions.value
+    )
+    
+    // 清除绘制的多边形
+    if (drawManager) {
+      drawManager.clearDrawings()
+    }
+    currentPolygonPositions.value = null
+    showSlopeResult.value = true
+    showAspectResult.value = false
+    statusMessage.value = '坡度分析完成'
+  } catch (error) {
+    console.error('坡度分析失败:', error)
+    statusMessage.value = '坡度分析失败：' + error.message
+  }
+}
+
+/**
+ * 执行方量计算
+ * @description 调用 volumeAnalyzer.calculateVolume() 计算填挖方量
+ * @param {Array} polygon - 多边形经纬度数组
+ * @param {number} planeHeight - 基准面高度
+ * @param {number} wallMinHeight - 墙体最小高度
+ * @param {number} wallMaxHeight - 墙体最大高度
+ */
+const handleCalculateVolume = async () => {
+  if (!volumeAnalyzer || !volumePolygonData.value) {
+    statusMessage.value = '请先绘制分析区域'
+    return
+  }
+
+  try {
+    statusMessage.value = '计算中，请稍候...'
+    
+    // 清除绘制的多边形
+    if (drawManager) {
+      drawManager.clearDrawings()
+    }
+    
+    // 调用方量分析器的计算方法
+    volumeAnalyzer.calculateVolume({
+      polygon: volumePolygonData.value,
+      planeHeight: volumeParams.planeHeight,
+      wallMinHeight: volumeParams.wallMinHeight,
+      wallMaxHeight: volumeParams.wallMaxHeight
+    }, (result) => {
+      // 保存计算结果
+      volumeResult.value = {
+        cutVolume: Math.round(result.cutVolume),
+        fillVolume: Math.round(result.fillVolume),
+        netVolume: Math.round(result.cutVolume - result.fillVolume),
+        area: Math.round(result.area),
+        minHeight: Math.round(result.minHeight),
+        maxHeight: Math.round(result.maxHeight),
+        planeHeight: result.planeHeight,
+        wallMinHeight: result.wallMinHeight,
+        wallMaxHeight: result.wallMaxHeight
+      }
+      
+      // 可视化分析结果
+      volumeAnalyzer.visualize({
+        polygonColor: Cesium.Color.CHARTREUSE.withAlpha(0.5),
+        wallColor: Cesium.Color.CYAN.withAlpha(0.7),
+        showLabel: true
+      })
+      
+      statusMessage.value = '方量计算完成'
+    })
+  } catch (error) {
+    console.error('方量计算失败:', error)
+    statusMessage.value = '方量计算失败：' + error.message
+  }
+}
+
+/**
+ * 重新分析方量
+ * @description 参数变更时重新执行方量计算
+ */
+const handleReAnalyzeVolume = () => {
+  if (volumeResult.value) {
+    handleCalculateVolume()
+  }
+}
+
+// ------------------------------
+// 清理函数
+// ------------------------------
+/**
+ * 清除所有分析结果和绘制内容
+ * @description 切换模式或手动清除时调用
+ */
 const handleClear = () => {
+  // 清除各分析器的结果
   if (sectionAnalyzer) {
     sectionAnalyzer.clearSection()
   }
   if (aspectAnalyzer) {
     aspectAnalyzer.clearAspect()
   }
+  if (slopeAnalyzer) {
+    slopeAnalyzer.clearSlope()
+  }
+  if (volumeAnalyzer) {
+    volumeAnalyzer.clearVisuals()
+  }
   if (drawManager) {
     drawManager.clearDrawings()
   }
+  
+  // 重置状态
   currentPolygonPositions.value = null
   showAspectResult.value = false
-  if (currentMode.value === 'section') {
-    statusMessage.value = '已清除，点击"绘制剖面线"开始剖面分析'
-  } else {
-    statusMessage.value = '已清除，点击"绘制分析区域"开始坡向分析'
-  }
+  showSlopeResult.value = false
+  volumeResult.value = null
+  volumePolygonData.value = null
 }
 
-const destroyCesium = () => {
+/**
+ * 组件卸载时清理资源
+ * @description 销毁所有分析器实例，释放内存
+ */
+const handleDestroy = () => {
   if (sectionAnalyzer) {
-    sectionAnalyzer.destroyAnalysis()
+    sectionAnalyzer.destroy()
   }
   if (aspectAnalyzer) {
-    aspectAnalyzer.destroyAnalysis()
+    aspectAnalyzer.destroy()
   }
-  if (viewer && !viewer.isDestroyed()) {
+  if (slopeAnalyzer) {
+    slopeAnalyzer.destroy()
+  }
+  if (volumeAnalyzer) {
+    volumeAnalyzer.destroy()
+  }
+  if (viewer) {
     viewer.destroy()
     viewer = null
   }
-  getViewerFn = null
-  drawManager = null
-  sectionAnalyzer = null
-  aspectAnalyzer = null
-  isReady.value = false
-  console.log('Cesium 销毁完成')
 }
 
+// ------------------------------
+// 生命周期钩子
+// ------------------------------
 onMounted(() => {
   initCesium()
 })
 
 onUnmounted(() => {
-  destroyCesium()
+  handleDestroy()
 })
 </script>
 
 <template>
-  <div class="cesium-wrapper">
+   <div class="cesium-wrapper">
     <div id="cesium-container"></div>
-
+    
+    <!-- 模式切换标签 -->
     <div class="mode-tabs">
-      <button
-        class="mode-tab"
-        :class="{ active: currentMode === 'section' }"
+      <button 
+        :class="['mode-tab', { active: currentMode === 'section' }]"
         @click="switchMode('section')"
       >
-        <span class="tab-icon">📈</span>
-        <span>剖面分析</span>
+        剖面分析
       </button>
-      <button
-        class="mode-tab"
-        :class="{ active: currentMode === 'aspect' }"
+      <button 
+        :class="['mode-tab', { active: currentMode === 'aspect' }]"
         @click="switchMode('aspect')"
       >
-        <span class="tab-icon">🧭</span>
-        <span>坡向分析</span>
+        坡向分析
+      </button>
+      <button 
+        :class="['mode-tab', { active: currentMode === 'slope' }]"
+        @click="switchMode('slope')"
+      >
+        坡度分析
+      </button>
+      <button 
+        :class="['mode-tab', { active: currentMode === 'volume' }]"
+        @click="switchMode('volume')"
+      >
+        方量分析
       </button>
     </div>
 
-    <div class="toolbar-panel" v-if="currentMode === 'section'">
-      <div class="toolbar-row">
-        <button class="btn-primary" :disabled="!isReady || isDrawing" @click="handleDrawSection">
-          <span class="btn-icon">✏️</span>
-          {{ isDrawing ? '绘制中...' : '绘制剖面线' }}
-        </button>
-        <button class="btn-danger" :disabled="!isReady" @click="handleClear">
-          <span class="btn-icon">🗑️</span>
-          清除
-        </button>
-      </div>
-      <div class="status-bar">
-        <span class="status-text">{{ statusMessage }}</span>
+    <!-- 剖面分析工具栏 -->
+    <div v-if="currentMode === 'section'" class="toolbar">
+      <button :disabled="!isReady || isDrawing" @click="handleDrawSection">
+        绘制剖面线
+      </button>
+      <button :disabled="!isReady" @click="handleClear">
+        清除
+      </button>
+    </div>
+
+    <!-- 坡向分析工具栏 -->
+    <div v-if="currentMode === 'aspect'" class="toolbar">
+      <button :disabled="!isReady || isDrawing" @click="handleDrawPolygon">
+        绘制分析区域
+      </button>
+      <button :disabled="!isReady || !currentPolygonPositions" @click="handleStartAspectAnalysis">
+        开始坡向分析
+      </button>
+      <button :disabled="!isReady" @click="handleClear">
+        清除
+      </button>
+      <div class="precision">
+        精度: {{ precisionMeters }}m
+        <input type="range" min="1" max="10" v-model="precisionLevel" @change="updateDelta" />
       </div>
     </div>
 
-    <div class="toolbar-panel" v-if="currentMode === 'aspect'">
-      <div class="toolbar-row">
-        <button class="btn-primary" :disabled="!isReady || isDrawing" @click="handleDrawPolygon">
-          <span class="btn-icon">✏️</span>
-          {{ isDrawing ? '绘制中...' : '绘制分析区域' }}
-        </button>
-        <button class="btn-purple" :disabled="!isReady || !currentPolygonPositions" @click="handleStartAspectAnalysis">
-          <span class="btn-icon">🔍</span>
-          开始分析
-        </button>
-        <button class="btn-danger" :disabled="!isReady" @click="handleClear">
-          <span class="btn-icon">🗑️</span>
-          清除
-        </button>
-      </div>
-      <div class="precision-row">
-        <span class="label">分析精度:</span>
-        <input
-          type="range"
-          min="1"
-          max="10"
-          step="1"
-          v-model="precisionLevel"
-          @change="updateDelta"
-          class="precision-slider"
-        />
-        <span class="precision-value">{{ precisionMeters }}m</span>
-      </div>
-      <div class="status-bar">
-        <span class="status-text">{{ statusMessage }}</span>
+    <!-- 坡度分析工具栏 -->
+    <div v-if="currentMode === 'slope'" class="toolbar">
+      <button :disabled="!isReady || isDrawing" @click="handleDrawPolygon">
+        绘制分析区域
+      </button>
+      <button :disabled="!isReady || !currentPolygonPositions" @click="handleStartSlopeAnalysis">
+        坡度分析
+      </button>
+      <button :disabled="!isReady" @click="handleClear">
+        清除
+      </button>
+      <div class="precision">
+        精度: {{ precisionMeters }}m
+        <input type="range" min="1" max="10" v-model="precisionLevel" @change="updateDelta" />
       </div>
     </div>
 
-    <div v-if="currentMode === 'aspect' && showAspectResult" class="legend-panel">
-      <div class="legend-header">
-        <span class="legend-title">坡向图例</span>
+    <!-- 方量分析工具栏 -->
+    <div v-if="currentMode === 'volume'" class="toolbar">
+      <button :disabled="!isReady || isDrawing" @click="handleDrawVolumePolygon">
+        绘制区域
+      </button>
+      <button :disabled="!isReady || !volumePolygonData" @click="handleCalculateVolume">
+        计算方量
+      </button>
+      <button :disabled="!isReady || !volumeResult" @click="handleReAnalyzeVolume">
+        重新分析
+      </button>
+      <button :disabled="!isReady" @click="handleClear">
+        清除
+      </button>
+    </div>
+
+    <!-- 方量分析参数设置 -->
+    <div v-if="currentMode === 'volume'" class="volume-panel">
+      <div class="panel-header">参数设置</div>
+      <div class="param-item">
+        <label>基准面高度：{{ volumeParams.planeHeight }} m</label>
+        <input type="range" v-model.number="volumeParams.planeHeight" min="0" max="500" step="1" />
       </div>
-      <div class="legend-items">
-        <div class="legend-row">
-          <span class="color-box" style="background: rgba(0,150,255,0.8)"></span>
-          <span>北 (0°)</span>
-        </div>
-        <div class="legend-row">
-          <span class="color-box" style="background: rgba(0,255,0,0.8)"></span>
-          <span>东北 (45°)</span>
-        </div>
-        <div class="legend-row">
-          <span class="color-box" style="background: rgba(0,255,255,0.8)"></span>
-          <span>东 (90°)</span>
-        </div>
-        <div class="legend-row">
-          <span class="color-box" style="background: rgba(255,255,0,0.8)"></span>
-          <span>东南 (135°)</span>
-        </div>
-        <div class="legend-row">
-          <span class="color-box" style="background: rgba(255,150,0,0.8)"></span>
-          <span>南 (180°)</span>
-        </div>
-        <div class="legend-row">
-          <span class="color-box" style="background: rgba(255,0,0,0.8)"></span>
-          <span>西南 (225°)</span>
-        </div>
-        <div class="legend-row">
-          <span class="color-box" style="background: rgba(255,0,255,0.8)"></span>
-          <span>西 (270°)</span>
-        </div>
-        <div class="legend-row">
-          <span class="color-box" style="background: rgba(150,0,255,0.8)"></span>
-          <span>西北 (315°)</span>
-        </div>
+      <div class="param-item">
+        <label>墙体最小高度：{{ volumeParams.wallMinHeight }} m</label>
+        <input type="range" v-model.number="volumeParams.wallMinHeight" min="0" max="300" step="1" />
+      </div>
+      <div class="param-item">
+        <label>墙体最大高度：{{ volumeParams.wallMaxHeight }} m</label>
+        <input type="range" v-model.number="volumeParams.wallMaxHeight" min="0" max="1000" step="1" />
       </div>
     </div>
 
+    <!-- 状态提示 -->
+    <div class="status">{{ statusMessage }}</div>
+
+    <!-- 坡向图例 -->
+    <div v-if="currentMode === 'aspect' && showAspectResult" class="legend aspect-legend">
+      <div>坡向图例</div>
+      <div><span style="background:rgba(0,150,255,0.8)"></span>北</div>
+      <div><span style="background:rgba(0,255,0,0.8)"></span>东北</div>
+      <div><span style="background:rgba(0,255,255,0.8)"></span>东</div>
+      <div><span style="background:rgba(255,255,0,0.8)"></span>东南</div>
+      <div><span style="background:rgba(255,150,0,0.8)"></span>南</div>
+      <div><span style="background:rgba(255,0,0,0.8)"></span>西南</div>
+      <div><span style="background:rgba(255,0,255,0.8)"></span>西</div>
+      <div><span style="background:rgba(150,0,255,0.8)"></span>西北</div>
+    </div>
+
+    <!-- 坡度图例 -->
+    <div v-if="currentMode === 'slope' && showSlopeResult" class="legend slope-legend">
+      <div>坡度图例(°)</div>
+      <div><span style="background:rgba(0,200,0,0.8)"></span>&lt;10</div>
+      <div><span style="background:rgba(100,200,50,0.8)"></span>10-20</div>
+      <div><span style="background:rgba(200,200,0,0.8)"></span>20-30</div>
+      <div><span style="background:rgba(255,150,0,0.8)"></span>30-45</div>
+      <div><span style="background:rgba(255,80,0,0.8)"></span>45-60</div>
+      <div><span style="background:rgba(200,0,0,0.8)"></span>&gt;60</div>
+    </div>
+
+    <!-- 方量结果 -->
+    <div v-if="currentMode === 'volume' && volumeResult" class="legend volume-result">
+      <div>方量计算结果</div>
+      <div><span class="value-cut">挖方:</span> {{ volumeResult.cutVolume.toLocaleString() }} m³</div>
+      <div><span class="value-fill">填方:</span> {{ volumeResult.fillVolume.toLocaleString() }} m³</div>
+      <div>净方量: {{ volumeResult.netVolume.toLocaleString() }} m³</div>
+      <div>面积: {{ volumeResult.area.toLocaleString() }} m²</div>
+      <div>最小高程: {{ volumeResult.minHeight }} m</div>
+      <div>最大高程: {{ volumeResult.maxHeight }} m</div>
+      <div>基准面高度: {{ volumeResult.planeHeight }} m</div>
+    </div>
+
+    <!-- 剖面图 -->
     <div v-if="currentMode === 'section'" id="section-chart" class="section-chart"></div>
 
-    <div v-if="!isReady" class="loading-overlay">
-      <div class="loading-spinner"></div>
-      <span>加载地形数据中...</span>
-    </div>
+    <!-- 加载状态 -->
+   <div v-if="!isReady" class="loading-overlay">加载中...</div>
   </div>
 </template>
 
@@ -338,282 +631,166 @@ onUnmounted(() => {
   left: 20px;
   display: flex;
   gap: 4px;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 8px;
+  background: rgba(0,0,0,0.7);
   padding: 4px;
+  border-radius: 8px;
   z-index: 100;
 }
-
 .mode-tab {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
+  padding: 8px 16px;
   border: none;
-  border-radius: 6px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
-  font-family: '微软雅黑', sans-serif;
+  color: rgba(255,255,255,0.7);
   cursor: pointer;
-  transition: all 0.2s ease;
+  border-radius: 4px;
+  transition: all 0.2s;
 }
-
 .mode-tab:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255,255,255,0.1);
 }
-
 .mode-tab.active {
-  background: rgba(255, 255, 255, 0.95);
+  background: white;
   color: #333;
 }
-
-.tab-icon {
-  font-size: 16px;
-}
-
-.toolbar-panel {
+.toolbar {
   position: absolute;
   top: 80px;
   left: 20px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  gap: 8px;
+  background: rgba(255,255,255,0.95);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   z-index: 100;
-  min-width: 280px;
 }
-
-.toolbar-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.btn-primary,
-.btn-danger,
-.btn-purple {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-family: '微软雅黑', sans-serif;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #3498db, #2980b9);
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2980b9, #2471a3);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
-}
-
-.btn-primary:disabled {
-  background: #bdc3c7;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.btn-danger {
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
-  color: white;
-}
-
-.btn-danger:hover:not(:disabled) {
-  background: linear-gradient(135deg, #c0392b, #a93226);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
-}
-
-.btn-danger:disabled {
-  background: #bdc3c7;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.btn-purple {
-  background: linear-gradient(135deg, #9b59b6, #8e44ad);
-  color: white;
-}
-
-.btn-purple:hover:not(:disabled) {
-  background: linear-gradient(135deg, #8e44ad, #7d3c98);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
-}
-
-.btn-purple:disabled {
-  background: #bdc3c7;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.btn-icon {
-  font-size: 14px;
-}
-
-.precision-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 6px;
-  margin-bottom: 12px;
-}
-
-.label {
-  font-size: 12px;
-  color: #666;
-  font-family: '微软雅黑', sans-serif;
-  white-space: nowrap;
-}
-
-.precision-slider {
-  flex: 1;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: linear-gradient(90deg, #3498db, #9b59b6);
-  border-radius: 2px;
-  outline: none;
-}
-
-.precision-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background: white;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.precision-value {
-  font-size: 12px;
-  color: #333;
-  font-family: '微软雅黑', sans-serif;
-  font-weight: 500;
-  min-width: 40px;
-  text-align: right;
-}
-
-.status-bar {
+.toolbar button {
   padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.03);
+  border: none;
   border-radius: 4px;
-  border-left: 3px solid #3498db;
+  cursor: pointer;
+  background: #409eff;
+  color: white;
 }
-
-.status-text {
-  font-size: 12px;
-  color: #666;
-  font-family: '微软雅黑', sans-serif;
+.toolbar button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
-
-.legend-panel {
-  position: absolute;
-  bottom: 220px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 10px;
-  padding: 14px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  min-width: 140px;
-}
-
-.legend-header {
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.legend-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
-  font-family: '微软雅黑', sans-serif;
-}
-
-.legend-items {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.legend-row {
+.toolbar .precision {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  color: #666;
   font-size: 12px;
-  color: #555;
-  font-family: '微软雅黑', sans-serif;
 }
-
-.color-box {
+.status {
+  position: absolute;
+  bottom: 240px;
+  left: 20px;
+  background: rgba(255,255,255,0.95);
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #666;
+  z-index: 100;
+}
+.legend {
+  position: absolute;
+  bottom: 240px;
+  right: 20px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  z-index: 100;
+  min-width: 180px;
+}
+.legend div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+  line-height: 1.6;
+}
+.legend span {
   width: 20px;
   height: 14px;
-  border-radius: 3px;
-  flex-shrink: 0;
+  border-radius: 2px;
 }
-
+.legend > div:first-child {
+  font-weight: bold;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+}
 .section-chart {
   position: absolute;
   bottom: 20px;
   left: 20px;
   width: calc(100% - 40px);
-  height: 220px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  height: 200px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   z-index: 100;
 }
-
-.loading-overlay {
+.loading {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255,255,255,0.9);
   z-index: 200;
 }
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(52, 152, 219, 0.2);
-  border-top-color: #3498db;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+.volume-panel {
+  position: absolute;
+  top: 140px;
+  left: 20px;
+  background: rgba(255,255,255,0.95);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 100;
+  min-width: 280px;
 }
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.loading-overlay span {
+.volume-panel .panel-header {
+  font-weight: bold;
   font-size: 14px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+}
+.volume-panel .param-item {
+  margin-bottom: 12px;
+}
+.volume-panel .param-item:last-child {
+  margin-bottom: 0;
+}
+.volume-panel label {
+  display: block;
+  font-size: 12px;
   color: #666;
-  font-family: '微软雅黑', sans-serif;
+  margin-bottom: 4px;
+}
+.volume-panel input {
+  width: 100%;
+}
+.volume-result .value-cut {
+  color: #E6A23C;
+  font-weight: bold;
+  display: inline-block;
+  min-width: 40px;
+}
+.volume-result .value-fill {
+  color: #67C23A;
+  font-weight: bold;
+  display: inline-block;
+  min-width: 40px;
 }
 </style>

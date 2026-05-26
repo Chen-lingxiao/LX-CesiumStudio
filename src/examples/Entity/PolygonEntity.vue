@@ -1,17 +1,91 @@
 <script setup>
 /**
- * BasicEntity.vue - Cesium Entity 基础示例组件
+ * PolygonEntity.vue - Cesium 多边形实体多种模式示例组件
  *
- * 功能说明：
- * 1. 创建基础的 Cesium Viewer 实例
- * 2. 添加一个完整的实体对象（包含点标记、广告牌、文字标签）
- * 3. 演示如何使用 Cesium Entities API 创建和管理地理实体
+ * 【功能说明】
+ * 1. 演示 Cesium Polygon 实体的 6 种不同配置模式
+ * 2. 展示多边形的高度控制、拉伸效果、空洞处理等技术
+ * 3. 对比 perPositionHeight、height、extrudedHeight 等参数的作用
+ * 4. 帮助理解多边形在 3D 空间中的形态变化
  *
- * 技术要点：
- * - Entity 支持多种可视化属性：point、billboard、label、polyline、polygon 等
- * - heightReference: 高度参考（NONE/RELATIVE_TO_GROUND/CLAMP_TO_GROUND）
- * - disableDepthTestDistance: 禁用深度测试，使标注始终显示在最前方
- * - distanceDisplayCondition: 根据距离控制显示范围
+ * 【核心技术要点】
+ *
+ * 1. 多边形层级（PolygonHierarchy）
+ *    - 第一个参数：外圈边界坐标（逆时针排列）
+ *    - 第二个参数：内圈（空洞）数组（顺时针排列）
+ *    - 支持多个嵌套空洞，实现复杂环形结构
+ *
+ * 2. 高度控制参数
+ *    - height: 多边形平面的统一高度（perPositionHeight=false 时生效）
+ *    - extrudedHeight: 拉伸高度，与 height 配合形成 3D 体积
+ *    - perPositionHeight: 是否使用顶点独立高度
+ *      · false：所有顶点使用统一的 height 值
+ *      · true：每个顶点使用 hierarchy 中的 Z 值
+ *
+ * 3. 坐标转换方法
+ *    - fromDegreesArray: 仅经纬度，无高度（贴地）
+ *    - fromDegreesArrayHeights: 经纬度 + 高度数组
+ *
+ * 4. 外观配置
+ *    - material: 填充材质（支持颜色、图片、渐变等）
+ *    - outline: 是否显示轮廓线
+ *    - outlineColor: 轮廓线颜色
+ *    - outlineWidth: 轮廓线宽度（像素）
+ *    - closeTop/closeBottom: 拉伸体顶部/底部是否闭合
+ *
+ * 【六种多边形模式详解】
+ *
+ * Polygon A - 基础悬浮多边形（红色）
+ * - 特点：所有顶点统一高度 5000 米，perPositionHeight=false
+ * - 行为：使用 hierarchy 坐标但忽略 Z 值，使用 height 属性
+ * - 适用：空中区域、禁飞区等悬浮平面
+ *
+ * Polygon B - 悬浮拉伸多边形（蓝色，U 型槽）
+ * - 特点：从 height(5000m) 拉伸到 extrudedHeight(6000m)
+ * - closeTop=false：顶部开放，形成 U 型槽
+ * - closeBottom=true：底部闭合
+ * - 适用：建筑物墙体、立体区域边界
+ *
+ * Polygon C - 地形贴合多边形（绿色）
+ * - 特点：使用 fromDegreesArray（无高度），默认贴地
+ * - 行为：多边形跟随 3D 地形起伏
+ * - 适用：湖泊、行政区域、用地范围
+ *
+ * Polygon D - 贴地拉伸多边形（黄色）
+ * - 特点：perPositionHeight=true，底部随地形，顶部在 extrudedHeight
+ * - 行为：底部贴合地形起伏，顶部保持水平
+ * - 适用：洪水淹没模拟、海拔分层设色
+ *
+ * Polygon E - 带空洞的环形多边形（紫色）
+ * - 特点：hierarchy 第二个参数传入洞数组
+ * - 行为：外圈内部挖去内圈区域，形成环形
+ * - 适用：环形建筑、岛屿群、保护区核心区与缓冲区
+ *
+ * Polygon F - 各顶点独立高度（橙色，斜面）
+ * - 特点：perPositionHeight=true，各顶点高度不同
+ * - 行为：四个顶点分别在 4500/4500/6500/6500 米，形成斜面
+ * - 适用：倾斜平面、地质层面、断层面
+ *
+ * 【实现步骤】
+ * 1. 创建 Viewer 实例并加载地形数据（必须，否则贴地效果不明显）
+ * 2. 依次创建 6 个多边形实体，每种模式一个
+ * 3. 为每个多边形配置标签说明其特点
+ * 4. 相机飞行到珠峰地区（地形起伏明显，高度对比更清晰）
+ *
+ * 【重要注意事项】
+ * - perPositionHeight 优先级高于 height，当 perPositionHeight=true 时，height 被忽略
+ * - 使用 fromDegreesArray 时，hierarchy 中的 Z 值被忽略
+ * - 使用 fromDegreesArrayHeights 时，Z 值是否生效取决于 perPositionHeight
+ * - extrudedHeight 必须与 height 配合使用，单独设置无效
+ * - 空洞的坐标方向必须与外圈相反（外圈逆时针，内圈顺时针）
+ * - 拉伸多边形会显著增加渲染负担，大量使用时注意性能优化
+ *
+ * 【使用场景】
+ * - 地理信息：行政区域、流域范围、土地利用类型
+ * - 城市规划：建筑基底、绿地范围、规划分区
+ * - 环境监测：污染范围、生态保护区、灾害影响区域
+ * - 军事应用：作战区域、禁飞区、雷达覆盖范围
+ * - 地质勘探：矿藏范围、地质层、断层分布
  */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
@@ -258,9 +332,9 @@ const initCesium = async () => {
       duration: 2, // 飞行动画持续2秒
     })
     isReady.value = true
-    console.log('BasicEntity 初始化完成')
+    console.log('PolygonEntity 初始化完成')
   } catch (error) {
-    console.error('BasicEntity 初始化失败：', error)
+    console.error('PolygonEntity 初始化失败：', error)
   }
 }
 
@@ -270,7 +344,7 @@ const destroyCesium = () => {
     viewer = null
   }
   isReady.value = false
-  console.log('Cesium 销毁完成')
+  console.log('PolygonEntity 销毁完成')
 }
 
 onMounted(() => {

@@ -276,7 +276,7 @@ CesiumStudio-LX/
 │   │   ├── useCesiumDraw.js          # Cesium 绘制工具
 │   │   ├── useMeasurement.js         # 测量工具
 │   │   ├── useAspectAnalysis.js      # 坡向分析
-│   │   └── useTerrainSectionAnalysis.js  # 地形剖面分析
+│   │   └── useSectionAnalysis.js       # 地形剖面分析
 │   │
 │   ├── examples/                     # Cesium 示例
 │   │   ├── index.js                  # 示例配置与数据管理

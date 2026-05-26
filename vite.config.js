@@ -7,8 +7,8 @@ import cesium from 'vite-plugin-cesium'
 
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
-  
   return {
+    base: './',
     plugins: [
       vue(),
       !isProduction && vueDevTools(),

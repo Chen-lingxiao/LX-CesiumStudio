@@ -8,7 +8,7 @@ import * as echarts from 'echarts'
  * 接收一条折线坐标，沿线进行地形高程采样，并渲染 ECharts 高程剖面图
  *
  * 【使用方式】
- * const { analyzeSection, clearSection, destroyAnalysis } = useTerrainSectionAnalysis(getViewer, 'section-chart')
+ * const { analyzeSection, clearSection, destroyAnalysis } = useSectionAnalysis(getViewer, 'section-chart')
  *
  * // 用户绘制完成后
  * const result = await drawLine()
@@ -16,7 +16,7 @@ import * as echarts from 'echarts'
  *   analyzeSection(result.lnglats)
  * }
  */
-export function useTerrainSectionAnalysis(getViewer, chartContainerId = 'section-chart') {
+export function useSectionAnalysis(getViewer, chartContainerId = 'section-chart') {
   let chart = null
   const sectionEntityIds = []
 

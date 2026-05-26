@@ -1,17 +1,108 @@
 <script setup>
 /**
- * BasicEntity.vue - Cesium Entity 基础示例组件
+ * ModelEntity.vue - Cesium 3D 模型实体示例组件
  *
- * 功能说明：
- * 1. 创建基础的 Cesium Viewer 实例
- * 2. 添加一个完整的实体对象（包含点标记、广告牌、文字标签）
- * 3. 演示如何使用 Cesium Entities API 创建和管理地理实体
+ * 【功能说明】
+ * 1. 演示如何在 Cesium 中加载和展示 3D 模型（glTF/glb 格式）
+ * 2. 展示 Model 实体的多种配置选项：缩放、动画、阴影、轮廓线等
+ * 3. 演示模型的颜色混合模式和姿态控制（朝向、俯仰、翻滚）
+ * 4. 通过 SpaceX 星舰模型实例，展示复杂 3D 模型的完整配置流程
  *
- * 技术要点：
- * - Entity 支持多种可视化属性：point、billboard、label、polyline、polygon 等
- * - heightReference: 高度参考（NONE/RELATIVE_TO_GROUND/CLAMP_TO_GROUND）
- * - disableDepthTestDistance: 禁用深度测试，使标注始终显示在最前方
- * - distanceDisplayCondition: 根据距离控制显示范围
+ * 【核心技术要点】
+ *
+ * 1. 模型加载基础
+ *    - uri: 模型资源路径，支持 glTF(.gltf) 和 glTF Binary(.glb) 格式
+ *    - scale: 模型缩放比例（1=原始大小，0.5=一半，2=两倍）
+ *    - minimumPixelSize: 最小像素尺寸，防止远距离时模型过小不可见
+ *    - maximumScale: 最大缩放比例限制，防止近距离时模型过大
+ *
+ * 2. 纹理与动画
+ *    - incrementallyLoadTextures: 增量加载纹理（后台渐进式加载，提升首屏速度）
+ *    - runAnimations: 运行模型内置动画（如机械臂运动、舱门开合等）
+ *    - clampAnimations: 强制动画播放（动画时间超出时停留在最后一帧）
+ *
+ * 3. 光照与阴影
+ *    - shadows: 阴影模式
+ *      · Cesium.ShadowMode.ENABLED：启用阴影投射
+ *      · Cesium.ShadowMode.DISABLED：禁用阴影
+ *      · Cesium.ShadowMode.CAST_ONLY：仅投射阴影
+ *      · Cesium.ShadowMode.RECEIVE_ONLY：仅接收阴影
+ *
+ * 4. 高度参考（与 PointEntity 一致）
+ *    - HeightReference.NONE：绝对高度
+ *    - HeightReference.RELATIVE_TO_GROUND：相对地面高度
+ *    - HeightReference.CLAMP_TO_GROUND：贴地
+ *
+ * 5. 轮廓线效果（Silhouette）
+ *    - silhouetteColor: 轮廓线颜色
+ *    - silhouetteSize: 轮廓线宽度（像素）
+ *    - 适用：选中高亮、边界强调、X 光效果
+ *
+ * 6. 颜色混合模式（ColorBlendMode）
+ *    - MIX：混合颜色（默认），与 colorBlendAmount 配合控制混合比例
+ *    - REPLACE：替换颜色，完全覆盖模型原色
+ *    - HIGHLIGHT：高亮颜色，增强模型亮度
+ *    - colorBlendAmount: 混合比例（0-1），0=原色，1=完全混合色
+ *
+ * 7. 模型姿态控制
+ *    - orientation: 模型朝向，使用四元数（Quaternion）表示
+ *    - 生成方法：
+ *      · Transforms.headingPitchRollQuaternion(位置，HeadingPitchRoll)
+ *      · HeadingPitchRoll(heading, pitch, roll)：朝向、俯仰、翻滚（弧度制）
+ *      · Cesium.Math.toRadians(角度)：角度转弧度
+ *
+ * 【三个模型实例详解】
+ *
+ * 模型 1 - Super Heavy 助推器
+ * - 位置：美国得克萨斯州 SpaceX 发射场（-97.190367°E, 25.985713°N）
+ * - 高度：35 米（RELATIVE_TO_GROUND，地面以上 35 米）
+ * - 配置：标准模型，启用阴影，无特殊效果
+ * - 说明：展示基础模型加载和配置
+ *
+ * 模型 2 - Star Ship 星舰（带轮廓线）
+ * - 位置：发射场东侧（-97.190140°E, 25.985901°N）
+ * - 高度：25 米
+ * - 特殊效果：蓝色轮廓线（silhouetteColor/size）
+ * - 说明：展示轮廓线高亮效果，适用于选中状态
+ *
+ * 模型 3 - Star Ship 星舰（姿态 + 颜色混合）
+ * - 位置：更东侧（-97.189851°E, 25.986203°N）
+ * - 高度：25 米
+ * - 姿态：heading=90°（朝东），pitch=90°（垂直向上），roll=45°（翻滚 45 度）
+ * - 颜色：红色半透明混合（colorBlendMode=MIX, alpha=0.4）
+ * - 说明：展示模型姿态控制和颜色混合效果
+ *
+ * 【实现步骤】
+ * 1. 定义模型路径常量（便于复用和维护）
+ * 2. 创建 Viewer 实例（本例未加载地形，可根据需要添加）
+ * 3. 依次创建三个模型实体，每个展示不同特性
+ * 4. 配置每个模型的 model 属性（uri、scale、shadows 等）
+ * 5. 为特殊模型添加轮廓线、颜色混合、姿态控制
+ * 6. 添加 description 描述信息（支持 HTML，点击显示）
+ * 7. 相机飞行到最佳观察位置（俯视角度，同时看到三个模型）
+ *
+ * 【重要注意事项】
+ * - 模型路径必须是相对路径或绝对 URL，确保资源可访问
+ * - glTF/glb 格式支持最佳，其他格式可能不兼容
+ * - 大型模型（>10MB）建议启用 incrementallyLoadTextures 提升加载体验
+ * - 阴影会显著增加性能开销，大量模型时建议关闭或限制数量
+ * - orientation 使用四元数，不要直接使用欧拉角
+ * - 颜色混合需要模型支持透明度，否则 alpha 值无效
+ * - 模型坐标原点通常在底部中心，如需调整可使用 position 偏移
+ *
+ * 【性能优化建议】
+ * - 使用 Draco 压缩的 glTF 模型（减小文件体积）
+ * - 合并多个模型为单个 glTF（减少 HTTP 请求）
+ * - 远距离时使用 billboard 代替模型（性能更优）
+ * - 使用 LOD（Level of Detail）技术，根据距离切换不同精度模型
+ *
+ * 【使用场景】
+ * - 城市规划：建筑物、桥梁、塔吊等 3D 可视化
+ * - 工业仿真：机械设备、工厂产线、机器人
+ * - 交通运输：飞机、船舶、车辆模型展示
+ * - 军事应用：武器装备、军事设施、战场仿真
+ * - 文化旅游：古迹建筑、文物展示、虚拟导游
+ * - 房地产：楼盘沙盘、户型展示、室内导航
  */
 import { onMounted, onUnmounted, ref } from "vue";
 import * as Cesium from "cesium";
@@ -120,9 +211,9 @@ const initCesium = async () => {
       duration: 1,
     })
     isReady.value = true;
-    console.log("BasicEntity 初始化完成");
+    console.log("ModelEntity 初始化完成");
   } catch (error) {
-    console.error("BasicEntity 初始化失败：", error);
+    console.error("ModelEntity 初始化失败：", error);
   }
 };
 const destroyCesium = () => {
@@ -131,7 +222,7 @@ const destroyCesium = () => {
     viewer = null;
   }
   isReady.value = false;
-  console.log("Cesium 销毁完成");
+  console.log("ModelEntity 销毁完成");
 };
 
 onMounted(() => {

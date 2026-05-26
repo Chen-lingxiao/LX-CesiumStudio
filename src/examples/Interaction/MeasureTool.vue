@@ -1,21 +1,45 @@
 <script setup>
 /**
- * MeasureTool.vue - 综合测量工具组件（基于 useMeasurement Composable）
+ * MeasureTool.vue - Cesium 综合测量工具组件
  *
- * 功能说明：
- * 1. 集成距离测量、面积测量、高度测量和坐标拾取四大功能模块
- * 2. 通过 useMeasurement composable 复用测量逻辑，保持视图层与业务逻辑分离
- * 3. 提供清晰的模式切换、状态提示和操作引导
+ * 【功能说明】
+ * 1. 集成距离测量、面积测量、高度测量、坐标拾取四大功能
+ * 2. 基于 useMeasurement composable 实现测量逻辑复用
+ * 3. 提供统一的 UI 交互和状态提示
  *
- * 交互逻辑：
- * - 距离测量：点击选点 → 预览线段跟随鼠标 → 再次点击完成 → 显示距离标签
- * - 面积测量：连续点击添加顶点 → Enter / 右键 / 双击完成 → 显示多边形和面积标签
- * - 高度测量：点击选两点 → 计算地形高差 → 显示连接线和高差标签
- * - 坐标拾取：点击查看经纬度高度信息
+ * 【核心技术要点】
  *
- * 面积测量完成方式（均在 composable 内部处理，UI 不再提供额外按钮）：
- * - Enter 键完成 | Escape 键取消
- * - 鼠标右键完成 | 鼠标双击完成
+ * 1. 组件架构
+ *    - 视图层（Vue Template）：模式选择和状态展示
+ *    - 业务层（useMeasurement）：封装测量逻辑
+ *    - 渲染层（Cesium Viewer）：地图渲染和实体管理
+ *
+ * 2. useMeasurement Composable
+ *    - startDistanceMeasure()：启动距离测量
+ *    - startAreaMeasure()：启动面积测量
+ *    - startHeightMeasure()：启动高度测量
+ *    - startCoordinatePick()：启动坐标拾取
+ *    - stopCurrentMode()：停止当前测量模式
+ *    - clearAll()：清除所有测量结果
+ *
+ * 3. 测量模式说明
+ *    - 距离测量：点击两点，显示三维空间直线距离
+ *    - 面积测量：点击多点形成多边形，显示球面面积
+ *    - 高度测量：点击两点，显示地形高差
+ *    - 坐标拾取：点击任意位置，显示经纬度和高度
+ *
+ * 【交互流程】
+ * - 点击按钮选择测量模式
+ * - 根据模式提示进行操作
+ * - 测量结果实时显示在地图上
+ * - 再次点击同一按钮或点击其他按钮切换模式
+ * - 点击"清除所有"移除所有测量结果
+ *
+ * 【设计要点】
+ * - modeConfig 配置各模式的基本信息（键名、标签、图标、描述）
+ * - statusCallback 回调将 composable 内部状态同步到组件
+ * - currentMode 跟踪当前激活的测量模式
+ * - 支持测量过程中的状态消息实时更新
  */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
@@ -43,28 +67,28 @@ const modeConfig = [
     label: '距离测量',
     activeLabel: '结束距离测量',
     description: '点击添加起点，再次点击完成',
-    icon: '📏'
+    icon: ''
   },
   {
     key: 'area',
     label: '面积测量',
     activeLabel: '结束面积测量',
     description: '点击添加顶点，Enter/右键/双击完成',
-    icon: '📐'
+    icon: ''
   },
   {
     key: 'height',
     label: '高度测量',
     activeLabel: '结束高度测量',
     description: '点击选择两个点计算高差',
-    icon: '📈'
+    icon: ''
   },
   {
     key: 'coordinate',
     label: '坐标拾取',
     activeLabel: '结束坐标拾取',
     description: '点击查看经纬度高度',
-    icon: '📍'
+    icon: ''
   }
 ]
 
@@ -76,7 +100,7 @@ const modeConfig = [
  */
 const getModeIcon = (mode) => {
   const config = modeConfig.find((m) => m.key === mode)
-  return config ? config.icon : '📐'
+  return config ? config.icon : ''
 }
 
 /**
@@ -151,9 +175,10 @@ const initCesium = async () => {
 
     isReady.value = true
     statusMessage.value = '地图加载完成，请选择测量模式'
+    console.log('MeasureTool初始化成功')
   } catch (error) {
-    console.error('测量工具初始化失败：', error)
-    statusMessage.value = '初始化失败'
+    console.error('MeasureTool初始化失败：', error)
+    statusMessage.value = 'MeasureTool初始化失败'
   }
 }
 
@@ -172,6 +197,7 @@ const destroyCesium = () => {
   }
 
   isReady.value = false
+  console.log('MeasureTool已销毁')
 }
 
 onMounted(() => {
@@ -214,7 +240,6 @@ onUnmounted(() => {
 
       <!-- 清除所有测量结果 -->
       <button class="clear-btn" @click="clearAll">
-        <span class="btn-icon">🗑️</span>
         <span class="btn-label">清除所有</span>
       </button>
     </div>

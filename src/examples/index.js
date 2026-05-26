@@ -19,6 +19,13 @@ import SceneBasic from './Basic/SceneBasic.vue'
 import sceneBasicCode from './Basic/SceneBasic.vue?raw'
 import GlobeBasic from './Basic/GlobeBasic.vue'
 import globeBasicCode from './Basic/GlobeBasic.vue?raw'
+import ColorBasic from './Basic/ColorBasic.vue'
+import colorBasicCode from './Basic/ColorBasic.vue?raw'
+import CoordinateBasic from './Basic/CoordinateBasic.vue'
+import coordinateBasicCode from './Basic/CoordinateBasic.vue?raw'
+import ScreenSpaceEventBasic from './Basic/ScreenSpaceEventBasic.vue'
+import screenSpaceEventBasicCode from './Basic/ScreenSpaceEventBasic.vue?raw'
+
 // 影像
 import OSMImagery from './Imagery/OSMImagery.vue'
 import osmImageryCode from './Imagery/OSMImagery.vue?raw'
@@ -74,10 +81,15 @@ import SectionAnalysis from './SpatialAnalysis/SectionAnalysis.vue'
 import sectionAnalysisCode from './SpatialAnalysis/SectionAnalysis.vue?raw'
 import AspectAnalysis from './SpatialAnalysis/AspectAnalysis.vue'
 import aspectAnalysisCode from './SpatialAnalysis/AspectAnalysis.vue?raw'
+import SlopeAnalysis from './SpatialAnalysis/SlopeAnalysis.vue'
+import slopeAnalysisCode from './SpatialAnalysis/SlopeAnalysis.vue?raw'
 import VolumeAnalysis from './SpatialAnalysis/VolumeAnalysis.vue'
 import volumeAnalysisCode from './SpatialAnalysis/VolumeAnalysis.vue?raw'
 import VisibilityAnalysis from './SpatialAnalysis/VisibilityAnalysis.vue'
 import visibilityAnalysisCode from './SpatialAnalysis/VisibilityAnalysis.vue?raw'
+// 特殊效果
+import WeatherEffects from './SpecialEffects/WeatherEffects.vue'
+import weatherEffectsCode from './SpecialEffects/WeatherEffects.vue?raw'
 
 /**
  * 示例列表
@@ -87,7 +99,7 @@ export const examples = [
   {
     id: 'viewer-basic',
     name: 'Viewer 基础类',
-    description: 'Cesium 应用的顶层容器类，封装 Scene、Camera、Globe、数据源及UI控件，提供声明式API简化三维应用开发',
+    description: '创建基础 Viewer 实例，配置控件、添加实体、演示相机飞行到指定位置',
     tags: ['Viewer', '基础类'],
     thumbnail: '/thumbnails/viewer-basic.png',
     component: ViewerBasic,
@@ -96,7 +108,7 @@ export const examples = [
   {
     id: 'camera-basic',
     name: 'Camera 基础类',
-    description: '控制观察者视角的核心类，定义视锥体参数，实现场景导航、视角变换和飞行动画',
+    description: '演示相机操作方法（flyTo、setView、lookAt 等），实现视角倾斜、旋转、缩放等控制',
     tags: ['Camera', '基础类'],
     thumbnail: '/thumbnails/camera-basic.png',
     component: CameraBasic,
@@ -105,7 +117,7 @@ export const examples = [
   {
     id: 'scene-basic',
     name: 'Scene 基础类',
-    description: '渲染管线核心类，管理所有可渲染对象（图元、实体、3D瓦片），协调帧更新和底层渲染流程',
+    description: '演示 Scene 配置选项（场景模式、大气、雾效、光照、地形夸张等），提供交互式控制面板',
     tags: ['Scene', '基础类'],
     thumbnail: '/thumbnails/scene-basic.png',
     component: SceneBasic,
@@ -114,11 +126,38 @@ export const examples = [
   {
     id: 'globe-basic',
     name: 'Globe 基础类',
-    description: '地球模型核心类，定义地球的几何形状、椭球体参数、地表材质、地形渲染和光照效果',
+    description: '演示 Globe 类配置（地球外观、地形、光照、深度测试、大气效果等），控制地球渲染',
     tags: ['Globe', '基础类'],
     thumbnail: '/thumbnails/globe-basic.png',
     component: GlobeBasic,
     ...extractCode(globeBasicCode)
+  },
+  {
+    id: 'color-basic',
+    name: 'Color 颜色',
+    description: '演示 5 种颜色创建方式（内置常量、RGBA、RGB字节、十六进制、CSS颜色名），在地图展示',
+    tags: ['Color', '基础类'],
+    thumbnail: '/thumbnails/color-basic.png',
+    component: ColorBasic,
+    ...extractCode(colorBasicCode)
+  },
+  {
+    id: 'coordinate-basic',
+    name: 'Coordinate 坐标系',
+    description: '演示四种坐标系及转换方法（地理经纬度、地理弧度、屏幕、笛卡尔），控制台输出结果',
+    tags: ['Coordinate', '基础类'],
+    thumbnail: '/thumbnails/coordinate-basic.png',
+    component: CoordinateBasic,
+    ...extractCode(coordinateBasicCode)
+  },
+  {
+    id: 'screen-space-event-basic',
+    name: 'ScreenSpaceEvent 屏幕空间事件',
+    description: '演示屏幕空间事件监听和场景拾取，点击创建点标记并显示自定义弹窗',
+    tags: ['ScreenSpaceEvent', '基础类'],
+    thumbnail: '/thumbnails/screen-space-event-basic.png',
+    component: ScreenSpaceEventBasic,
+    ...extractCode(screenSpaceEventBasicCode)
   },
   {
     id: 'basic-entity',
@@ -338,6 +377,15 @@ export const examples = [
     ...extractCode(aspectAnalysisCode)
   },
   {
+    id: 'slope-analysis',
+    name: '坡度分析',
+    description: '独立实现的坡度分析示例：点击地图显示坡度分析结果',
+    tags: ['SpatialAnalysis', '空间分析', '坡度分析'],
+    thumbnail: '/thumbnails/slope-analysis.png',
+    component: SlopeAnalysis,
+    ...extractCode(slopeAnalysisCode)
+  },
+  {
     id: 'volume-analysis',
     name: '方量分析',
     description: '独立实现的方量分析示例：点击地图显示方量分析结果',
@@ -354,6 +402,16 @@ export const examples = [
     thumbnail: '/thumbnails/visibility-analysis.png',
     component: VisibilityAnalysis,
     ...extractCode(visibilityAnalysisCode)
+  },
+  // 特殊效果
+  {
+    id: 'weather-effects',
+    name: '天气效果',
+    description: '独立实现的天气效果示例：点击地图显示天气效果',
+    tags: ['SpecialEffects', '天气效果'],
+    thumbnail: '/thumbnails/weather-effects.png',
+    component: WeatherEffects,
+    ...extractCode(weatherEffectsCode)
   }
 ]
 

@@ -567,9 +567,10 @@ const initCesium = async () => {
     })
 
     isReady.value = true
+    console.log('AreaMeasure初始化成功')
   } catch (error) {
-    console.error('初始化失败：', error)
-    statusMessage.value = '初始化失败'
+    console.error('AreaMeasure初始化失败：', error)
+    statusMessage.value = 'AreaMeasure初始化失败'
   }
 }
 
@@ -585,6 +586,7 @@ const destroyCesium = () => {
   }
 
   isReady.value = false
+  console.log('AreaMeasure已销毁')
 }
 
 onMounted(() => {

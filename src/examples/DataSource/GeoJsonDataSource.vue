@@ -1,17 +1,21 @@
 <script setup>
 /**
- * BasicEntity.vue - Cesium Entity 基础示例组件
+ * GeoJsonDataSource.vue - Cesium GeoJSON 数据源加载示例组件
  *
  * 功能说明：
- * 1. 创建基础的 Cesium Viewer 实例
- * 2. 添加一个完整的实体对象（包含点标记、广告牌、文字标签）
- * 3. 演示如何使用 Cesium Entities API 创建和管理地理实体
+ * 1. 创建 Cesium Viewer 实例
+ * 2. 使用 GeoJsonDataSource 加载 GeoJSON 格式的地理数据
+ * 3. 根据 GeoJSON 数据中的属性，为每个实体添加标签标注（显示名称）
+ * 4. 根据 GeoJSON 数据中的属性，随机设置面要素的填充颜色
+ * 5. 自动飞行到数据范围
  *
  * 技术要点：
- * - Entity 支持多种可视化属性：point、billboard、label、polyline、polygon 等
- * - heightReference: 高度参考（NONE/RELATIVE_TO_GROUND/CLAMP_TO_GROUND）
- * - disableDepthTestDistance: 禁用深度测试，使标注始终显示在最前方
- * - distanceDisplayCondition: 根据距离控制显示范围
+ * - Cesium.GeoJsonDataSource.load() 支持多种配置选项
+ * - stroke/strokeWidth: 轮廓颜色和宽度
+ * - fill: 面填充颜色（支持透明度）
+ * - clampToGround: 贴地显示
+ * - 通过 entity.properties 访问 GeoJSON 的属性数据
+ * - LabelGraphics 用于添加文字标签
  */
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as Cesium from 'cesium'
@@ -32,11 +36,12 @@ async function loadBasicGeoJSON(url) {
         dataSource.entities.values.forEach(entity => {
             //  获取名称属性
             if (entity.properties.name && entity.properties.center) {
-                const name = entity.properties.name.getValue()
+                const name = entity.properties.name.getValue() 
                 const center = entity.properties.center.getValue()
                 console.log(center, name)
                 const position = Cesium.Cartesian3.fromDegrees(center[0], center[1], 0)
                 entity.position = position
+                // 添加标签标注
                 entity.label = new Cesium.LabelGraphics({
                     text: name,
                     font: "16px Microsoft YaHei",  // 字体
@@ -50,6 +55,7 @@ async function loadBasicGeoJSON(url) {
                     scale: 0.8,
                     show: true,
                 })
+                // 随机设置面要素的填充颜色
                 const randomColor = Cesium.Color.fromRandom({ alpha: 0.4 });
                 entity.polygon.material = randomColor;
                 entity.polygon.outline = true;
@@ -82,9 +88,9 @@ const initCesium = async () => {
         await loadBasicGeoJSON(dataurl) // 加载GeoJSON数据
 
         isReady.value = true
-        console.log('BasicEntity 初始化完成')
+        console.log('GeoJsonDataSource 初始化完成')
     } catch (error) {
-        console.error('BasicEntity 初始化失败：', error)
+        console.error('GeoJsonDataSource 初始化失败：', error)
     }
 }
 
@@ -94,7 +100,7 @@ const destroyCesium = () => {
         viewer = null
     }
     isReady.value = false
-    console.log('Cesium 销毁完成')
+    console.log('GeoJsonDataSource 销毁完成')
 }
 
 onMounted(() => {
