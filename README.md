@@ -31,7 +31,7 @@ CesiumStudio-LX 是一个面向开发者的 Cesium 学习与演示平台，旨�
 |------|------|
 | **代码编辑** | 集成 Monaco Editor，支持 JavaScript 语法高亮 |
 | **实时预览** | 左侧代码编辑，右侧 Cesium 场景即时渲染 |
-| **示例画廊** | 提供 28+ 种 Cesium 功能示例，支持搜索和标签筛选 |
+| **示例画廊** | 提供多种 Cesium 功能示例，支持搜索和标签筛选 |
 | **主题切换** | 支持亮色/暗色模式，适应不同开发环境 |
 | **多主题色** | 提供 6 种主题色预设（默认白、淡紫、淡绿、淡粉、薄荷绿、柔和蓝） |
 | **FPS监控** | 可选的帧率监控显示，便于性能调试 |
@@ -157,7 +157,7 @@ pnpm preview
 | 图标 | 功能 | 说明 |
 |------|------|------|
 | GitHub | 项目仓库 | 访问源代码 |
-| 邮箱 | 联系作者 | 发送反馈邮件 |
+| 邮箱 | 联系作者 | 发送邮件 |
 | 月亮/太阳 | 明暗模式 | 切换应用主题 |
 | 设置 | 应用设置 | 调整应用偏好（主题色预设、FPS监控等） |
 
@@ -177,26 +177,29 @@ pnpm preview
 
 ## 示例列表
 
-项目提供以下 Cesium 示例，涵盖基础功能、实体管理、影像图层、地形、交互绘制、测量工具和空间分析等方面：
+项目提供以下 Cesium 示例，涵盖基础功能、实体管理、影像图层、地形、数据源、交互绘制、测量工具、空间分析和特殊效果等方面：
 
 ### 基础功能（Basic）
 
 | 示例名称 | 描述 | 标签 |
 |---------|------|------|
-| Viewer 基础 | Cesium 应用的顶层容器类，封装 Scene、Camera、Globe、数据源及UI控件 | Viewer、基础类 |
-| Camera 基础 | 控制观察者视角的核心类，实现场景导航、视角变换和飞行动画 | Camera、基础类 |
-| Scene 基础 | 渲染管线核心类，管理所有可渲染对象，协调帧更新和底层渲染流程 | Scene、基础类 |
-| Globe 基础 | 地球模型核心类，定义地球的几何形状、椭球体参数、地表材质 | Globe、基础类 |
+| Viewer 基础 | 创建基础 Viewer 实例，配置控件、添加实体、演示相机飞行到指定位置 | Viewer、基础类 |
+| Camera 基础 | 演示相机操作方法（flyTo、setView、lookAt 等），实现视角倾斜、旋转、缩放等控制 | Camera、基础类 |
+| Scene 基础 | 演示 Scene 配置选项（场景模式、大气、雾效、光照、地形夸张等），提供交互式控制面板 | Scene、基础类 |
+| Globe 基础 | 演示 Globe 类配置（地球外观、地形、光照、深度测试、大气效果等），控制地球渲染 | Globe、基础类 |
+| Color 颜色 | 演示 5 种颜色创建方式（内置常量、RGBA、RGB字节、十六进制、CSS颜色名），在地图展示 | Color、基础类 |
+| Coordinate 坐标系 | 演示四种坐标系及转换方法（地理经纬度、地理弧度、屏幕、笛卡尔），控制台输出结果 | Coordinate、基础类 |
+| ScreenSpaceEvent 屏幕空间事件 | 演示屏幕空间事件监听和场景拾取，点击创建点标记并显示自定义弹窗 | ScreenSpaceEvent、基础类 |
 
 ### 实体管理（Entity）
 
 | 示例名称 | 描述 | 标签 |
 |---------|------|------|
-| Entities 基础 | 创建完整的实体对象，包含点标记、广告牌和文字标签 | Entities、基础类 |
-| 点实体 | 创建点实体对象，设置点的颜色、大小、高度参考等属性 | Entities、Point |
+| Entities 基础 | 创建基础的Cesium Viewer实例，演示如何添加包含点标记、广告牌和文字标签的完整实体对象 | Entities、基础类 |
+| 点实体 | 创建点实体对象，设置点的颜色、大小、高度参考和深度测试等属性 | Entities、Point |
 | 折线实体 | 创建折线实体对象，设置折线的宽度、颜色材质、是否贴地等属性 | Entities、Polyline |
-| 多边形实体 | 创建多边形实体对象，设置多边形的颜色、高度参考等属性 | Entities、Polygon |
-| 模型实体 | 创建模型实体对象，加载3D模型文件，设置位置、旋转、缩放等属性 | Entities、Model |
+| 多边形实体 | 创建多边形实体对象，设置多边形的颜色、大小、高度参考和深度测试等属性 | Entities、Polygon |
+| 模型实体 | 创建模型实体对象，加载3D模型文件，设置模型的位置、旋转、缩放等属性 | Entities、Model |
 
 ### 影像图层（Imagery）
 
@@ -213,125 +216,151 @@ pnpm preview
 | 地形自定义 | 添加自定义地形图层 | Terrain、自定义 |
 | 地形高程分层设色 | 根据地形高程分层设置颜色 | Terrain、地形高程分层设色 |
 
+### 数据源（DataSource）
+
+| 示例名称 | 描述 | 标签 |
+|---------|------|------|
+| GeoJSON 数据源 | 加载 GeoJSON 数据，显示在地图上 | DataSource、GeoJSON |
+| KML 数据源 | 加载 KML 数据，显示在地图上 | DataSource、KML |
+
 ### 交互绘制（Interaction）
 
 | 示例名称 | 描述 | 标签 |
 |---------|------|------|
-| 绘制工具合集 | 交互式绘制工具：支持点、线、多边形、矩形的绘制 | Interaction、绘制 |
-| 绘制点 | 交互式点绘制工具，点击地图添加点位 | Interaction、绘制、Point |
-| 绘制折线 | 交互式折线绘制工具，点击添加顶点、右键完成绘制 | Interaction、绘制、Polyline |
-| 绘制多边形 | 交互式多边形绘制工具，点击添加顶点、右键闭合绘制 | Interaction、绘制、Polygon |
+| 绘制工具合集 | 交互式绘制工具：使用 useCesiumDraw composable，支持点、线、多边形、矩形的绘制，左键添加顶点，右键完成绘制 | Interaction、绘制 |
+| 绘制点 | 交互式点绘制工具，点击地图添加点位，支持清除绘制内容 | Interaction、绘制、Point |
+| 绘制折线 | 交互式折线绘制工具，点击添加顶点、右键完成绘制，支持清除 | Interaction、绘制、Polyline |
+| 绘制多边形 | 交互式多边形绘制工具，点击添加顶点、右键闭合绘制，支持清除 | Interaction、绘制、Polygon |
 
 ### 测量工具（Measurement）
 
 | 示例名称 | 描述 | 标签 |
 |---------|------|------|
-| 测量工具合集 | 交互式测量工具：支持距离、面积、高度测量和坐标拾取 | Interaction、测量 |
-| 距离测量 | 独立实现的距离测量示例：点击添加两点，计算并显示距离 | Interaction、测量、距离 |
-| 面积测量 | 独立实现的面积测量示例：使用 turf.js 计算面积 | Interaction、测量、面积 |
-| 高度测量 | 独立实现的高度测量示例：计算地形高度差 | Interaction、测量、高度 |
+| 测量工具合集 | 交互式测量工具：使用 useMeasurement composable，支持距离测量、面积测量、高度测量和坐标拾取 | Interaction、测量 |
+| 距离测量 | 独立实现的距离测量示例：点击添加两点，计算并显示两点间距离 | Interaction、测量、距离 |
+| 面积测量 | 独立实现的面积测量示例：点击添加顶点（至少3个），右键完成，计算面积 | Interaction、测量、面积 |
+| 高度测量 | 独立实现的高度测量示例：点击选择两点，计算地形高度差 | Interaction、测量、高度 |
 | 坐标拾取 | 独立实现的坐标拾取示例：点击地图显示经纬度和高度信息 | Interaction、测量、坐标 |
 
 ### 空间分析（SpatialAnalysis）
 
 | 示例名称 | 描述 | 标签 |
 |---------|------|------|
-| 空间分析 | 综合空间分析示例 | SpatialAnalysis、空间分析 |
-| 剖面分析 | 地形剖面分析示例 | SpatialAnalysis、剖面分析 |
-| 坡向分析 | 地形坡向分析示例 | SpatialAnalysis、坡向分析 |
-| 方量分析 | 挖填方方量分析示例 | SpatialAnalysis、方量分析 |
-| 可见性分析 | 视线可见性分析示例 | SpatialAnalysis、可见性分析 |
+| 空间分析合集 | 综合空间分析示例：集成剖面、坡向、坡度、方量、可见性分析 | SpatialAnalysis、空间分析 |
+| 剖面分析 | 地形剖面分析示例：绘制路径，生成地形剖面图 | SpatialAnalysis、剖面分析 |
+| 坡向分析 | 地形坡向分析示例：绘制区域，分析坡面朝向分布 | SpatialAnalysis、坡向分析 |
+| 坡度分析 | 地形坡度分析示例：绘制区域，分析坡面倾斜角度分布 | SpatialAnalysis、坡度分析 |
+| 方量分析 | 挖填方方量分析示例：绘制区域，计算挖方填方量 | SpatialAnalysis、方量分析 |
+| 可见性分析 | 视线可见性分析示例：设置观察点和目标点，判断通视性 | SpatialAnalysis、可见性分析 |
+
+### 特殊效果（SpecialEffects）
+
+| 示例名称 | 描述 | 标签 |
+|---------|------|------|
+| 天气效果 | 模拟雨、雪、雾等天气效果，支持参数调节 | SpecialEffects、天气效果 |
 
 ---
 
 ## 项目结构
 
 ```
-CesiumStudio-LX/
-├── public/                          # 静态资源目录
-│   ├── favicon.ico                  # 网站图标
-│   └── thumbnails/                   # 示例缩略图
-│       └── *.png                     # 示例缩略图文件
+CesiumSandbox-LX/
+├── public/                              # 静态资源目录
+│   ├── favicon.ico                      # 网站图标
+│   └── thumbnails/                      # 示例缩略图
+│       └── *.png                        # 示例缩略图文件
 │
-├── src/                             # 源代码目录
-│   ├── assets/                       # 资源文件
-│   │   ├── fonts/                    # 字体文件
-│   │   │   ├── iconfont.css          # 图标字体样式
-│   │   │   ├── iconfont.js           # 图标字体数据
-│   │   │   ├── iconfont.json         # 图标配置
-│   │   │   └── iconfont.*            # 字体文件（woff/ttf）
-│   │   └── styles/                   # 样式文件
-│   │       └── main.scss             # 全局样式与主题变量
+├── src/                                 # 源代码目录
+│   ├── assets/                          # 资源文件
+│   │   ├── fonts/                       # 字体文件
+│   │   │   ├── iconfont.css             # 图标字体样式
+│   │   │   ├── iconfont.js              # 图标字体数据
+│   │   │   ├── iconfont.json            # 图标配置
+│   │   │   └── iconfont.*               # 字体文件（woff/ttf）
+│   │   └── styles/                      # 样式文件
+│   │       └── main.scss                # 全局样式与主题变量
 │   │
-│   ├── components/                   # Vue 组件
-│   │   ├── AppSidebar.vue            # 左侧功能栏
-│   │   ├── AppMiddlePanel.vue        # 中间面板（编辑器/画廊）
-│   │   ├── AppRightPanel.vue         # 右侧面板（Cesium预览）
-│   │   ├── SettingsPanel.vue         # 设置面板
-│   │   └── FPSMonitor.vue            # FPS监控组件
+│   ├── components/                      # Vue 组件
+│   │   ├── AppSidebar.vue               # 左侧功能栏
+│   │   ├── AppMiddlePanel.vue           # 中间面板（编辑器/画廊）
+│   │   ├── AppRightPanel.vue            # 右侧面板（Cesium预览）
+│   │   ├── SettingsPanel.vue            # 设置面板
+│   │   └── FPSMonitor.vue               # FPS监控组件
 │   │
-│   ├── composables/                  # 可组合函数
-│   │   ├── useSettings.ts            # 设置管理
-│   │   ├── useResizer.js             # 拖拽调整逻辑
-│   │   ├── useCesiumDraw.js          # Cesium 绘制工具
-│   │   ├── useMeasurement.js         # 测量工具
-│   │   ├── useAspectAnalysis.js      # 坡向分析
-│   │   └── useSectionAnalysis.js       # 地形剖面分析
+│   ├── composables/                     # 可组合函数（Composables）
+│   │   ├── useSettings.ts               # 设置管理（主题、暗色模式等）
+│   │   ├── useResizer.js                # 拖拽调整逻辑
+│   │   ├── useCesiumDraw.js             # Cesium 绘制工具（点、线、面、矩形）
+│   │   ├── useMeasurement.js            # Cesium 测量工具（距离、面积、高度、坐标）
+│   │   ├── useAspectAnalysis.js         # 坡向分析
+│   │   ├── useSlopeAnalysis.js          # 坡度分析
+│   │   ├── useSectionAnalysis.js        # 地形剖面分析
+│   │   └── useMeasureVolume.js          # 方量计算
 │   │
-│   ├── examples/                     # Cesium 示例
-│   │   ├── index.js                  # 示例配置与数据管理
-│   │   ├── examples.vue              # 示例页面主组件
-│   │   ├── Basic/                    # 基础示例目录
-│   │   │   ├── ViewerBasic.vue       # Viewer基础示例
-│   │   │   ├── CameraBasic.vue       # 相机控制示例
-│   │   │   ├── SceneBasic.vue        # 场景配置示例
-│   │   │   └── GlobeBasic.vue        # 地球配置示例
-│   │   ├── Entity/                   # 实体示例目录
-│   │   │   ├── BasicEntity.vue       # Entities基础示例
-│   │   │   ├── PointEntity.vue       # 点实体示例
-│   │   │   ├── PolylineEntity.vue    # 折线实体示例
-│   │   │   ├── PolygonEntity.vue     # 多边形实体示例
-│   │   │   └── ModelEntity.vue       # 模型实体示例
-│   │   ├── Imagery/                  # 影像示例目录
-│   │   │   ├── OSMImagery.vue        # OpenStreetMap影像示例
-│   │   │   └── MapboxImagery.vue     # Mapbox影像示例
-│   │   ├── Terrain/                  # 地形示例目录
-│   │   │   ├── TerrainBasic.vue      # 地形基础示例
-│   │   │   ├── TerrainCustom.vue     # 地形自定义示例
-│   │   │   └── TerrainElevationColor.vue  # 地形高程分层设色示例
-│   │   ├── Interaction/              # 交互示例目录
-│   │   │   ├── DrawTool.vue          # 绘制工具合集
-│   │   │   ├── DrawPoint.vue         # 绘制点
-│   │   │   ├── DrawPolyline.vue      # 绘制折线
-│   │   │   ├── DrawPolygon.vue       # 绘制多边形
-│   │   │   ├── MeasureTool.vue       # 测量工具合集
-│   │   │   ├── DistanceMeasure.vue   # 距离测量
-│   │   │   ├── AreaMeasure.vue       # 面积测量
-│   │   │   ├── HeightMeasure.vue     # 高度测量
-│   │   │   └── CoordinatePick.vue    # 坐标拾取
-│   │   └── SpatialAnalysis/          # 空间分析目录
-│   │       ├── SpatialAnaysis.vue    # 空间分析合集
-│   │       ├── SectionAnalysis.vue   # 剖面分析
-│   │       ├── AspectAnalysis.vue    # 坡向分析
-│   │       ├── VolumeAnalysis.vue    # 方量分析
-│   │       └── VisibilityAnalysis.vue  # 可见性分析
+│   ├── examples/                        # Cesium 示例
+│   │   ├── index.js                     # 示例配置与数据管理
+│   │   ├── examples.vue                 # 示例页面主组件
+│   │   ├── Basic/                       # 基础示例
+│   │   │   ├── ViewerBasic.vue          # Viewer基础示例
+│   │   │   ├── CameraBasic.vue          # 相机控制示例
+│   │   │   ├── SceneBasic.vue           # 场景配置示例
+│   │   │   ├── GlobeBasic.vue           # 地球配置示例
+│   │   │   ├── ColorBasic.vue           # 颜色示例
+│   │   │   ├── CoordinateBasic.vue      # 坐标系示例
+│   │   │   └── ScreenSpaceEventBasic.vue # 屏幕空间事件示例
+│   │   ├── Entity/                      # 实体示例
+│   │   │   ├── BasicEntity.vue          # Entities基础示例
+│   │   │   ├── PointEntity.vue          # 点实体示例
+│   │   │   ├── PolylineEntity.vue       # 折线实体示例
+│   │   │   ├── PolygonEntity.vue        # 多边形实体示例
+│   │   │   └── ModelEntity.vue          # 模型实体示例
+│   │   ├── Imagery/                     # 影像示例
+│   │   │   ├── OSMImagery.vue           # OpenStreetMap影像示例
+│   │   │   └── MapboxImagery.vue        # Mapbox影像示例
+│   │   ├── Terrain/                     # 地形示例
+│   │   │   ├── TerrainBasic.vue         # 地形基础示例
+│   │   │   ├── TerrainCustom.vue        # 地形自定义示例
+│   │   │   └── TerrainElevationColor.vue # 地形高程分层设色示例
+│   │   ├── DataSource/                  # 数据源示例
+│   │   │   ├── GeoJsonDataSource.vue    # GeoJSON数据源示例
+│   │   │   └── KmlDataSource.vue        # KML数据源示例
+│   │   ├── Interaction/                 # 交互示例
+│   │   │   ├── DrawTool.vue             # 绘制工具合集
+│   │   │   ├── DrawPoint.vue            # 绘制点
+│   │   │   ├── DrawPolyline.vue         # 绘制折线
+│   │   │   ├── DrawPolygon.vue          # 绘制多边形
+│   │   │   ├── MeasureTool.vue          # 测量工具合集
+│   │   │   ├── DistanceMeasure.vue      # 距离测量
+│   │   │   ├── AreaMeasure.vue          # 面积测量
+│   │   │   ├── HeightMeasure.vue        # 高度测量
+│   │   │   └── CoordinatePick.vue       # 坐标拾取
+│   │   ├── SpatialAnalysis/             # 空间分析示例
+│   │   │   ├── SpatialAnaysis.vue       # 空间分析合集
+│   │   │   ├── SectionAnalysis.vue      # 剖面分析
+│   │   │   ├── AspectAnalysis.vue       # 坡向分析
+│   │   │   ├── SlopeAnalysis.vue        # 坡度分析
+│   │   │   ├── VolumeAnalysis.vue       # 方量分析
+│   │   │   └── VisibilityAnalysis.vue   # 可见性分析
+│   │   └── SpecialEffects/              # 特殊效果示例
+│   │       ├── WeatherEffects.vue       # 天气效果
+│   │       ├── weatherEffects.js        # 天气效果工具函数
+│   │       └── weatherEffects2.js       # 天气效果工具函数
 │   │
-│   ├── router/                       # 路由配置
-│   │   └── index.js                  # 路由配置文件
+│   ├── router/                          # 路由配置
+│   │   └── index.js                     # 路由配置文件
 │   │
-│   ├── utils/                        # 工具函数
-│   │   └── codeExtractor.js          # 代码提取工具
+│   ├── utils/                           # 工具函数
+│   │   └── codeExtractor.js             # 代码提取工具
 │   │
-│   ├── App.vue                       # 根组件
-│   ├── main.js                       # 应用入口文件
-│   └── env.d.ts                      # TypeScript 环境声明
+│   ├── App.vue                          # 根组件
+│   ├── main.js                          # 应用入口文件
+│   └── env.d.ts                         # TypeScript 环境声明
 │
-├── index.html                        # HTML 入口文件
-├── vite.config.js                    # Vite 配置
-├── package.json                      # 项目依赖配置
-├── tsconfig.json                     # TypeScript 配置
-├── jsconfig.json                     # JavaScript 配置
-└── .gitignore                        # Git 忽略配置
+├── index.html                           # HTML 入口文件
+├── vite.config.js                       # Vite 配置
+├── package.json                         # 项目依赖配置
+├── tsconfig.json                        # TypeScript 配置
+└── .gitignore                           # Git 忽略配置
 ```
 
 ---
@@ -386,11 +415,7 @@ const isReady = ref(false)
 const initCesium = async () => {
   try {
     isReady.value = false
-    viewer = new Cesium.Viewer('cesium-container', {
-      terrainProvider: await Cesium.CesiumTerrainProvider.fromUrl(
-        Cesium.IonResource.fromAssetId(1)
-      ),
-    })
+    viewer = new Cesium.Viewer('cesium-container')
     // 添加功能代码...
     isReady.value = true
     console.log('Cesium 初始化完成')

@@ -38,6 +38,10 @@ const handleIconClick = (iconName) => {
     emit('new-example')
   } else if (iconName === 'docs') {
     window.open('https://cesium.com/learn/cesiumjs/ref-doc/', '_blank')
+  } else if (iconName === 'github') {
+    window.open('https://github.com/Chen-lingxiao/CesiumSandbox--LX', '_blank')
+  } else if (iconName === 'email') {
+    window.open('mailto:chen.lingxiao@outlook.com', '_blank')
   } else if (iconName === 'settings') {
     emit('toggle-settings')
   }
@@ -79,10 +83,10 @@ const toggleDarkMode = () => {
 
     <!-- 底部功能区 -->
     <div class="sidebar-bottom">
-       <div class="icon-item" title="github">
+       <div class="icon-item" title="GitHub" @click="handleIconClick('github')">
         <span class="iconfont icon-githublogo"></span>
       </div>
-      <div class="icon-item" title="邮箱">
+      <div class="icon-item" title="邮箱" @click="handleIconClick('email')">
         <span class="iconfont icon-youxiang"></span>
       </div>
       <div
