@@ -1,43 +1,76 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useSettings } from './composables/useSettings'
 
 const { initSettings } = useSettings()
 initSettings()
 
-const loadingState = ref('loading')
+/**
+ * 检查页面是否已完全渲染（有可见内容）
+ * @returns {boolean} 是否有可见内容
+ */
+const isPageReady = () => {
+  const appElement = document.getElementById('app')
+  if (!appElement) return false
+  
+  // 检查是否有实际内容渲染
+  const hasContent = appElement.offsetHeight > 0 || appElement.offsetWidth > 0
+  
+  // 检查是否有子元素且子元素有内容
+  const children = appElement.children
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i]
+    if (child.offsetHeight > 0 || child.offsetWidth > 0) {
+      return true
+    }
+  }
+  
+  return hasContent
+}
 
+/**
+ * 淡出并移除 index.html 中的加载动画
+ * 加载动画在 index.html 中以纯 HTML+CSS 实现，浏览器解析即显示，避免白屏
+ * 等待页面内容完全渲染后再移除加载动画，避免短暂白屏
+ */
 onMounted(() => {
-  const startTime = Date.now()
   const minLoadingTime = 800
-  const finishLoading = () => {
-    const elapsed = Date.now() - startTime
-    const remaining = Math.max(0, minLoadingTime - elapsed)
-    setTimeout(() => { loadingState.value = 'done' }, remaining)
+  const maxLoadingTime = 5000 // 最大等待时间5秒
+  const startTime = performance.now()
+  
+  // 使用 requestAnimationFrame 轮询检查页面是否就绪
+  const checkAndRemoveLoader = () => {
+    const elapsed = performance.now() - startTime
+    
+    // 如果页面已就绪或超过最大等待时间，移除加载动画
+    if (isPageReady() || elapsed >= maxLoadingTime) {
+      const loader = document.getElementById('app-loading')
+      if (loader) {
+        loader.classList.add('fade-out')
+        loader.addEventListener('transitionend', () => loader.remove(), { once: true })
+        // 双重保险：500ms后强制移除
+        setTimeout(() => {
+          if (loader && loader.parentElement) {
+            loader.remove()
+          }
+        }, 500)
+      }
+      return
+    }
+    
+    // 继续轮询检查
+    requestAnimationFrame(checkAndRemoveLoader)
   }
-  if (document.readyState === 'complete') {
-    finishLoading()
-  } else {
-    window.addEventListener('load', finishLoading)
-  }
+  
+  // 至少等待 minLoadingTime 后开始检查
+  setTimeout(() => {
+    checkAndRemoveLoader()
+  }, minLoadingTime)
 })
 </script>
 
 <template>
   <div id="app">
-    <div class="loading-overlay" :class="{ 'loading-exit': loadingState === 'done' }">
-      <div class="loading-content">
-        <div class="logo-text">
-          <span v-for="(char, i) in 'Cesium'" :key="'c-' + i" class="logo-char" :style="{ animationDelay: i * 80 + 'ms' }">{{ char }}</span>
-          <span class="logo-dot">·</span>
-          <span v-for="(char, i) in 'Sandbox'" :key="'s-' + i" class="logo-char" :style="{ animationDelay: (i + 7) * 80 + 'ms' }">{{ char }}</span>
-        </div>
-        <div class="loading-bar">
-          <div class="loading-bar-inner"></div>
-        </div>
-        <div class="loading-hint">正在加载Cesium三维引擎...</div>
-      </div>
-    </div>
     <router-view />
   </div>
 </template>
@@ -51,106 +84,5 @@ onMounted(() => {
 
 #app {
   min-height: 100vh;
-}
-</style>
-
-<style scoped>
-.loading-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background-color: #0f1525;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-.loading-overlay.loading-exit {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.loading-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
-}
-
-.logo-text {
-  display: flex;
-  align-items: baseline;
-  gap: 2px;
-  font-size: 36px;
-  font-weight: 700;
-  font-family: 'Segoe UI', 'PingFang SC', sans-serif;
-  letter-spacing: 2px;
-}
-
-.logo-char {
-  display: inline-block;
-  color: #e0e6f0;
-  animation: charFloat 2.4s ease-in-out infinite;
-}
-
-.logo-dot {
-  display: inline-block;
-  color: #4a90d9;
-  margin: 0 4px;
-  font-weight: 300;
-}
-
-.loading-bar {
-  width: 240px;
-  height: 3px;
-  background-color: rgba(255, 255, 255, 0.08);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.loading-bar-inner {
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, #4a90d9, transparent);
-  border-radius: 2px;
-  animation: barSlide 1.4s ease-in-out infinite;
-}
-
-.loading-hint {
-  font-size: 13px;
-  color: rgba(224, 230, 240, 0.35);
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  animation: hintBreathe 2.8s ease-in-out infinite;
-}
-
-@keyframes charFloat {
-  0%, 100% {
-    transform: translateY(0);
-    opacity: 0.7;
-  }
-  50% {
-    transform: translateY(-6px);
-    opacity: 1;
-  }
-}
-
-@keyframes barSlide {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(350%);
-  }
-}
-
-@keyframes hintBreathe {
-  0%, 100% {
-    opacity: 0.35;
-  }
-  50% {
-    opacity: 0.7;
-  }
 }
 </style>

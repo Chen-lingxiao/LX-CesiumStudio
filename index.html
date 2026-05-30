@@ -5,9 +5,119 @@
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LX | Cesium Sandbox - 在线沙盒编辑器</title>
+    <style>
+      /* 确保加载动画立即显示，不受其他样式影响 */
+      html, body {
+        margin: 0;
+        padding: 0;
+        overflow: visible !important;
+        background-color: #0f1525;
+      }
+      #app-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background-color: #0f1525;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+      }
+      #app-loading.fade-out {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .app-loading-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+      }
+      .app-logo-text {
+        display: flex;
+        align-items: baseline;
+        gap: 2px;
+        font-size: 36px;
+        font-weight: 700;
+        font-family: 'Segoe UI', 'PingFang SC', sans-serif;
+        letter-spacing: 2px;
+      }
+      .app-logo-char {
+        display: inline-block;
+        color: #e0e6f0;
+        animation: appCharFloat 2.4s ease-in-out infinite;
+      }
+      .app-logo-dot {
+        display: inline-block;
+        color: #4a90d9;
+        margin: 0 4px;
+        font-weight: 300;
+      }
+      .app-loading-bar {
+        width: 240px;
+        height: 3px;
+        background-color: rgba(255, 255, 255, 0.08);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .app-loading-bar-inner {
+        width: 40%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, #4a90d9, transparent);
+        border-radius: 2px;
+        animation: appBarSlide 1.4s ease-in-out infinite;
+      }
+      .app-loading-hint {
+        font-size: 13px;
+        color: rgba(224, 230, 240, 0.35);
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        animation: appHintBreathe 2.8s ease-in-out infinite;
+      }
+      @keyframes appCharFloat {
+        0%, 100% { transform: translateY(0); opacity: 0.7; }
+        50% { transform: translateY(-6px); opacity: 1; }
+      }
+      @keyframes appBarSlide {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(350%); }
+      }
+      @keyframes appHintBreathe {
+        0%, 100% { opacity: 0.35; }
+        50% { opacity: 0.7; }
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
+    <!-- 加载动画：纯 HTML+CSS，不依赖 JS，浏览器解析即显示 -->
+    <div id="app-loading">
+      <div class="app-loading-content">
+        <div class="app-logo-text">
+          <span class="app-logo-char" style="animation-delay:0ms">C</span>
+          <span class="app-logo-char" style="animation-delay:80ms">e</span>
+          <span class="app-logo-char" style="animation-delay:160ms">s</span>
+          <span class="app-logo-char" style="animation-delay:240ms">i</span>
+          <span class="app-logo-char" style="animation-delay:320ms">u</span>
+          <span class="app-logo-char" style="animation-delay:400ms">m</span>
+          <span class="app-logo-dot">·</span>
+          <span class="app-logo-char" style="animation-delay:560ms">S</span>
+          <span class="app-logo-char" style="animation-delay:640ms">a</span>
+          <span class="app-logo-char" style="animation-delay:720ms">n</span>
+          <span class="app-logo-char" style="animation-delay:800ms">d</span>
+          <span class="app-logo-char" style="animation-delay:880ms">b</span>
+          <span class="app-logo-char" style="animation-delay:960ms">o</span>
+          <span class="app-logo-char" style="animation-delay:1040ms">x</span>
+        </div>
+        <div class="app-loading-bar">
+          <div class="app-loading-bar-inner"></div>
+        </div>
+        <div class="app-loading-hint">正在加载Cesium三维引擎...</div>
+      </div>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
