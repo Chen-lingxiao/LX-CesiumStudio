@@ -13,6 +13,15 @@ export default defineConfig(({ mode }) => {
       vue(),
       !isProduction && vueDevTools(),
       cesium(),
+      {
+        name: 'defer-cesium-script',
+        transformIndexHtml(html) {
+          return html.replace(
+            '<script src="cesium/Cesium.js">',
+            '<script defer src="cesium/Cesium.js">'
+          )
+        }
+      },
     ].filter(Boolean),
     resolve: {
       alias: {

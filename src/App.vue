@@ -45,15 +45,15 @@ onMounted(() => {
     // 如果页面已就绪或超过最大等待时间，移除加载动画
     if (isPageReady() || elapsed >= maxLoadingTime) {
       const loader = document.getElementById('app-loading')
+      const appEl = document.getElementById('app')
       if (loader) {
         loader.classList.add('fade-out')
-        loader.addEventListener('transitionend', () => loader.remove(), { once: true })
-        // 双重保险：500ms后强制移除
-        setTimeout(() => {
-          if (loader && loader.parentElement) {
-            loader.remove()
-          }
-        }, 500)
+        const cleanup = () => {
+          if (loader.parentElement) loader.remove()
+          if (appEl) appEl.style.removeProperty('background-color')
+        }
+        loader.addEventListener('transitionend', cleanup, { once: true })
+        setTimeout(cleanup, 600)
       }
       return
     }
