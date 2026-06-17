@@ -9,6 +9,10 @@
  * - examples: 示例列表数组
  */
 
+const BASE_URL = import.meta.env.BASE_URL
+
+const thumbnail = (name) => `${BASE_URL}thumbnails/${name}.png`
+
 import { extractCode } from '../utils/codeExtractor'
 
 import ViewerBasic from './Basic/ViewerBasic.vue'
@@ -101,7 +105,7 @@ export const examples = [
     name: 'Viewer 基础类',
     description: '创建基础 Viewer 实例，配置控件、添加实体、演示相机飞行到指定位置',
     tags: ['Viewer', '基础类'],
-    thumbnail: '/thumbnails/viewer-basic.png',
+    thumbnail: thumbnail('viewer-basic'),
     component: ViewerBasic,
     ...extractCode(viewerBasicCode)
   },
@@ -110,7 +114,7 @@ export const examples = [
     name: 'Camera 基础类',
     description: '演示相机操作方法（flyTo、setView、lookAt 等），实现视角倾斜、旋转、缩放等控制',
     tags: ['Camera', '基础类'],
-    thumbnail: '/thumbnails/camera-basic.png',
+    thumbnail: thumbnail('camera-basic'),
     component: CameraBasic,
     ...extractCode(cameraBasicCode)
   },
@@ -119,7 +123,7 @@ export const examples = [
     name: 'Scene 基础类',
     description: '演示 Scene 配置选项（场景模式、大气、雾效、光照、地形夸张等），提供交互式控制面板',
     tags: ['Scene', '基础类'],
-    thumbnail: '/thumbnails/scene-basic.png',
+    thumbnail: thumbnail('scene-basic'),
     component: SceneBasic,
     ...extractCode(sceneBasicCode)
   },
@@ -128,7 +132,7 @@ export const examples = [
     name: 'Globe 基础类',
     description: '演示 Globe 类配置（地球外观、地形、光照、深度测试、大气效果等），控制地球渲染',
     tags: ['Globe', '基础类'],
-    thumbnail: '/thumbnails/globe-basic.png',
+    thumbnail: thumbnail('globe-basic'),
     component: GlobeBasic,
     ...extractCode(globeBasicCode)
   },
@@ -137,7 +141,7 @@ export const examples = [
     name: 'Color 颜色',
     description: '演示 5 种颜色创建方式（内置常量、RGBA、RGB字节、十六进制、CSS颜色名），在地图展示',
     tags: ['Color', '基础类'],
-    thumbnail: '/thumbnails/color-basic.png',
+    thumbnail: thumbnail('color-basic'),
     component: ColorBasic,
     ...extractCode(colorBasicCode)
   },
@@ -146,7 +150,7 @@ export const examples = [
     name: 'Coordinate 坐标系',
     description: '演示四种坐标系及转换方法（地理经纬度、地理弧度、屏幕、笛卡尔），控制台输出结果',
     tags: ['Coordinate', '基础类'],
-    thumbnail: '/thumbnails/coordinate-basic.png',
+    thumbnail: thumbnail('coordinate-basic'),
     component: CoordinateBasic,
     ...extractCode(coordinateBasicCode)
   },
@@ -155,7 +159,7 @@ export const examples = [
     name: 'ScreenSpaceEvent 屏幕空间事件',
     description: '演示屏幕空间事件监听和场景拾取，点击创建点标记并显示自定义弹窗',
     tags: ['ScreenSpaceEvent', '基础类'],
-    thumbnail: '/thumbnails/screen-space-event-basic.png',
+    thumbnail: thumbnail('screen-space-event-basic'),
     component: ScreenSpaceEventBasic,
     ...extractCode(screenSpaceEventBasicCode)
   },
@@ -164,7 +168,7 @@ export const examples = [
     name: 'Entities 基础类',
     description: '创建基础的Cesium Viewer实例，演示如何添加包含点标记、广告牌和文字标签的完整实体对象',
     tags: ['Entities', '基础类'],
-    thumbnail: '/thumbnails/basic-entity.png',
+    thumbnail: thumbnail('basic-entity'),
     component: BasicEntity,
     ...extractCode(basicEntityCode)
   },
@@ -173,7 +177,7 @@ export const examples = [
     name: '点实体',
     description: '创建点实体对象，设置点的颜色、大小、高度参考和深度测试等属性',
     tags: ['Entities', 'Point'],
-    thumbnail: '/thumbnails/point-entity.png',
+    thumbnail: thumbnail('point-entity'),
     component: PointEntity,
     ...extractCode(pointEntityCode)
   },
@@ -182,7 +186,7 @@ export const examples = [
     name: '折线实体',
     description: '创建折线实体对象，设置折线的宽度、颜色材质、是否贴地等属性',
     tags: ['Entities', 'Polyline'],
-    thumbnail: '/thumbnails/polyline-entity.png',
+    thumbnail: thumbnail('polyline-entity'),
     component: PolylineEntity,
     ...extractCode(polylineEntityCode)
   },
@@ -191,7 +195,7 @@ export const examples = [
     name: '多边形实体',
     description: '创建多边形实体对象，设置多边形的颜色、大小、高度参考和深度测试等属性',
     tags: ['Entities', 'Polygon'],
-    thumbnail: '/thumbnails/polygon-entity.png',
+    thumbnail: thumbnail('polygon-entity'),
     component: PolygonEntity,
     ...extractCode(polygonEntityCode)
   },
@@ -200,7 +204,7 @@ export const examples = [
     name: '模型实体',
     description: '创建模型实体对象，加载3D模型文件，设置模型的位置、旋转、缩放等属性',
     tags: ['Entities', 'Model'],
-    thumbnail: '/thumbnails/model-entity.png',
+    thumbnail: thumbnail('model-entity'),
     component: ModelEntity,
     ...extractCode(modelEntityCode)
   },
@@ -209,7 +213,7 @@ export const examples = [
     name: 'OpenStreetMap 影像',
     description: '添加OpenStreetMap影像图层',
     tags: ['Imagery', '影像', 'OpenStreetMap'],
-    thumbnail: '/thumbnails/osm-imagery.png',
+    thumbnail: thumbnail('osm-imagery'),
     component: OSMImagery,
     ...extractCode(osmImageryCode)
   },
@@ -218,7 +222,7 @@ export const examples = [
     name: 'Mapbox 影像',
     description: '添加Mapbox影像图层',
     tags: ['Imagery', '影像', 'Mapbox'],
-    thumbnail: '/thumbnails/mapbox-imagery.png',
+    thumbnail: thumbnail('mapbox-imagery'),
     component: MapboxImagery,
     ...extractCode(mapboxImageryCode)
   },
@@ -227,7 +231,7 @@ export const examples = [
     name: '地形基础',
     description: '添加基础地形图层',
     tags: ['Terrain', '基础'],
-    thumbnail: '/thumbnails/terrain-basic.png',
+    thumbnail: thumbnail('terrain-basic'),
     component: TerrainBasic,
     ...extractCode(terrainBasicCode)
   },
@@ -236,7 +240,7 @@ export const examples = [
     name: '地形自定义',
     description: '添加自定义地形图层',
     tags: ['Terrain', '自定义'],
-    thumbnail: '/thumbnails/terrain-custom.png',
+    thumbnail: thumbnail('terrain-custom'),
     component: TerrainCustom,
     ...extractCode(terrainCustomCode)
   },
@@ -245,7 +249,7 @@ export const examples = [
     name: '地形高程分层设色',
     description: '根据地形高程分层设置颜色',
     tags: ['Terrain', '地形高程分层设色'],
-    thumbnail: '/thumbnails/terrain-elevation-color.png',
+    thumbnail: thumbnail('terrain-elevation-color'),
     component: TerrainElevationColor,
     ...extractCode(terrainElevationColorCode)
   },
@@ -255,7 +259,7 @@ export const examples = [
     name: 'GeoJSON 数据源',
     description: '加载GeoJSON数据，显示在地图上',
     tags: ['DataSource', 'GeoJSON'],
-    thumbnail: '/thumbnails/geojson-data-source.png',
+    thumbnail: thumbnail('geojson-data-source'),
     component: GeoJsonDataSource,
     ...extractCode(geoJsonDataSourceCode)
   },
@@ -264,7 +268,7 @@ export const examples = [
     name: 'KML 数据源',
     description: '加载KML数据，显示在地图上',
     tags: ['DataSource', 'KML'],
-    thumbnail: '/thumbnails/kml-data-source.png',
+    thumbnail: thumbnail('kml-data-source'),
     component: KmlDataSource,
     ...extractCode(kmlDataSourceCode)
   },
@@ -273,7 +277,7 @@ export const examples = [
     name: '绘制工具合集',
     description: '交互式绘制工具：使用 useCesiumDraw composable，支持点、线、多边形、矩形的绘制，左键添加顶点，右键完成绘制，支持清除所有绘制内容',
     tags: ['Interaction', '绘制'],
-    thumbnail: '/thumbnails/draw-tool.png',
+    thumbnail: thumbnail('draw-tool'),
     component: DrawTool,
     ...extractCode(drawToolCode)
   },
@@ -282,7 +286,7 @@ export const examples = [
     name: '绘制点',
     description: '交互式点绘制工具，点击地图添加点位，支持清除绘制内容',
     tags: ['Interaction', '绘制', 'Point'],
-    thumbnail: '/thumbnails/draw-point.png',
+    thumbnail: thumbnail('draw-point'),
     component: DrawPoint,
     ...extractCode(drawPointCode)
   },
@@ -291,7 +295,7 @@ export const examples = [
     name: '绘制折线',
     description: '交互式折线绘制工具，点击添加顶点、右键完成绘制，支持清除',
     tags: ['Interaction', '绘制', 'Polyline'],
-    thumbnail: '/thumbnails/draw-polyline.png',
+    thumbnail: thumbnail('draw-polyline'),
     component: DrawPolyline,
     ...extractCode(drawPolylineCode)
   },
@@ -300,7 +304,7 @@ export const examples = [
     name: '绘制多边形',
     description: '交互式多边形绘制工具，点击添加顶点、右键闭合绘制，支持清除',
     tags: ['Interaction', '绘制', 'Polygon'],
-    thumbnail: '/thumbnails/draw-polygon.png',
+    thumbnail: thumbnail('draw-polygon'),
     component: DrawPolygon,
     ...extractCode(drawPolygonCode)
   },
@@ -309,7 +313,7 @@ export const examples = [
     name: '测量工具合集',
     description: '交互式测量工具：使用 useMeasurement composable，支持距离测量、面积测量、高度测量和坐标拾取',
     tags: ['Interaction', '测量'],
-    thumbnail: '/thumbnails/measure-tool.png',
+    thumbnail: thumbnail('measure-tool'),
     component: MeasureTool,
     ...extractCode(measureToolCode)
   },
@@ -318,7 +322,7 @@ export const examples = [
     name: '距离测量',
     description: '独立实现的距离测量示例：点击添加两点，计算并显示两点间距离',
     tags: ['Interaction', '测量', '距离'],
-    thumbnail: '/thumbnails/distance-measure.png',
+    thumbnail: thumbnail('distance-measure'),
     component: DistanceMeasure,
     ...extractCode(distanceMeasureCode)
   },
@@ -327,7 +331,7 @@ export const examples = [
     name: '面积测量',
     description: '独立实现的面积测量示例：点击添加顶点（至少3个），右键完成，计算面积',
     tags: ['Interaction', '测量', '面积'],
-    thumbnail: '/thumbnails/area-measure.png',
+    thumbnail: thumbnail('area-measure'),
     component: AreaMeasure,
     ...extractCode(areaMeasureCode)
   },
@@ -336,7 +340,7 @@ export const examples = [
     name: '高度测量',
     description: '独立实现的高度测量示例：点击选择两点，计算地形高度差',
     tags: ['Interaction', '测量', '高度'],
-    thumbnail: '/thumbnails/height-measure.png',  
+    thumbnail: thumbnail('height-measure'),  
     component: HeightMeasure,
     ...extractCode(heightMeasureCode)
   },
@@ -345,7 +349,7 @@ export const examples = [
     name: '坐标拾取',
     description: '独立实现的坐标拾取示例：点击地图显示经纬度和高度信息',
     tags: ['Interaction', '测量', '坐标'],
-    thumbnail: '/thumbnails/coordinate-pick.png',
+    thumbnail: thumbnail('coordinate-pick'),
     component: CoordinatePick,
     ...extractCode(coordinatePickCode)
   },
@@ -354,7 +358,7 @@ export const examples = [
     name: '空间分析合集',
     description: '综合空间分析示例：使用 useSectionAnalysis、useAspectAnalysis、useSlopeAnalysis、useMeasureVolume composable，集成剖面、坡向、坡度、方量、可见性分析',
     tags: ['SpatialAnalysis', '空间分析'],
-    thumbnail: '/thumbnails/spatial-analysis.png',
+    thumbnail: thumbnail('spatial-analysis'),
     component: SpatialAnaysis,
     ...extractCode(spatialAnaysisCode)
   },
@@ -363,7 +367,7 @@ export const examples = [
     name: '剖面分析',
     description: '独立实现的剖面分析示例：点击地图显示剖面分析结果',
     tags: ['SpatialAnalysis', '空间分析', '剖面分析'],
-    thumbnail: '/thumbnails/section-analysis.png',
+    thumbnail: thumbnail('section-analysis'),
     component: SectionAnalysis,
     ...extractCode(sectionAnalysisCode)
   },
@@ -372,7 +376,7 @@ export const examples = [
     name: '坡向分析',
     description: '独立实现的坡向分析示例：点击地图显示坡向分析结果',
     tags: ['SpatialAnalysis', '空间分析', '坡向分析'],
-    thumbnail: '/thumbnails/aspect-analysis.png',
+    thumbnail: thumbnail('aspect-analysis'),
     component: AspectAnalysis,
     ...extractCode(aspectAnalysisCode)
   },
@@ -381,7 +385,7 @@ export const examples = [
     name: '坡度分析',
     description: '独立实现的坡度分析示例：点击地图显示坡度分析结果',
     tags: ['SpatialAnalysis', '空间分析', '坡度分析'],
-    thumbnail: '/thumbnails/slope-analysis.png',
+    thumbnail: thumbnail('slope-analysis'),
     component: SlopeAnalysis,
     ...extractCode(slopeAnalysisCode)
   },
@@ -390,7 +394,7 @@ export const examples = [
     name: '方量分析',
     description: '独立实现的方量分析示例：点击地图显示方量分析结果',
     tags: ['SpatialAnalysis', '空间分析', '方量分析'],
-    thumbnail: '/thumbnails/volume-analysis.png',
+    thumbnail: thumbnail('volume-analysis'),
     component: VolumeAnalysis,
     ...extractCode(volumeAnalysisCode)
   },
@@ -399,7 +403,7 @@ export const examples = [
     name: '可见性分析',
     description: '独立实现的可见性分析示例：点击地图显示可见性分析结果',
     tags: ['SpatialAnalysis', '空间分析', '可见性分析'],
-    thumbnail: '/thumbnails/visibility-analysis.png',
+    thumbnail: thumbnail('visibility-analysis'),
     component: VisibilityAnalysis,
     ...extractCode(visibilityAnalysisCode)
   },
@@ -409,7 +413,7 @@ export const examples = [
     name: '天气效果',
     description: '独立实现的天气效果示例：点击地图显示天气效果',
     tags: ['SpecialEffects', '天气效果'],
-    thumbnail: '/thumbnails/weather-effects.png',
+    thumbnail: thumbnail('weather-effects'),
     component: WeatherEffects,
     ...extractCode(weatherEffectsCode)
   }
