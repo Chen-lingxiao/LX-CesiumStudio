@@ -87,16 +87,33 @@ touch .env
 
 编辑 `.env` 文件，添加以下配置：
 
-| 变量名 | 说明 | 获取方式 |
-|--------|------|----------|
-| `VITE_CESIUM_TOKEN` | Cesium Ion 访问令牌 | [Cesium Ion 控制台](https://cesium.com/ion/) |
+| 变量名 | 说明 | 获取方式 | 必填 |
+|--------|------|----------|------|
+| `VITE_CESIUM_TOKEN` | Cesium Ion 访问令牌 | [Cesium Ion 控制台](https://cesium.com/ion/) | 是 |
+| `VITE_TIANDITU_TOKEN` | 天地图服务令牌 | [天地图开发者平台](https://www.tianditu.gov.cn/) | 否 |
+| `VITE_MAPBOX_TOKEN` | Mapbox 访问令牌 | [Mapbox 控制台](https://account.mapbox.com/) | 否 |
 
-**获取 Cesium Ion 令牌：**
+**获取令牌：**
 
-1. 访问 [Cesium Ion 控制台](https://cesium.com/ion/)
-2. 注册或登录账号
-3. 在 `Access Tokens` 页面创建新令牌
-4. 将令牌复制到 `.env` 文件中
+- **Cesium Ion 令牌（必填）**：
+  1. 访问 [Cesium Ion 控制台](https://cesium.com/ion/)
+  2. 注册或登录账号
+  3. 在 `Access Tokens` 页面创建新令牌
+  4. 将令牌复制到 `.env` 文件中
+
+- **天地图令牌（可选）**：
+  1. 访问 [天地图开发者平台](https://www.tianditu.gov.cn/)
+  2. 注册账号并申请开发者权限
+  3. 创建应用获取服务令牌
+  4. 将令牌复制到 `.env` 文件中
+
+- **Mapbox 令牌（可选）**：
+  1. 访问 [Mapbox 控制台](https://account.mapbox.com/)
+  2. 注册或登录账号
+  3. 在 `Access tokens` 页面获取默认令牌或创建新令牌
+  4. 将令牌复制到 `.env` 文件中
+
+> **说明**：天地图和 Mapbox 令牌用于影像图层功能，如不配置则相关示例可能无法正常显示。
 
 ### 3. 安装依赖
 
@@ -246,7 +263,7 @@ pnpm preview
 
 | 示例名称 | 描述 | 标签 |
 |---------|------|------|
-| 空间分析合集 | 综合空间分析示例：集成剖面、坡向、坡度、方量、可见性分析 | SpatialAnalysis、空间分析 |
+| 空间分析合集 | 综合空间分析示例：使用 useSectionAnalysis、useAspectAnalysis、useSlopeAnalysis、useMeasureVolume composable，集成剖面、坡向、坡度、方量、可见性分析 | SpatialAnalysis、空间分析 |
 | 剖面分析 | 地形剖面分析示例：绘制路径，生成地形剖面图 | SpatialAnalysis、剖面分析 |
 | 坡向分析 | 地形坡向分析示例：绘制区域，分析坡面朝向分布 | SpatialAnalysis、坡向分析 |
 | 坡度分析 | 地形坡度分析示例：绘制区域，分析坡面倾斜角度分布 | SpatialAnalysis、坡度分析 |

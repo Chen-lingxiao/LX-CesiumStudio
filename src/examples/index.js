@@ -352,7 +352,7 @@ export const examples = [
   {
     id: 'spatial-analysis',
     name: '空间分析合集',
-    description: '独立实现的空间分析示例：点击地图显示空间分析结果',
+    description: '综合空间分析示例：使用 useSectionAnalysis、useAspectAnalysis、useSlopeAnalysis、useMeasureVolume composable，集成剖面、坡向、坡度、方量、可见性分析',
     tags: ['SpatialAnalysis', '空间分析'],
     thumbnail: '/thumbnails/spatial-analysis.png',
     component: SpatialAnaysis,
