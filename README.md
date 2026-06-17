@@ -1,6 +1,6 @@
-# CesiumStudio-LX
+# Cesium Studio
 
-一个基于 Vue 3 + Cesium 的交互式地理信息可视化工作台，提供丰富的代码示例和实时预览功能。
+一个基于 Vue 3 + Cesium 的在线地理信息可视化编辑器，提供丰富的代码示例和实时预览功能。
 
 ## 目录
 
@@ -21,7 +21,7 @@
 
 ## 项目概述
 
-CesiumStudio-LX 是一个面向开发者的 Cesium 学习与演示平台，旨在帮助开发者快速掌握 Cesium 地理可视化技术。平台提供直观的代码编辑器和实时预览功能，让学习和调试 Cesium 代码变得更加高效。
+Cesium Studio 是一个面向开发者的 Cesium 学习与演示平台，旨在帮助开发者快速掌握 Cesium 地理可视化技术。平台提供直观的代码编辑器和实时预览功能，让学习和调试 Cesium 代码变得更加高效。
 
 ---
 
@@ -73,7 +73,7 @@ CesiumStudio-LX 是一个面向开发者的 Cesium 学习与演示平台，旨�
 
 ```bash
 git clone <repository-url>
-cd CesiumStudio-LX
+cd cesium-studio
 ```
 
 ### 2. 配置环境变量
@@ -264,7 +264,7 @@ pnpm preview
 ## 项目结构
 
 ```
-CesiumSandbox-LX/
+CesiumStudio/
 ├── public/                              # 静态资源目录
 │   ├── favicon.ico                      # 网站图标
 │   └── thumbnails/                      # 示例缩略图

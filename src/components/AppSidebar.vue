@@ -39,7 +39,7 @@ const handleIconClick = (iconName) => {
   } else if (iconName === 'docs') {
     window.open('https://cesium.com/learn/cesiumjs/ref-doc/', '_blank')
   } else if (iconName === 'github') {
-    window.open('https://github.com/Chen-lingxiao/CesiumSandbox--LX', '_blank')
+    window.open('https://github.com/Chen-lingxiao/LX-CesiumStudio', '_blank')
   } else if (iconName === 'email') {
     window.open('mailto:chen.lingxiao@outlook.com', '_blank')
   } else if (iconName === 'settings') {
