@@ -133,9 +133,6 @@ const handleClose = () => {
 </template>
 
 <style scoped>
-/* 引入图标字体样式 */
-@import '../assets/fonts/iconfont.css';
-
 /* 设置容器 */
 .settings-container {
   position: fixed;

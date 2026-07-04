@@ -154,9 +154,10 @@ const clearDraw = () => {
  * 坡向分析主函数
  * @param {Array} extent - 分析范围 [最小经度, 最小纬度, 最大经度, 最大纬度]
  * @param {Number} precision - 采样精度（度，值越小精度越高），默认0.0005度≈55米
+ * @param {Array} polygonPositions - 用户绘制的多边形坐标（可选）
  * @returns {Promise<Object>} - 返回坡向数据和可视化实体
  */
-const analyzeAspect = async (extent, precision = 0.0005) => {
+const analyzeAspect = async (extent, precision = 0.0005, polygonPositions = null) => {
   if (!viewer || !isReady.value) {
     throw new Error('Cesium viewer 未初始化')
   }
@@ -295,8 +296,8 @@ const analyzeAspect = async (extent, precision = 0.0005) => {
   
   // 使用用户绘制的多边形边界（如果有），否则使用矩形
   let polygonHierarchy
-  if (currentPolygonPositions.value) {
-    polygonHierarchy = new Cesium.PolygonHierarchy(currentPolygonPositions.value)
+  if (polygonPositions) {
+    polygonHierarchy = new Cesium.PolygonHierarchy(polygonPositions)
   } else {
     polygonHierarchy = new Cesium.PolygonHierarchy([
       Cesium.Cartesian3.fromDegrees(minLon, minLat),
@@ -383,12 +384,18 @@ const updateDelta = () => {
 
 const startAspectAnalysis = async () => {
   try {
+    // 保存多边形位置，避免在分析前被清除
+    const polygonPositions = currentPolygonPositions.value
+    
     // 清除绘制的区域，避免叠加
     if (drawApi) {
       drawApi.clearDrawings()
-      currentPolygonPositions.value = null
     }
-    await analyzeAspect(currentExtent.value, currentPrecision.value)
+    
+    await analyzeAspect(currentExtent.value, currentPrecision.value, polygonPositions)
+    
+    // 分析完成后清除多边形位置
+    currentPolygonPositions.value = null
   } catch (error) {
     console.error('坡向分析失败:', error)
   }

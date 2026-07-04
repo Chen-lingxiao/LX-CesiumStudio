@@ -28,7 +28,7 @@ const initCesium = async () => {
     isReady.value = false;
     viewer = new Cesium.Viewer("cesium-container", {
       // terrainProvider: await Cesium.createWorldTerrainAsync()， // 加载世界地形
-      terrain: new Cesium.Terrain(Cesium.CesiumTerrainProvider.fromUrl("/static/terrainTiles/demtilesnew")),
+      terrain: new Cesium.Terrain(Cesium.CesiumTerrainProvider.fromUrl(import.meta.env.BASE_URL + "static/terrainTiles/demtilesnew")),
     })
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(110.47, 29.35, 1000),

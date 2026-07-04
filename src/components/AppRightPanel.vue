@@ -22,9 +22,6 @@ import { ref, computed, onMounted, onUnmounted, watch, shallowRef, nextTick } fr
 import * as Cesium from 'cesium'
 import { useResizer } from '../composables/useResizer'
 
-// 配置Cesium Ion访问令牌
-Cesium.Ion.defaultAccessToken = import.meta.env.VITE_CESIUM_TOKEN
-
 /**
  * 组件属性定义
  */

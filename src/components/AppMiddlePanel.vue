@@ -248,11 +248,13 @@ watch(
 const initEditor = () => {
   if (!editorContainer.value) return;
 
-  // 根据当前标签页获取初始代码
+  monaco.languages.html.htmlDefaults.setModeConfiguration({
+    diagnostics: false,
+  });
+
   const initialValue =
     currentTab.value === "javascript" ? jsCode.value : htmlCssCode.value;
 
-  // 创建编辑器实例
   editor = monaco.editor.create(editorContainer.value, {
     value: initialValue || "// 在此输入代码",
     language: currentTab.value === "javascript" ? "javascript" : "html",
@@ -271,14 +273,12 @@ const initEditor = () => {
 const updateEditorLanguage = () => {
   if (!editor) return;
 
-  // 根据当前标签页切换语言
   const language = currentTab.value === "javascript" ? "javascript" : "html";
   const value =
     currentTab.value === "javascript" ? jsCode.value : htmlCssCode.value;
 
-  // 设置编辑器语言和内容
-  monaco.editor.setModelLanguage(editor.getModel(), language);
-  editor.setValue(value);
+  const model = monaco.editor.createModel(value, language);
+  editor.setModel(model);
 };
 
 /**

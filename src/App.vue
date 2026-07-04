@@ -1,9 +1,5 @@
 <script setup>
 import { onMounted } from 'vue'
-import { useSettings } from './composables/useSettings'
-
-const { initSettings } = useSettings()
-initSettings()
 
 /**
  * 检查页面是否已完全渲染（有可见内容）
@@ -76,12 +72,6 @@ onMounted(() => {
 </template>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 #app {
   min-height: 100vh;
 }

@@ -14,10 +14,14 @@
  * - iconfont.css: 图标字体样式
  */
 import { createApp } from 'vue'
+import * as Cesium from 'cesium'
 import App from './App.vue'
 import router from './router'
 import '@/assets/styles/main.scss'
 import '@/assets/fonts/iconfont.css'
+
+// 全局配置 Cesium Ion 访问令牌
+Cesium.Ion.defaultAccessToken = import.meta.env.VITE_CESIUM_TOKEN
 
 const app = createApp(App)
 app.use(router)

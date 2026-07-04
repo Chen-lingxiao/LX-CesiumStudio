@@ -24,7 +24,7 @@ const props = defineProps({
 
 const emit = defineEmits(['view-change', 'new-example', 'toggle-settings'])
 
-const { settings } = useSettings()
+const { settings, updateSetting } = useSettings()
 
 /**
  * 处理图标点击
@@ -48,7 +48,6 @@ const handleIconClick = (iconName) => {
 }
 
 const toggleDarkMode = () => {
-  const { updateSetting } = useSettings()
   updateSetting('isDark', !settings.isDark)
 }
 </script>
@@ -104,9 +103,6 @@ const toggleDarkMode = () => {
 </template>
 
 <style scoped>
-/* 引入图标字体样式 */
-@import '../assets/fonts/iconfont.css';
-
 /* 侧边栏容器样式 */
 .sidebar {
   width: 50px;

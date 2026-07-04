@@ -22,7 +22,7 @@ import * as Cesium from 'cesium'
 
 let viewer = null // Cesium 实例
 const isReady = ref(false) // 初始化状态
-const dataurl = '/static/GeoJSON/China.geojson'
+const dataurl = import.meta.env.BASE_URL + 'static/GeoJSON/China.geojson'
 async function loadBasicGeoJSON(url) {
     try {
         // 加载数据并配置默认样式

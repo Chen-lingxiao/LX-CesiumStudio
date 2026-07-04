@@ -109,8 +109,8 @@ import * as Cesium from "cesium";
 
 let viewer = null; // Cesium 实例
 const isReady = ref(false); // 初始化状态
-const modelPath_SuperHeavy = "/static/3Dmodel/Rocket/SuperHeavy.glb";
-const modelPath_StarShip = "/static/3Dmodel/Rocket/StarShip.glb";
+const modelPath_SuperHeavy = import.meta.env.BASE_URL + "static/3Dmodel/Rocket/SuperHeavy.glb";
+const modelPath_StarShip = import.meta.env.BASE_URL + "static/3Dmodel/Rocket/starShip.glb";
 const initCesium = async () => {
   try {
     isReady.value = false;
